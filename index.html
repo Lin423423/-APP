@@ -17,1179 +17,190 @@
     --muted: #8888aa;
     --border: rgba(255,255,255,0.07);
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans TC', sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.4;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 60px;
-    background: rgba(10,10,15,0.8);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.5rem;
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .logo-dot {
-    width: 10px; height: 10px;
-    background: var(--accent2);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.4); opacity: 0.7; }
-  }
-
-  nav ul {
-    display: flex;
-    gap: 36px;
-    list-style: none;
-  }
-
-  nav a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.2s;
-    letter-spacing: 0.02em;
-  }
-
-  nav a:hover { color: var(--text); }
-
-  .nav-cta {
-    background: var(--accent);
-    color: #fff !important;
-    padding: 10px 22px;
-    border-radius: 8px;
-    font-weight: 600 !important;
-    transition: background 0.2s, transform 0.15s !important;
-  }
-
-  .nav-cta:hover {
-    background: #7b7ef8 !important;
-    transform: translateY(-1px);
-  }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 120px 40px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(91,94,244,0.18) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 80% 60%, rgba(0,229,192,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 30% 30% at 20% 70%, rgba(255,107,107,0.06) 0%, transparent 60%);
-  }
-
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(91,94,244,0.15);
-    border: 1px solid rgba(91,94,244,0.3);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 0.8rem;
-    color: #a0a3ff;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 32px;
-    animation: fadeUp 0.8s ease both;
-  }
-
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(3rem, 8vw, 6.5rem);
-    font-weight: 800;
-    line-height: 1.0;
-    letter-spacing: -0.04em;
-    margin-bottom: 28px;
-    animation: fadeUp 0.8s 0.1s ease both;
-  }
-
-  .hero h1 span {
-    background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 50%, #a78bfa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero p {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--muted);
-    max-width: 560px;
-    line-height: 1.8;
-    margin-bottom: 48px;
-    font-weight: 300;
-    animation: fadeUp 0.8s 0.2s ease both;
-  }
-
-  .hero-btns {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
-    animation: fadeUp 0.8s 0.3s ease both;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    padding: 16px 36px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 700;
-    text-decoration: none;
-    letter-spacing: 0.02em;
-    transition: all 0.2s;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-primary:hover {
-    background: #7b7ef8;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(91,94,244,0.4);
-  }
-
-  .btn-secondary {
-    background: transparent;
-    color: var(--text);
-    padding: 16px 36px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-secondary:hover {
-    border-color: rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.04);
-    transform: translateY(-2px);
-  }
-
-  /* ── STATS STRIP ── */
-  .stats {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    padding: 40px 60px;
-    display: flex;
-    justify-content: center;
-    gap: 80px;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    text-align: center;
-    animation: fadeUp 0.8s ease both;
-  }
-
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .stat-label {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-top: 4px;
-    font-weight: 400;
-  }
-
-  /* ── SECTION ── */
-  section {
-    padding: 100px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .section-tag {
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    font-weight: 700;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-bottom: 20px;
-  }
-
-  .section-sub {
-    font-size: 1.05rem;
-    color: var(--muted);
-    line-height: 1.8;
-    max-width: 520px;
-    font-weight: 300;
-  }
-
-  /* ── PROBLEM SECTION ── */
-  .problem-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-top: 60px;
-    align-items: center;
-  }
-
-  .pain-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .pain-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-
-  .pain-card:hover {
-    border-color: rgba(255,107,107,0.3);
-    transform: translateX(4px);
-  }
-
-  .pain-icon {
-    width: 44px; height: 44px;
-    background: rgba(255,107,107,0.1);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    flex-shrink: 0;
-  }
-
-  .pain-card h4 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .pain-card p {
-    font-size: 0.82rem;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  .mock-chat {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px;
-    position: relative;
-  }
-
-  .mock-chat-header {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .chat-bubble {
-    border-radius: 14px;
-    padding: 10px 16px;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    margin-bottom: 10px;
-    max-width: 85%;
-  }
-
-  .bubble-left {
-    background: rgba(255,255,255,0.06);
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-  }
-
-  .bubble-right {
-    background: var(--accent);
-    align-self: flex-end;
-    margin-left: auto;
-    border-bottom-right-radius: 4px;
-  }
-
-  .chat-label {
-    font-size: 0.7rem;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-
-  .chaos-label {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255,107,107,0.2);
-    border: 1px solid rgba(255,107,107,0.4);
-    color: #ff9999;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    padding: 4px 12px;
-    border-radius: 100px;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  /* ── FEATURES ── */
-  .features-section {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 100px 60px;
-  }
-
-  .features-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-top: 60px;
-  }
-
-  .feature-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px 28px;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .feature-card:hover {
-    border-color: rgba(91,94,244,0.3);
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-  }
-
-  .feature-card:hover::before {
-    opacity: 1;
-  }
-
-  .feat-icon {
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-  }
-
-  .feat-icon.blue { background: rgba(91,94,244,0.15); }
-  .feat-icon.green { background: rgba(0,229,192,0.12); }
-  .feat-icon.purple { background: rgba(167,139,250,0.15); }
-  .feat-icon.orange { background: rgba(251,146,60,0.15); }
-  .feat-icon.red { background: rgba(255,107,107,0.12); }
-  .feat-icon.cyan { background: rgba(0,229,192,0.12); }
-
-  .feature-card h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    letter-spacing: -0.01em;
-  }
-
-  .feature-card p {
-    font-size: 0.88rem;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  /* ── FLOW ── */
-  .flow-section {
-    padding: 100px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .flow-steps {
-    display: flex;
-    gap: 0;
-    margin-top: 60px;
-    position: relative;
-  }
-
-  .flow-steps::before {
-    content: '';
-    position: absolute;
-    top: 40px;
-    left: 40px;
-    right: 40px;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    z-index: 0;
-  }
-
-  .flow-step {
-    flex: 1;
-    text-align: center;
-    padding: 0 16px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .step-num {
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 2px solid var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.4rem;
-    color: var(--accent);
-    margin: 0 auto 20px;
-    box-shadow: 0 0 20px rgba(91,94,244,0.2);
-    transition: all 0.3s;
-  }
-
-  .flow-step:hover .step-num {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 0 30px rgba(91,94,244,0.5);
-  }
-
-  .flow-step h4 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .flow-step p {
-    font-size: 0.82rem;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  /* ── PRICING ── */
-  .pricing-section {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 100px 60px;
-  }
-
-  .pricing-inner {
-    max-width: 900px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .pricing-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 24px;
-    margin-top: 60px;
-    text-align: left;
-  }
-
-  .price-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 36px 28px;
-    transition: all 0.3s;
-    position: relative;
-  }
-
-  .price-card.featured {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, rgba(91,94,244,0.15), rgba(91,94,244,0.05));
-    box-shadow: 0 0 40px rgba(91,94,244,0.15);
-  }
-
-  .price-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent);
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 4px 14px;
-    border-radius: 100px;
-    white-space: nowrap;
-  }
-
-  .price-tier {
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
-
-  .price-amount {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.8rem;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .price-amount span {
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--muted);
-  }
-
-  .price-desc {
-    font-size: 0.82rem;
-    color: var(--muted);
-    margin-bottom: 28px;
-    line-height: 1.6;
-  }
-
-  .price-features {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-
-  .price-features li {
-    font-size: 0.88rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--muted);
-  }
-
-  .price-features li::before {
-    content: '✓';
-    color: var(--accent2);
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .price-features li.inactive { opacity: 0.4; }
-  .price-features li.inactive::before { content: '×'; color: #666; }
-
-  .btn-price {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-    letter-spacing: 0.02em;
-    border: none;
-    transition: all 0.2s;
-  }
-
-  .btn-price.outline {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-  }
-
-  .btn-price.outline:hover {
-    border-color: rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.04);
-  }
-
-  .btn-price.solid {
-    background: var(--accent);
-    color: #fff;
-  }
-
-  .btn-price.solid:hover {
-    background: #7b7ef8;
-    box-shadow: 0 8px 24px rgba(91,94,244,0.4);
-    transform: translateY(-1px);
-  }
-
-  /* ── CTA ── */
-  .cta-section {
-    padding: 100px 60px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cta-bg {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(91,94,244,0.12) 0%, transparent 70%);
-  }
-
-  .cta-section h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    margin-bottom: 20px;
-    position: relative;
-    line-height: 1.1;
-  }
-
-  .cta-section p {
-    font-size: 1.1rem;
-    color: var(--muted);
-    margin-bottom: 48px;
-    position: relative;
-  }
-
-  .email-form {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    position: relative;
-  }
-
-  .email-input {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 24px;
-    color: var(--text);
-    font-size: 0.95rem;
-    width: 320px;
-    outline: none;
-    transition: border-color 0.2s;
-    font-family: 'Noto Sans TC', sans-serif;
-  }
-
-  .email-input::placeholder { color: var(--muted); }
-
-  .email-input:focus {
-    border-color: var(--accent);
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 40px 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .footer-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.2rem;
-    letter-spacing: -0.02em;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 28px;
-    list-style: none;
-  }
-
-  .footer-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--text); }
-
-  .footer-copy {
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(32px);
-    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ── DASHBOARD MOCK ── */
-  .dashboard-mock {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    margin-top: 60px;
-  }
-
-  .mock-topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-  .mock-body {
-    padding: 28px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-  }
-
-  .mock-stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-  }
-
-  .mock-stat-label {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  .mock-stat-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-
-  .mock-stat-sub {
-    font-size: 0.72rem;
-    color: var(--accent2);
-    margin-top: 4px;
-  }
-
-  .mock-table {
-    grid-column: 1 / -1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-
-  .mock-table-header {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.72rem;
-    color: var(--muted);
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .mock-table-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.83rem;
-    align-items: center;
-    transition: background 0.15s;
-  }
-
-  .mock-table-row:last-child { border-bottom: none; }
-  .mock-table-row:hover { background: rgba(255,255,255,0.02); }
-
-  .status-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 100px;
-    font-size: 0.72rem;
-    font-weight: 700;
-  }
-
-  .status-paid { background: rgba(0,229,192,0.15); color: var(--accent2); }
-  .status-pending { background: rgba(251,146,60,0.15); color: #fb923c; }
-  .status-overdue { background: rgba(255,107,107,0.15); color: var(--accent3); }
-
-  /* responsive */
-  @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
-    nav ul { display: none; }
-    section { padding: 60px 24px; }
-    .features-section { padding: 60px 24px; }
-    .flow-section { padding: 60px 24px; }
-    .pricing-section { padding: 60px 24px; }
-    .cta-section { padding: 60px 24px; }
-    .stats { padding: 32px 24px; gap: 40px; }
-    footer { padding: 32px 24px; }
-    .problem-grid { grid-template-columns: 1fr; }
-    .features-grid { grid-template-columns: 1fr; }
-    .flow-steps { flex-direction: column; }
-    .flow-steps::before { display: none; }
-    .pricing-grid { grid-template-columns: 1fr; }
-    .mock-body { grid-template-columns: 1fr; }
-    .mock-table { display: none; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--text); font-family:'Noto Sans TC',sans-serif; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:9999; opacity:0.4; }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:20px 60px; background:rgba(10,10,15,0.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); }
+  .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); }
+  .logo-dot { width:10px; height:10px; background:var(--accent2); border-radius:50%; animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.7} }
+  nav ul { display:flex; gap:32px; list-style:none; align-items:center; }
+  nav a { color:var(--muted); text-decoration:none; font-size:0.9rem; font-weight:500; transition:color 0.2s; }
+  nav a:hover { color:var(--text); }
+  .nav-cta { background:var(--accent)!important; color:#fff!important; padding:10px 22px; border-radius:8px; font-weight:600!important; transition:all 0.2s!important; }
+  .nav-cta:hover { background:#7b7ef8!important; transform:translateY(-1px); }
+
+  .hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:120px 40px 80px; position:relative; overflow:hidden; }
+  .hero-bg { position:absolute; inset:0; background: radial-gradient(ellipse 60% 50% at 50% 0%,rgba(91,94,244,0.18) 0%,transparent 70%), radial-gradient(ellipse 40% 40% at 80% 60%,rgba(0,229,192,0.08) 0%,transparent 60%), radial-gradient(ellipse 30% 30% at 20% 70%,rgba(255,107,107,0.06) 0%,transparent 60%); }
+  .hero-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(91,94,244,0.15); border:1px solid rgba(91,94,244,0.3); border-radius:100px; padding:6px 16px; font-size:0.8rem; color:#a0a3ff; letter-spacing:0.08em; text-transform:uppercase; font-weight:600; margin-bottom:32px; animation:fadeUp 0.8s ease both; }
+  .hero h1 { font-family:'Syne',sans-serif; font-size:clamp(3rem,8vw,6.5rem); font-weight:800; line-height:1.0; letter-spacing:-0.04em; margin-bottom:28px; animation:fadeUp 0.8s 0.1s ease both; }
+  .hero h1 span { background:linear-gradient(135deg,var(--accent2) 0%,var(--accent) 50%,#a78bfa 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .hero p { font-size:clamp(1rem,2vw,1.2rem); color:var(--muted); max-width:560px; line-height:1.8; margin-bottom:48px; font-weight:300; animation:fadeUp 0.8s 0.2s ease both; }
+  .hero-btns { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; animation:fadeUp 0.8s 0.3s ease both; }
+
+  .btn-primary { background:var(--accent); color:#fff; padding:16px 36px; border-radius:12px; font-size:1rem; font-weight:700; text-decoration:none; letter-spacing:0.02em; transition:all 0.2s; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; font-family:'Noto Sans TC',sans-serif; }
+  .btn-primary:hover { background:#7b7ef8; transform:translateY(-2px); box-shadow:0 12px 32px rgba(91,94,244,0.4); }
+  .btn-secondary { background:transparent; color:var(--text); padding:16px 36px; border-radius:12px; font-size:1rem; font-weight:600; text-decoration:none; border:1px solid var(--border); transition:all 0.2s; cursor:pointer; display:inline-flex; align-items:center; gap:8px; font-family:'Noto Sans TC',sans-serif; }
+  .btn-secondary:hover { border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.04); transform:translateY(-2px); }
+
+  .stats { border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--surface); padding:40px 60px; display:flex; justify-content:center; gap:80px; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat-num { font-family:'Syne',sans-serif; font-size:2.5rem; font-weight:800; letter-spacing:-0.04em; background:linear-gradient(135deg,var(--accent2),var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .stat-label { font-size:0.85rem; color:var(--muted); margin-top:4px; }
+
+  section.content { padding:100px 60px; max-width:1200px; margin:0 auto; }
+  .section-tag { font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent2); font-weight:700; margin-bottom:16px; display:block; }
+  .section-title { font-family:'Syne',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:800; letter-spacing:-0.03em; line-height:1.1; margin-bottom:20px; }
+  .section-sub { font-size:1.05rem; color:var(--muted); line-height:1.8; max-width:520px; font-weight:300; }
+
+  .features-wrap { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:100px 60px; }
+  .features-inner { max-width:1200px; margin:0 auto; }
+  .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:60px; }
+  .feature-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px 28px; transition:all 0.3s; position:relative; overflow:hidden; cursor:pointer; }
+  .feature-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); opacity:0; transition:opacity 0.3s; }
+  .feature-card:hover { border-color:rgba(91,94,244,0.3); transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.3); }
+  .feature-card:hover::before { opacity:1; }
+  .feat-icon { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:20px; }
+  .feat-icon.blue { background:rgba(91,94,244,0.15); }
+  .feat-icon.green { background:rgba(0,229,192,0.12); }
+  .feat-icon.purple { background:rgba(167,139,250,0.15); }
+  .feat-icon.orange { background:rgba(251,146,60,0.15); }
+  .feat-icon.red { background:rgba(255,107,107,0.12); }
+  .feat-icon.cyan { background:rgba(0,229,192,0.12); }
+  .feature-card h3 { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; margin-bottom:10px; }
+  .feature-card p { font-size:0.88rem; color:var(--muted); line-height:1.7; }
+
+  .demo-cta { background:linear-gradient(135deg,rgba(91,94,244,0.15),rgba(0,229,192,0.08)); border:1px solid rgba(91,94,244,0.25); border-radius:24px; padding:60px; text-align:center; margin-top:60px; }
+  .demo-cta h2 { font-family:'Syne',sans-serif; font-size:2.5rem; font-weight:800; letter-spacing:-0.03em; margin-bottom:16px; }
+  .demo-cta p { color:var(--muted); margin-bottom:36px; font-size:1.05rem; }
+  .demo-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+
+  .pricing-wrap { background:var(--surface); border-top:1px solid var(--border); padding:100px 60px; }
+  .pricing-inner { max-width:900px; margin:0 auto; text-align:center; }
+  .pricing-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-top:60px; text-align:left; }
+  .price-card { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:36px 28px; transition:all 0.3s; position:relative; }
+  .price-card.featured { border-color:var(--accent); background:linear-gradient(135deg,rgba(91,94,244,0.15),rgba(91,94,244,0.05)); box-shadow:0 0 40px rgba(91,94,244,0.15); }
+  .price-badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:4px 14px; border-radius:100px; white-space:nowrap; }
+  .price-tier { font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:16px; }
+  .price-amount { font-family:'Syne',sans-serif; font-size:2.8rem; font-weight:800; letter-spacing:-0.04em; line-height:1; margin-bottom:4px; }
+  .price-amount span { font-size:1rem; font-weight:400; color:var(--muted); }
+  .price-desc { font-size:0.82rem; color:var(--muted); margin-bottom:28px; line-height:1.6; }
+  .price-features { list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; }
+  .price-features li { font-size:0.88rem; display:flex; align-items:center; gap:10px; color:var(--muted); }
+  .price-features li::before { content:'✓'; color:var(--accent2); font-weight:700; flex-shrink:0; }
+  .price-features li.inactive { opacity:0.4; }
+  .price-features li.inactive::before { content:'×'; color:#666; }
+  .btn-price { width:100%; padding:14px; border-radius:10px; font-size:0.9rem; font-weight:700; cursor:pointer; text-align:center; letter-spacing:0.02em; border:none; transition:all 0.2s; font-family:'Noto Sans TC',sans-serif; }
+  .btn-price.outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+  .btn-price.outline:hover { border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.04); }
+  .btn-price.solid { background:var(--accent); color:#fff; }
+  .btn-price.solid:hover { background:#7b7ef8; box-shadow:0 8px 24px rgba(91,94,244,0.4); transform:translateY(-1px); }
+
+  footer { border-top:1px solid var(--border); padding:40px 60px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+  .footer-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; }
+  .footer-links { display:flex; gap:28px; list-style:none; }
+  .footer-links a { color:var(--muted); text-decoration:none; font-size:0.85rem; transition:color 0.2s; }
+  .footer-links a:hover { color:var(--text); }
+  .footer-copy { font-size:0.8rem; color:var(--muted); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  .reveal { opacity:0; transform:translateY(32px); transition:all 0.7s cubic-bezier(0.16,1,0.3,1); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  @media(max-width:768px) {
+    nav { padding:16px 24px; }
+    nav ul { display:none; }
+    section.content,.features-wrap,.pricing-wrap { padding:60px 24px; }
+    .stats { padding:32px 24px; gap:40px; }
+    footer { padding:32px 24px; }
+    .features-grid { grid-template-columns:1fr; }
+    .pricing-grid { grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
-
-<!-- NAV -->
 <nav>
-  <div class="logo">
-    <div class="logo-dot"></div>
-    PayClub
-  </div>
+  <a class="logo" href="index.html"><div class="logo-dot"></div>PayClub</a>
   <ul>
-    <li><a href="#problem">痛點</a></li>
     <li><a href="#features">功能</a></li>
-    <li><a href="#how">流程</a></li>
     <li><a href="#pricing">方案</a></li>
-    <li><a href="#cta" class="nav-cta">立即試用</a></li>
+    <li><a href="login.html">登入</a></li>
+    <li><a href="login.html?mode=register" class="nav-cta">免費開始</a></li>
   </ul>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-tag">🎓 專為校園社團打造的金流工具</div>
-  <h1>
-    告別 LINE 催款<br>
-    <span>金流一鍵搞定</span>
-  </h1>
+  <h1>告別 LINE 催款<br><span>金流一鍵搞定</span></h1>
   <p>PayClub 讓社團幹部不再手動追蹤繳費狀態。自動提醒、即時報表、一鍵收款——讓你把時間花在真正重要的事上。</p>
   <div class="hero-btns">
-    <a href="#cta" class="btn-primary">🚀 免費開始使用</a>
-    <a href="#features" class="btn-secondary">了解功能 →</a>
+    <a href="login.html?mode=register" class="btn-primary">🚀 免費開始使用</a>
+    <a href="dashboard.html" class="btn-secondary">查看 Demo 儀表板 →</a>
   </div>
 </section>
 
-<!-- STATS -->
 <div class="stats">
-  <div class="stat reveal">
-    <div class="stat-num">120萬</div>
-    <div class="stat-label">台灣在學大學生</div>
-  </div>
-  <div class="stat reveal">
-    <div class="stat-num">10萬+</div>
-    <div class="stat-label">社團/班級數量</div>
-  </div>
-  <div class="stat reveal">
-    <div class="stat-num">3~5hr</div>
-    <div class="stat-label">每次活動平均節省時間</div>
-  </div>
-  <div class="stat reveal">
-    <div class="stat-num">0元</div>
-    <div class="stat-label">基本方案完全免費</div>
-  </div>
+  <div class="stat reveal"><div class="stat-num">120萬</div><div class="stat-label">台灣在學大學生</div></div>
+  <div class="stat reveal"><div class="stat-num">10萬+</div><div class="stat-label">社團/班級數量</div></div>
+  <div class="stat reveal"><div class="stat-num">3~5hr</div><div class="stat-label">每次活動平均節省時間</div></div>
+  <div class="stat reveal"><div class="stat-num">$0</div><div class="stat-label">基本方案完全免費</div></div>
 </div>
 
-<!-- PROBLEM -->
-<section id="problem">
-  <span class="section-tag">痛點分析</span>
-  <h2 class="section-title">幹部的日常<br>比你想的還混亂</h2>
-  <p class="section-sub">每次辦活動、收班費，都是一場折磨。這些問題你一定遇過。</p>
-
-  <div class="problem-grid reveal">
-    <div class="pain-cards">
-      <div class="pain-card">
-        <div class="pain-icon">😩</div>
-        <div>
-          <h4>一直手動催款</h4>
-          <p>在 LINE 群組一個個 tag、私訊，耗費大量時間與人情。</p>
-        </div>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">📊</div>
-        <div>
-          <h4>對帳超級麻煩</h4>
-          <p>轉帳截圖、Google 表單、Excel 三方比對，隨時可能搞錯。</p>
-        </div>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">💸</div>
-        <div>
-          <h4>缺乏正式報表</h4>
-          <p>交接給下一屆幹部毫無記錄，核銷也沒有正式文件。</p>
-        </div>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">🤐</div>
-        <div>
-          <h4>催款傷感情</h4>
-          <p>跟朋友要錢超尷尬，不催不行、催了又怕壞關係。</p>
-        </div>
-      </div>
+<section class="content" id="features">
+  <span class="section-tag">核心功能</span>
+  <h2 class="section-title">一個 APP<br>解決所有金流問題</h2>
+  <div class="features-grid" style="margin-top:60px">
+    <div class="feature-card reveal" onclick="location.href='dashboard.html'">
+      <div class="feat-icon blue">🔗</div>
+      <h3>一鍵建立收款連結</h3>
+      <p>設定活動名稱、金額與截止日，系統自動生成專屬收款連結，分享到任何平台即可。</p>
     </div>
-
-    <div class="mock-chat">
-      <div class="chaos-label">😵 現在的狀況</div>
-      <div class="mock-chat-header">💬 社團 LINE 群組</div>
-      <div class="chat-bubble bubble-left">📢 請還沒繳費的人趕快繳喔！</div>
-      <div class="chat-bubble bubble-right">我繳了啊？你沒收到嗎</div>
-      <div class="chat-bubble bubble-left">蛤？我查一下... 欸你匯款備註寫什麼</div>
-      <div class="chat-bubble bubble-right">我忘記備註了😅</div>
-      <div class="chat-bubble bubble-left">好那你傳截圖給我</div>
-      <div class="chat-bubble bubble-left">還有 2、5、8、12、17 號還沒繳</div>
-      <div class="chat-bubble bubble-right">我繳了啊！！！</div>
-      <div style="margin-top: 16px; padding: 12px; background: rgba(255,107,107,0.08); border-radius: 10px; border: 1px solid rgba(255,107,107,0.15);">
-        <div style="font-size: 0.75rem; color: #ff9999; font-weight: 600;">幹部已在這個群組浪費了 2 小時 ⏱️</div>
-      </div>
+    <div class="feature-card reveal" onclick="location.href='dashboard.html'">
+      <div class="feat-icon green">📡</div>
+      <h3>即時收款狀態追蹤</h3>
+      <p>儀表板即時顯示已繳/未繳人員名單，不用再手動比對，一目瞭然。</p>
+    </div>
+    <div class="feature-card reveal" onclick="location.href='dashboard.html'">
+      <div class="feat-icon purple">🔔</div>
+      <h3>自動催款提醒</h3>
+      <p>截止前 3 天、1 天自動推播提醒未繳者，讓系統幫你說難開口的話。</p>
+    </div>
+    <div class="feature-card reveal" onclick="location.href='report.html'">
+      <div class="feat-icon orange">📄</div>
+      <h3>財務報表自動生成</h3>
+      <p>收支明細、餘額總覽一鍵匯出 PDF，核銷、交接輕鬆搞定。</p>
+    </div>
+    <div class="feature-card reveal" onclick="location.href='dashboard.html'">
+      <div class="feat-icon cyan">👥</div>
+      <h3>多人共同管理</h3>
+      <p>可設定多位幹部不同權限，下一屆交接零痛苦，歷史紀錄永久保存。</p>
+    </div>
+    <div class="feature-card reveal" onclick="location.href='pay.html'">
+      <div class="feat-icon red">💳</div>
+      <h3>多元支付方式</h3>
+      <p>支援街口、LINE Pay、信用卡等主流支付，成員依喜好選擇，不再限制現金。</p>
+    </div>
+  </div>
+  <div class="demo-cta reveal">
+    <h2>立即體驗完整 Demo</h2>
+    <p>點擊下方按鈕，進入各個功能頁面實際操作</p>
+    <div class="demo-btns">
+      <a href="login.html" class="btn-primary">登入 / 註冊</a>
+      <a href="dashboard.html" class="btn-secondary">幹部儀表板</a>
+      <a href="create.html" class="btn-secondary">建立活動</a>
+      <a href="pay.html" class="btn-secondary">成員繳費頁</a>
+      <a href="report.html" class="btn-secondary">財務報表</a>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<div class="features-section" id="features">
-  <div class="features-inner">
-    <span class="section-tag">核心功能</span>
-    <h2 class="section-title">一個 APP<br>解決所有金流問題</h2>
-
-    <div class="features-grid">
-      <div class="feature-card reveal">
-        <div class="feat-icon blue">🔗</div>
-        <h3>一鍵建立收款連結</h3>
-        <p>設定活動名稱、金額與截止日，系統自動生成專屬收款連結，分享到任何平台即可。</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feat-icon green">📡</div>
-        <h3>即時收款狀態追蹤</h3>
-        <p>儀表板即時顯示已繳/未繳人員名單，不用再手動比對，一目瞭然。</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feat-icon purple">🔔</div>
-        <h3>自動催款提醒</h3>
-        <p>截止前 3 天、1 天自動推播提醒未繳者，讓系統幫你說難開口的話。</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feat-icon orange">📄</div>
-        <h3>財務報表自動生成</h3>
-        <p>收支明細、餘額總覽一鍵匯出 PDF，核銷、交接輕鬆搞定。</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feat-icon cyan">👥</div>
-        <h3>多人共同管理</h3>
-        <p>可設定多位幹部不同權限，下一屆交接零痛苦，歷史紀錄永久保存。</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feat-icon red">💳</div>
-        <h3>多元支付方式</h3>
-        <p>支援街口、LINE Pay、信用卡等主流支付，成員依喜好選擇，不再限制現金。</p>
-      </div>
-    </div>
-
-    <!-- Dashboard Mock -->
-    <div class="dashboard-mock reveal">
-      <div class="mock-topbar">
-        <div class="mock-dot" style="background:#ff6b6b"></div>
-        <div class="mock-dot" style="background:#ffd93d"></div>
-        <div class="mock-dot" style="background:#6bcb77"></div>
-        <span style="font-size:0.8rem; color:var(--muted); margin-left:8px;">PayClub — 迎新活動費用收款</span>
-      </div>
-      <div class="mock-body">
-        <div class="mock-stat-card">
-          <div class="mock-stat-label">總收款金額</div>
-          <div class="mock-stat-val" style="color:var(--accent2)">$8,400</div>
-          <div class="mock-stat-sub">↑ 已達目標 70%</div>
-        </div>
-        <div class="mock-stat-card">
-          <div class="mock-stat-label">已繳人數</div>
-          <div class="mock-stat-val">42 <span style="font-size:1rem;color:var(--muted)">/60</span></div>
-          <div class="mock-stat-sub">剩 18 人待繳</div>
-        </div>
-        <div class="mock-stat-card">
-          <div class="mock-stat-label">截止倒數</div>
-          <div class="mock-stat-val" style="color:#fb923c">3天</div>
-          <div class="mock-stat-sub">自動提醒已發送</div>
-        </div>
-        <div class="mock-table">
-          <div class="mock-table-header">
-            <span>成員姓名</span>
-            <span>金額</span>
-            <span>繳費時間</span>
-            <span>狀態</span>
-          </div>
-          <div class="mock-table-row">
-            <span>林小明</span>
-            <span>$200</span>
-            <span>10/05 14:22</span>
-            <span><span class="status-badge status-paid">已繳費</span></span>
-          </div>
-          <div class="mock-table-row">
-            <span>陳美玲</span>
-            <span>$200</span>
-            <span>10/06 09:11</span>
-            <span><span class="status-badge status-paid">已繳費</span></span>
-          </div>
-          <div class="mock-table-row">
-            <span>王大衛</span>
-            <span>$200</span>
-            <span>—</span>
-            <span><span class="status-badge status-pending">待繳費</span></span>
-          </div>
-          <div class="mock-table-row">
-            <span>張雅婷</span>
-            <span>$200</span>
-            <span>—</span>
-            <span><span class="status-badge status-overdue">逾期未繳</span></span>
-          </div>
-          <div class="mock-table-row">
-            <span>黃俊豪</span>
-            <span>$200</span>
-            <span>10/04 20:35</span>
-            <span><span class="status-badge status-paid">已繳費</span></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FLOW -->
-<section class="flow-section" id="how">
-  <span class="section-tag">使用流程</span>
-  <h2 class="section-title">三分鐘上手<br>五個步驟完成收款</h2>
-
-  <div class="flow-steps reveal">
-    <div class="flow-step">
-      <div class="step-num">01</div>
-      <h4>建立活動</h4>
-      <p>輸入活動名稱、收款金額與截止日期</p>
-    </div>
-    <div class="flow-step">
-      <div class="step-num">02</div>
-      <h4>分享連結</h4>
-      <p>一鍵分享到 LINE 群組或任何平台</p>
-    </div>
-    <div class="flow-step">
-      <div class="step-num">03</div>
-      <h4>成員付款</h4>
-      <p>成員選擇喜好支付方式線上繳費</p>
-    </div>
-    <div class="flow-step">
-      <div class="step-num">04</div>
-      <h4>自動追蹤</h4>
-      <p>系統即時更新狀態並自動提醒未繳者</p>
-    </div>
-    <div class="flow-step">
-      <div class="step-num">05</div>
-      <h4>匯出報表</h4>
-      <p>一鍵生成 PDF 財務報表，輕鬆核銷</p>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<div class="pricing-section" id="pricing">
+<div class="pricing-wrap" id="pricing">
   <div class="pricing-inner">
     <span class="section-tag">方案選擇</span>
     <h2 class="section-title">適合每種規模的社團</h2>
-    <p class="section-sub" style="margin: 0 auto;">從小班級到全校社聯，都有適合的方案。</p>
-
     <div class="pricing-grid reveal">
       <div class="price-card">
         <div class="price-tier">免費版</div>
@@ -1201,11 +212,9 @@
           <li>收款狀態追蹤</li>
           <li class="inactive">自動催款提醒</li>
           <li class="inactive">PDF 報表匯出</li>
-          <li class="inactive">多幹部管理</li>
         </ul>
-        <button class="btn-price outline">免費開始</button>
+        <button class="btn-price outline" onclick="location.href='login.html?mode=register'">免費開始</button>
       </div>
-
       <div class="price-card featured">
         <div class="price-badge">最受歡迎</div>
         <div class="price-tier">進階版</div>
@@ -1217,11 +226,9 @@
           <li>即時狀態追蹤</li>
           <li>自動催款提醒</li>
           <li>PDF 報表匯出</li>
-          <li>最多 3 位幹部</li>
         </ul>
-        <button class="btn-price solid">立即升級</button>
+        <button class="btn-price solid" onclick="location.href='login.html?mode=register'">立即升級</button>
       </div>
-
       <div class="price-card">
         <div class="price-tier">校方授權</div>
         <div class="price-amount">$3萬 <span>/年</span></div>
@@ -1232,7 +239,6 @@
           <li>客製化報表</li>
           <li>專屬客服支援</li>
           <li>API 系統整合</li>
-          <li>合規財務稽核功能</li>
         </ul>
         <button class="btn-price outline">聯繫我們</button>
       </div>
@@ -1240,76 +246,21 @@
   </div>
 </div>
 
-<!-- CTA -->
-<section class="cta-section" id="cta">
-  <div class="cta-bg"></div>
-  <h2>準備好告別<br><span style="background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">催款噩夢</span>了嗎？</h2>
-  <p>加入等待名單，搶先體驗 PayClub Beta 版本</p>
-  <div class="email-form">
-    <input type="email" class="email-input" placeholder="輸入你的學校 Email">
-    <button class="btn-primary" onclick="handleSignup(this)">立即加入 →</button>
-  </div>
-  <p style="margin-top:16px; font-size:0.8rem; color:var(--muted);">🔒 不會發送垃圾信件，可隨時取消訂閱</p>
-</section>
-
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">PayClub</div>
   <ul class="footer-links">
     <li><a href="#">關於我們</a></li>
     <li><a href="#">隱私政策</a></li>
-    <li><a href="#">使用條款</a></li>
-    <li><a href="#">聯繫我們</a></li>
+    <li><a href="login.html">登入</a></li>
   </ul>
-  <div class="footer-copy">© 2025 PayClub. 跨校跨產業金融科技競賽提案</div>
+  <div class="footer-copy">© 2025 PayClub · 跨校跨產業金融科技競賽提案</div>
 </footer>
 
 <script>
-  // Scroll reveal
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // Signup
-  function handleSignup(btn) {
-    const input = btn.previousElementSibling;
-    if (!input.value || !input.value.includes('@')) {
-      input.style.borderColor = 'var(--accent3)';
-      input.placeholder = '請輸入有效的 Email';
-      setTimeout(() => {
-        input.style.borderColor = '';
-        input.placeholder = '輸入你的學校 Email';
-      }, 2000);
-      return;
-    }
-    btn.textContent = '✓ 已加入名單！';
-    btn.style.background = 'var(--accent2)';
-    btn.style.color = '#000';
-    input.value = '';
-    input.disabled = true;
-    btn.disabled = true;
-  }
-
-  // Smooth number counter
-  function animateCount(el, target, suffix = '') {
-    let current = 0;
-    const step = target / 60;
-    const timer = setInterval(() => {
-      current += step;
-      if (current >= target) {
-        current = target;
-        clearInterval(timer);
-      }
-      el.textContent = Math.floor(current).toLocaleString() + suffix;
-    }, 16);
-  }
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*80); obs.unobserve(e.target); } });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>

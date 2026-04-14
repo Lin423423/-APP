@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>財務報表 — PayClub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0a0f; --surface:#12121a; --card:#1a1a26; --accent:#5b5ef4; --accent2:#00e5c0; --accent3:#ff6b6b; --text:#f0f0ff; --muted:#8888aa; --border:rgba(255,255,255,0.07); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Noto Sans TC',sans-serif; display:flex; min-height:100vh; }
+
+  .sidebar { width:240px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; bottom:0; left:0; z-index:50; }
+  .sidebar-logo { padding:28px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem; letter-spacing:-0.02em; }
+  .logo-dot { width:9px; height:9px; background:var(--accent2); border-radius:50%; animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4);opacity:0.7} }
+  .sidebar-nav { padding:16px 12px; flex:1; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:var(--muted); font-size:0.88rem; font-weight:500; cursor:pointer; transition:all 0.2s; margin-bottom:4px; text-decoration:none; }
+  .nav-item:hover { background:rgba(255,255,255,0.04); color:var(--text); }
+  .nav-item.active { background:rgba(91,94,244,0.15); color:var(--accent); font-weight:600; }
+  .nav-item span:first-child { font-size:1.1rem; width:20px; text-align:center; }
+
+  .main { margin-left:240px; flex:1; padding:36px 40px; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; flex-wrap:wrap; gap:16px; }
+  .page-title { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; letter-spacing:-0.03em; }
+  .page-sub { color:var(--muted); font-size:0.9rem; margin-top:4px; }
+  .topbar-actions { display:flex; gap:10px; }
+  .btn { padding:11px 20px; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; border:none; font-family:'Noto Sans TC',sans-serif; transition:all 0.2s; display:inline-flex; align-items:center; gap:7px; }
+  .btn-accent { background:var(--accent); color:#fff; }
+  .btn-accent:hover { background:#7b7ef8; transform:translateY(-1px); }
+  .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:rgba(255,255,255,0.15); color:var(--text); }
+  .btn-green { background:rgba(0,229,192,0.15); color:var(--accent2); border:1px solid rgba(0,229,192,0.2); }
+  .btn-green:hover { background:rgba(0,229,192,0.25); }
+
+  /* FILTER BAR */
+  .filter-bar { display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+  .filter-btn { padding:8px 18px; border-radius:100px; font-size:0.82rem; font-weight:600; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); font-family:'Noto Sans TC',sans-serif; transition:all 0.2s; }
+  .filter-btn.active { border-color:var(--accent); background:rgba(91,94,244,0.12); color:var(--accent); }
+
+  /* SUMMARY */
+  .summary-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+  .sum-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px 24px; }
+  .sum-label { font-size:0.75rem; color:var(--muted); font-weight:600; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:10px; }
+  .sum-val { font-family:'Syne',sans-serif; font-size:1.9rem; font-weight:800; letter-spacing:-0.04em; line-height:1; }
+  .sum-sub { font-size:0.75rem; margin-top:6px; color:var(--muted); }
+
+  /* CHART */
+  .chart-section { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:32px; }
+  .chart-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; }
+  .chart-title { font-size:0.85rem; font-weight:700; color:var(--muted); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:20px; }
+  .donut-wrap { display:flex; align-items:center; gap:24px; }
+  .donut { position:relative; width:100px; height:100px; flex-shrink:0; }
+  svg.donut-svg { transform:rotate(-90deg); }
+  .donut-center { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; }
+  .donut-pct { font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800; }
+  .donut-label { font-size:0.65rem; color:var(--muted); margin-top:2px; }
+  .legend { display:flex; flex-direction:column; gap:10px; }
+  .legend-item { display:flex; align-items:center; gap:10px; font-size:0.85rem; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .legend-val { font-weight:700; margin-left:auto; }
+  .bar-chart { display:flex; flex-direction:column; gap:12px; }
+  .bar-row { display:flex; align-items:center; gap:12px; }
+  .bar-label { font-size:0.82rem; color:var(--muted); width:100px; text-align:right; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bar-track { flex:1; height:10px; background:rgba(255,255,255,0.05); border-radius:100px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 1s ease; }
+  .bar-val { font-size:0.78rem; font-weight:700; color:var(--muted); width:50px; text-align:right; flex-shrink:0; }
+
+  /* TABLE */
+  .table-card { background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+  .table-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .table-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { padding:12px 24px; font-size:0.75rem; font-weight:700; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; text-align:left; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border); }
+  tbody tr { transition:background 0.15s; }
+  tbody tr:hover { background:rgba(255,255,255,0.02); }
+  tbody td { padding:14px 24px; font-size:0.88rem; border-bottom:1px solid var(--border); }
+  tbody tr:last-child td { border-bottom:none; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:100px; font-size:0.72rem; font-weight:700; }
+  .badge-paid { background:rgba(0,229,192,0.15); color:var(--accent2); }
+  .badge-pending { background:rgba(251,146,60,0.15); color:#fb923c; }
+  .badge-overdue { background:rgba(255,107,107,0.15); color:var(--accent3); }
+
+  /* PDF PREVIEW OVERLAY */
+  .pdf-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:200; display:none; align-items:center; justify-content:center; padding:40px; }
+  .pdf-overlay.show { display:flex; }
+  .pdf-preview { background:#fff; color:#111; border-radius:16px; padding:48px; width:100%; max-width:680px; max-height:80vh; overflow-y:auto; position:relative; box-shadow:0 32px 80px rgba(0,0,0,0.5); }
+  .pdf-close { position:absolute; top:20px; right:20px; background:rgba(0,0,0,0.1); border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; }
+  .pdf-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; border-bottom:3px solid #5b5ef4; padding-bottom:20px; }
+  .pdf-logo { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; color:#5b5ef4; }
+  .pdf-title { font-size:1.2rem; font-weight:700; color:#111; margin-bottom:4px; }
+  .pdf-sub { font-size:0.82rem; color:#666; }
+  .pdf-section { margin-bottom:24px; }
+  .pdf-section-title { font-size:0.78rem; font-weight:700; color:#5b5ef4; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px; border-bottom:1px solid #e0e0f0; padding-bottom:6px; }
+  .pdf-stat-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+  .pdf-stat { background:#f5f5ff; border-radius:10px; padding:14px; text-align:center; }
+  .pdf-stat-val { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; color:#5b5ef4; }
+  .pdf-stat-label { font-size:0.75rem; color:#666; margin-top:4px; }
+  .pdf-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  .pdf-table th { background:#f0f0ff; padding:8px 12px; text-align:left; font-size:0.72rem; color:#5b5ef4; font-weight:700; letter-spacing:0.06em; }
+  .pdf-table td { padding:9px 12px; border-bottom:1px solid #eee; color:#333; }
+  .pdf-download { width:100%; padding:14px; background:#5b5ef4; color:#fff; border:none; border-radius:10px; font-size:0.95rem; font-weight:700; cursor:pointer; margin-top:20px; font-family:'Noto Sans TC',sans-serif; }
+
+  .toast { position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 20px; font-size:0.88rem; opacity:0; transition:all 0.3s; z-index:999; white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+  @media(max-width:900px) { .sidebar{display:none} .main{margin-left:0;padding:24px 20px} .summary-grid{grid-template-columns:1fr 1fr} .chart-section{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-dot"></div>PayClub</div>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="dashboard.html"><span>🏠</span>總覽</a>
+    <a class="nav-item" href="create.html"><span>➕</span>建立活動</a>
+    <a class="nav-item active" href="report.html"><span>📊</span>財務報表</a>
+    <a class="nav-item" href="pay.html"><span>💳</span>繳費頁範例</a>
+    <a class="nav-item" href="index.html"><span>🌐</span>回首頁</a>
+  </nav>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title">財務報表</div>
+      <div class="page-sub">查看所有活動的收款統計與明細</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">📅 本學期</button>
+      <button class="btn btn-green" onclick="showPdfPreview()">📄 匯出 PDF</button>
+      <button class="btn btn-accent" onclick="exportExcel()">📊 匯出 Excel</button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter(this,'all')">全部活動</button>
+    <button class="filter-btn" onclick="setFilter(this,'active')">進行中</button>
+    <button class="filter-btn" onclick="setFilter(this,'closed')">已結束</button>
+  </div>
+
+  <div class="summary-grid">
+    <div class="sum-card">
+      <div class="sum-label">總收款金額</div>
+      <div class="sum-val" id="totalRevenue" style="color:var(--accent2)">$0</div>
+      <div class="sum-sub" id="totalRevSub">所有活動合計</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">整體繳費率</div>
+      <div class="sum-val" id="overallRate">0%</div>
+      <div class="sum-sub" id="overallRateSub">全體成員</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">已收 / 應收</div>
+      <div class="sum-val" id="collectedVal" style="color:var(--accent)">$0</div>
+      <div class="sum-sub" id="uncollectedSub">應收 $0</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">待收款金額</div>
+      <div class="sum-val" id="pendingRevenue" style="color:#fb923c">$0</div>
+      <div class="sum-sub">未繳成員合計</div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="chart-card">
+      <div class="chart-title">繳費狀態分佈</div>
+      <div class="donut-wrap">
+        <div class="donut">
+          <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="14"/>
+            <circle id="donutPaid" cx="50" cy="50" r="38" fill="none" stroke="url(#dg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 240"/>
+            <circle id="donutPending" cx="50" cy="50" r="38" fill="none" stroke="#fb923c" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 240" stroke-dashoffset="0"/>
+            <defs><linearGradient id="dg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00e5c0"/><stop offset="100%" stop-color="#5b5ef4"/></linearGradient></defs>
+          </svg>
+          <div class="donut-center"><div class="donut-pct" id="donutPct">0%</div><div class="donut-label">已繳</div></div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div>已繳費<span class="legend-val" id="legPaid">0人</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div>待繳費<span class="legend-val" id="legPending">0人</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div>逾期未繳<span class="legend-val" id="legOverdue">0人</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">各活動收款進度</div>
+      <div class="bar-chart" id="barChart"></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-title">收款明細</div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>成員姓名</th><th>活動名稱</th><th>金額</th><th>繳費時間</th><th>狀態</th>
+      </tr></thead>
+      <tbody id="detailTableBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- PDF PREVIEW -->
+<div class="pdf-overlay" id="pdfOverlay">
+  <div class="pdf-preview" id="pdfContent">
+    <button class="pdf-close" onclick="closePdf()">✕</button>
+    <div class="pdf-header">
+      <div><div class="pdf-logo">PayClub</div><div style="font-size:0.78rem;color:#888;margin-top:4px">校園團體金流管理平台</div></div>
+      <div style="text-align:right"><div class="pdf-title">財務報告</div><div class="pdf-sub" id="pdf-date">—</div></div>
+    </div>
+    <div class="pdf-section">
+      <div class="pdf-section-title">收款摘要</div>
+      <div class="pdf-stat-row">
+        <div class="pdf-stat"><div class="pdf-stat-val" id="pdf-total">$0</div><div class="pdf-stat-label">總收款金額</div></div>
+        <div class="pdf-stat"><div class="pdf-stat-val" id="pdf-rate">0%</div><div class="pdf-stat-label">繳費率</div></div>
+        <div class="pdf-stat"><div class="pdf-stat-val" id="pdf-events">0</div><div class="pdf-stat-label">活動總數</div></div>
+      </div>
+    </div>
+    <div class="pdf-section">
+      <div class="pdf-section-title">各活動明細</div>
+      <table class="pdf-table" id="pdfTable">
+        <thead><tr><th>活動名稱</th><th>每人金額</th><th>已繳人數</th><th>收款小計</th><th>繳費率</th></tr></thead>
+        <tbody id="pdfTableBody"></tbody>
+      </table>
+    </div>
+    <button class="pdf-download" onclick="downloadPdf()">⬇️ 下載 PDF（Demo）</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SEED = [
+  {id:'e1',title:'2025 迎新活動費用',amount:300,deadline:'2025-10-15',status:'active',members:[{name:'林小明',status:'paid',paidAt:'10/05 14:22'},{name:'陳美玲',status:'paid',paidAt:'10/06 09:11'},{name:'王大衛',status:'pending',paidAt:''},{name:'張雅婷',status:'overdue',paidAt:''},{name:'黃俊豪',status:'paid',paidAt:'10/04 20:35'},{name:'李小花',status:'paid',paidAt:'10/05 11:08'},{name:'吳志豪',status:'pending',paidAt:''},{name:'劉書羽',status:'paid',paidAt:'10/07 16:44'}]},
+  {id:'e2',title:'11 月社遊費用',amount:500,deadline:'2025-11-01',status:'active',members:[{name:'林小明',status:'paid',paidAt:'10/20 10:00'},{name:'陳美玲',status:'pending',paidAt:''},{name:'王大衛',status:'pending',paidAt:''},{name:'黃俊豪',status:'paid',paidAt:'10/21 09:30'},{name:'李小花',status:'overdue',paidAt:''}]},
+  {id:'e3',title:'年度社費（下學期）',amount:200,deadline:'2025-09-30',status:'closed',members:[{name:'林小明',status:'paid',paidAt:'09/01 08:00'},{name:'陳美玲',status:'paid',paidAt:'09/02 13:00'},{name:'王大衛',status:'paid',paidAt:'09/01 15:30'},{name:'張雅婷',status:'paid',paidAt:'09/03 10:00'}]},
+];
+
+function getEvents(){ return JSON.parse(localStorage.getItem('pc_events')||'null')||SEED; }
+
+let currentFilter = 'all';
+function setFilter(el, f){ currentFilter=f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderAll(); }
+
+function renderAll(){
+  const evts = getEvents().filter(e=>currentFilter==='all'||e.status===currentFilter);
+  let totalRev=0, paid=0, pending=0, overdue=0, total=0, shouldCollect=0;
+  evts.forEach(e=>{ e.members.forEach(m=>{ total++; shouldCollect+=e.amount; if(m.status==='paid'){paid++;totalRev+=e.amount;} else if(m.status==='overdue') overdue++; else pending++; }); });
+  const uncollected = shouldCollect - totalRev;
+  document.getElementById('totalRevenue').textContent='$'+totalRev.toLocaleString();
+  document.getElementById('overallRate').textContent=total?Math.round(paid/total*100)+'%':'0%';
+  document.getElementById('overallRateSub').textContent=`${paid} / ${total} 人`;
+  document.getElementById('collectedVal').textContent='$'+totalRev.toLocaleString();
+  document.getElementById('uncollectedSub').textContent='應收 $'+shouldCollect.toLocaleString();
+  document.getElementById('pendingRevenue').textContent='$'+uncollected.toLocaleString();
+  document.getElementById('legPaid').textContent=paid+'人';
+  document.getElementById('legPending').textContent=pending+'人';
+  document.getElementById('legOverdue').textContent=overdue+'人';
+  const pct = total?Math.round(paid/total*100):0;
+  document.getElementById('donutPct').textContent=pct+'%';
+  const circ=2*Math.PI*38;
+  document.getElementById('donutPaid').setAttribute('stroke-dasharray',`${circ*pct/100} ${circ}`);
+  const pendPct=(pending+overdue)/total;
+  document.getElementById('donutPending').setAttribute('stroke-dasharray',`${circ*pendPct} ${circ}`);
+  document.getElementById('donutPending').setAttribute('stroke-dashoffset',`-${circ*pct/100}`);
+
+  // Bar chart
+  document.getElementById('barChart').innerHTML = evts.map(e=>{
+    const p=e.members.filter(m=>m.status==='paid').length;
+    const pct=e.members.length?Math.round(p/e.members.length*100):0;
+    return `<div class="bar-row"><div class="bar-label" title="${e.title}">${e.title.slice(0,8)}...</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><div class="bar-val">${pct}%</div></div>`;
+  }).join('');
+
+  // Table
+  const rows = [];
+  evts.forEach(e=>{ e.members.forEach(m=>{ rows.push({event:e.title, amount:e.amount, ...m}); }); });
+  rows.sort((a,b)=>a.status==='paid'?-1:1);
+  document.getElementById('detailTableBody').innerHTML = rows.map(r=>`
+    <tr>
+      <td><div style="font-weight:600">${r.name}</div></td>
+      <td style="color:var(--muted);font-size:0.85rem">${r.event}</td>
+      <td style="font-weight:700">$${r.amount}</td>
+      <td style="color:var(--muted)">${r.paidAt||'—'}</td>
+      <td><span class="badge badge-${r.status==='paid'?'paid':r.status==='overdue'?'overdue':'pending'}">${r.status==='paid'?'已繳費':r.status==='overdue'?'逾期未繳':'待繳費'}</span></td>
+    </tr>`).join('');
+}
+
+function showPdfPreview(){
+  const evts = getEvents();
+  let totalRev=0, paid=0, total=0;
+  evts.forEach(e=>e.members.forEach(m=>{total++;if(m.status==='paid'){paid++;totalRev+=e.amount;}}));
+  document.getElementById('pdf-date').textContent=new Date().toLocaleDateString('zh-TW');
+  document.getElementById('pdf-total').textContent='$'+totalRev.toLocaleString();
+  document.getElementById('pdf-rate').textContent=total?Math.round(paid/total*100)+'%':'0%';
+  document.getElementById('pdf-events').textContent=evts.length;
+  document.getElementById('pdfTableBody').innerHTML=evts.map(e=>{
+    const p=e.members.filter(m=>m.status==='paid').length;
+    const rev=p*e.amount;
+    const r=e.members.length?Math.round(p/e.members.length*100):0;
+    return `<tr><td>${e.title}</td><td>$${e.amount}</td><td>${p}/${e.members.length}</td><td style="color:#5b5ef4;font-weight:700">$${rev.toLocaleString()}</td><td>${r}%</td></tr>`;
+  }).join('');
+  document.getElementById('pdfOverlay').classList.add('show');
+}
+function closePdf(){ document.getElementById('pdfOverlay').classList.remove('show'); }
+function downloadPdf(){ showToast('📄 PDF 下載功能（串接後端後啟用）'); closePdf(); }
+function exportExcel(){ showToast('📊 Excel 匯出功能（串接後端後啟用）'); }
+
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+renderAll();
+</script>
+</body>
+</html>
