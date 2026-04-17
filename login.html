@@ -4,45 +4,43 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>登入 — PayClub</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css">
-<script src="pc_auth.js"></script>
+<link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{display:flex;min-height:100vh;}
-.left{flex:1;background:var(--accent);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px;position:relative;overflow:hidden;}
-.left::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,0.06);top:-80px;right:-80px;}
-.left::after{content:'';position:absolute;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,0.04);bottom:-50px;left:-50px;}
-.left-inner{position:relative;z-index:1;color:#fff;text-align:center;max-width:320px;}
-.left-icon{font-size:2.5rem;margin-bottom:20px;}
-.left-inner h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:10px;letter-spacing:-0.03em;}
-.left-inner p{color:rgba(255,255,255,0.75);font-size:0.95rem;line-height:1.7;margin-bottom:40px;}
-.feat-list{display:flex;flex-direction:column;gap:10px;text-align:left;width:100%;}
-.feat-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:0.87rem;color:#fff;font-weight:500;}
-.feat-icon{font-size:1.1rem;flex-shrink:0;}
-
-.right{width:480px;background:var(--white);display:flex;flex-direction:column;justify-content:center;padding:52px 44px;box-shadow:-4px 0 20px rgba(0,0,0,0.04);}
-.right-logo{display:flex;align-items:center;gap:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.2rem;color:var(--accent);margin-bottom:36px;}
+/* darker blue left panel */
+.left{flex:1;background:#2d3a8c;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 40px;position:relative;overflow:hidden;}
+.left::before{content:'';position:absolute;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,0.05);top:-80px;right:-80px;}
+.left::after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.04);bottom:-40px;left:-40px;}
+.left-inner{position:relative;z-index:1;color:#fff;text-align:center;max-width:300px;}
+.left-icon{font-size:2.2rem;margin-bottom:16px;}
+.left-inner h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:2rem;font-weight:800;margin-bottom:10px;letter-spacing:-0.03em;}
+.left-inner p{color:rgba(255,255,255,0.65);font-size:0.9rem;line-height:1.7;margin-bottom:36px;}
+.feat-list{display:flex;flex-direction:column;gap:9px;text-align:left;width:100%;}
+.feat-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.08);border-radius:9px;padding:11px 14px;font-size:0.85rem;color:rgba(255,255,255,0.9);font-weight:500;}
+.feat-icon{font-size:1rem;flex-shrink:0;}
+.right{width:460px;background:var(--white);display:flex;flex-direction:column;justify-content:center;padding:48px 40px;box-shadow:-4px 0 20px rgba(0,0,0,0.04);}
+.right-logo{display:flex;align-items:center;gap:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.2rem;color:var(--accent);margin-bottom:32px;}
 .right-logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
-.tabs{display:flex;background:var(--surface);border-radius:9px;padding:3px;margin-bottom:24px;}
-.tab{flex:1;padding:9px;border:none;background:transparent;color:var(--text2);font-size:0.88rem;font-weight:600;cursor:pointer;border-radius:7px;transition:all 0.2s;font-family:'Noto Sans TC',sans-serif;}
+.tabs{display:flex;background:var(--surface);border-radius:9px;padding:3px;margin-bottom:22px;}
+.tab{flex:1;padding:9px;border:none;background:transparent;color:var(--text2);font-size:0.87rem;font-weight:600;cursor:pointer;border-radius:7px;transition:all 0.2s;font-family:'Noto Sans TC',sans-serif;}
 .tab.active{background:var(--white);color:var(--text);box-shadow:var(--shadow);}
 .form-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:4px;}
-.form-sub{color:var(--text2);font-size:0.86rem;margin-bottom:20px;}
-.demo-box{background:var(--accent-light);border:1px solid #c7d2fe;border-radius:9px;padding:11px 14px;margin-bottom:18px;font-size:0.82rem;color:#4338ca;line-height:1.7;}
+.form-sub{color:var(--text2);font-size:0.85rem;margin-bottom:18px;}
+.demo-box{background:var(--accent-light);border:1px solid #c7d2fe;border-radius:9px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;color:#4338ca;line-height:1.7;}
 .demo-box strong{font-weight:700;}
-.demo-fill{background:var(--accent);color:#fff;border:none;padding:4px 12px;border-radius:6px;font-size:0.76rem;font-weight:700;cursor:pointer;margin-top:5px;font-family:'Noto Sans TC',sans-serif;transition:background 0.15s;}
-.demo-fill:hover{background:var(--accent-dark);}
+.demo-fill{background:var(--accent);color:#fff;border:none;padding:4px 11px;border-radius:6px;font-size:0.76rem;font-weight:700;cursor:pointer;margin-top:5px;font-family:'Noto Sans TC',sans-serif;}
 .role-row{display:flex;gap:8px;margin-bottom:14px;}
-.role-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:9px;background:var(--white);color:var(--text2);font-size:0.84rem;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
+.role-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:9px;background:var(--white);color:var(--text2);font-size:0.83rem;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
 .role-btn.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
 .submit-btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;margin-top:4px;}
 .submit-btn:hover{background:var(--accent-dark);box-shadow:0 4px 14px rgba(79,110,247,0.3);}
 .divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.divider span{font-size:0.76rem;color:var(--text3);}
-.google-btn{width:100%;padding:12px;background:var(--white);color:var(--text);border:1.5px solid var(--border);border-radius:9px;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.divider span{font-size:0.75rem;color:var(--text3);}
+.google-btn{width:100%;padding:11px;background:var(--white);color:var(--text);border:1.5px solid var(--border);border-radius:9px;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:9px;}
 .google-btn:hover{border-color:var(--border2);background:var(--surface);}
 input.err{border-color:var(--red)!important;}
-.err-msg{color:var(--red);font-size:0.75rem;margin-top:4px;display:none;}
+.err-msg{color:var(--red);font-size:0.74rem;margin-top:3px;display:none;}
 .err-msg.show{display:block;}
 @media(max-width:860px){.left{display:none;}.right{width:100%;padding:36px 24px;}}
 </style>
@@ -83,7 +81,7 @@ input.err{border-color:var(--red)!important;}
     <div class="form-group"><label class="form-label">姓名</label><input type="text" id="rName" class="form-input" placeholder="林小明"></div>
     <div class="form-group"><label class="form-label">學校 Email</label><input type="email" id="rEmail" class="form-input" placeholder="b12345678@ntu.edu.tw"></div>
     <div class="form-group"><label class="form-label">密碼（至少 6 字）</label><input type="password" id="rPwd" class="form-input" placeholder="••••••••"></div>
-    <div style="font-size:0.8rem;font-weight:600;color:var(--text2);margin-bottom:8px;">你的身份</div>
+    <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:7px;">你的身份</div>
     <div class="role-row"><button class="role-btn active" id="rLeader" onclick="setRole('leader')">👑 社團幹部</button><button class="role-btn" id="rMember" onclick="setRole('member')">🎓 一般成員</button></div>
     <button class="submit-btn" onclick="handleRegister()">建立帳號</button>
     <div class="divider"><span>或</span></div>
@@ -99,16 +97,16 @@ function switchTab(t){document.getElementById('loginForm').style.display=t==='lo
 function fillDemo(){document.getElementById('lEmail').value='demo@payclub.app';document.getElementById('lPwd').value='demo123';}
 let selectedRole='leader';
 function setRole(r){selectedRole=r;document.getElementById('rLeader').classList.toggle('active',r==='leader');document.getElementById('rMember').classList.toggle('active',r==='member');}
-function redirect(user){PC_toast('✓ 登入成功');const p=new URLSearchParams(location.search);setTimeout(()=>location.href=p.get('next')||'dashboard.html',700);}
+function redirect(user){PC_registerUser(user);PC_logActivity(user,'login');localStorage.setItem('pc_current_user',JSON.stringify(user));PC_toast('✓ 登入成功');const p=new URLSearchParams(location.search);setTimeout(()=>location.href=p.get('next')||'dashboard.html',700);}
 function handleLogin(){
   const email=document.getElementById('lEmail').value.trim(),pwd=document.getElementById('lPwd').value;
   let ok=true;
   if(!email||!email.includes('@')){document.getElementById('lEmail').classList.add('err');document.getElementById('lEmailErr').classList.add('show');ok=false;}else{document.getElementById('lEmail').classList.remove('err');document.getElementById('lEmailErr').classList.remove('show');}
   if(pwd.length<6){document.getElementById('lPwd').classList.add('err');document.getElementById('lPwdErr').classList.add('show');ok=false;}else{document.getElementById('lPwd').classList.remove('err');document.getElementById('lPwdErr').classList.remove('show');}
   if(!ok)return;
-  if(email==='demo@payclub.app'&&pwd==='demo123'){localStorage.setItem('pc_current_user',JSON.stringify(DEMO_USER));return redirect(DEMO_USER);}
+  if(email==='demo@payclub.app'&&pwd==='demo123'){return redirect(DEMO_USER);}
   const users=JSON.parse(localStorage.getItem('pc_users')||'[]'),user=users.find(u=>u.email===email&&u.pwd===pwd);
-  if(user){localStorage.setItem('pc_current_user',JSON.stringify(user));return redirect(user);}
+  if(user){return redirect(user);}
   PC_toast('Email 或密碼錯誤');
 }
 function handleRegister(){
@@ -116,8 +114,8 @@ function handleRegister(){
   if(!name||!email||!email.includes('@')||pwd.length<6){PC_toast('請填寫所有欄位（密碼至少 6 字）');return;}
   const users=JSON.parse(localStorage.getItem('pc_users')||'[]');
   if(users.find(u=>u.email===email)){PC_toast('此 Email 已被使用');return;}
-  const nu={name,email,pwd,role:selectedRole};users.push(nu);localStorage.setItem('pc_users',JSON.stringify(users));localStorage.setItem('pc_current_user',JSON.stringify(nu));redirect(nu);
+  const nu={name,email,pwd,role:selectedRole};users.push(nu);localStorage.setItem('pc_users',JSON.stringify(users));redirect(nu);
 }
-function handleGoogle(){const u={name:'Google 用戶',email:'user@ntu.edu.tw',role:'leader'};localStorage.setItem('pc_current_user',JSON.stringify(u));redirect(u);}
+function handleGoogle(){const u={name:'Google 用戶',email:'google_'+Date.now()+'@gmail.com',role:'leader'};redirect(u);}
 </script>
 </body></html>

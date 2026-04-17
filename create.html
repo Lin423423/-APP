@@ -69,7 +69,12 @@ body{display:flex;}
 </style>
 </head>
 <body>
-<aside class="sidebar">
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+<nav class="mobile-nav">
+  <div class="mobile-nav-logo"><span style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;margin-right:4px"></span>PayClub</div>
+  <button class="hamburger" onclick="openSidebar()">☰</button>
+</nav>
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo"><div class="logo-dot"></div>PayClub</div>
   <nav class="sidebar-nav">
     <a class="nav-item" href="dashboard.html"><span class="icon">🏠</span>總覽</a>
@@ -216,6 +221,8 @@ body{display:flex;}
 </main>
 <div class="toast" id="toast"></div>
 <script>
+function openSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("mobileOverlay").classList.add("show");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("mobileOverlay").classList.remove("show");}
 const user=PC_requireLogin();if(!user)throw new Error('redirect');
 PC_fillSidebarUser();
 

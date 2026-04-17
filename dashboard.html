@@ -4,48 +4,54 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>儀表板 — PayClub</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css">
-<script src="pc_auth.js"></script>
+<link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{display:flex;}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
-.stat-label{font-size:0.74rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
-.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;line-height:1;}
-.stat-sub{font-size:0.74rem;color:var(--text3);margin-top:5px;}
-.stat-sub.green{color:var(--green);}
-.section-title{font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:14px;}
-.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
-.event-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);position:relative;}
-.event-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(79,110,247,0.1);transform:translateY(-2px);}
-.ec-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:10px;}
-.ec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;flex:1;}
-.ec-meta{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
-.ec-meta span{font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:4px;}
-.ec-revenue{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.rev-box{background:var(--surface);border-radius:8px;padding:8px 12px;}
-.rev-label{font-size:0.68rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;}
-.rev-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;}
-.rev-val.collected{color:var(--green);}
-.ec-progress-text{display:flex;justify-content:space-between;font-size:0.74rem;color:var(--text2);margin-top:4px;}
-.ec-arrow{position:absolute;bottom:18px;right:18px;color:var(--text3);font-size:0.85rem;transition:all 0.15s;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.stat-label{font-size:0.72rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:7px;}
+.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.7rem;font-weight:800;letter-spacing:-0.03em;line-height:1;}
+.stat-sub{font-size:0.72rem;color:var(--text3);margin-top:4px;}
+.bulk-bar{display:flex;align-items:center;gap:10px;background:var(--accent-light);border:1px solid #c7d2fe;border-radius:10px;padding:10px 16px;margin-bottom:14px;flex-wrap:wrap;}
+.bulk-bar span{font-size:0.84rem;color:var(--accent);font-weight:600;flex:1;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.section-title{font-size:0.92rem;font-weight:700;}
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.event-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);position:relative;}
+.event-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 14px rgba(79,110,247,0.1);}
+.event-card.selected{border-color:var(--accent);background:var(--accent-light);}
+.ec-check{position:absolute;top:14px;left:14px;width:18px;height:18px;border-radius:5px;border:2px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;z-index:2;}
+.ec-check.checked{background:var(--accent);border-color:var(--accent);color:#fff;}
+.ec-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px;}
+.ec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:700;flex:1;line-height:1.3;}
+.ec-meta{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.ec-meta span{font-size:0.76rem;color:var(--text2);}
+.ec-revenue{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.rev-box{background:var(--surface);border-radius:7px;padding:7px 10px;}
+.rev-label{font-size:0.65rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px;}
+.rev-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:700;}
+.rev-val.g{color:var(--green);}
+.ec-foot{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text2);margin-top:4px;}
+.ec-arrow{position:absolute;bottom:14px;right:14px;color:var(--text3);font-size:0.8rem;transition:all 0.15s;}
 .event-card:hover .ec-arrow{color:var(--accent);transform:translateX(3px);}
-/* Delete event btn overlay */
-.ec-delete{position:absolute;top:12px;right:12px;background:var(--red-light);border:1px solid #fecaca;color:var(--red);border-radius:6px;padding:3px 8px;font-size:0.7rem;font-weight:700;cursor:pointer;opacity:0;transition:opacity 0.15s;font-family:'Noto Sans TC',sans-serif;z-index:2;}
-.event-card:hover .ec-delete{opacity:1;}
-.empty-state{text-align:center;padding:60px 20px;color:var(--text2);}
-.empty-icon{font-size:3rem;margin-bottom:14px;opacity:0.4;}
-.empty-state p{margin-bottom:20px;}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text2);grid-column:1/-1;}
+@media(max-width:768px){.stats-grid{grid-template-columns:1fr 1fr;}.events-grid{grid-template-columns:1fr;}}
+@media(max-width:480px){.stat-val{font-size:1.4rem;}}
 </style>
 </head>
 <body>
-<aside class="sidebar">
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+<nav class="mobile-nav">
+  <div class="mobile-nav-logo"><span style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;margin-right:4px"></span>PayClub</div>
+  <button class="hamburger" onclick="openSidebar()">☰</button>
+</nav>
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo"><div class="logo-dot"></div>PayClub</div>
   <nav class="sidebar-nav">
     <a class="nav-item active" href="dashboard.html"><span class="icon">🏠</span>總覽</a>
     <a class="nav-item" href="create.html"><span class="icon">➕</span>建立活動</a>
     <a class="nav-item" href="report.html"><span class="icon">📊</span>財務報表</a>
-    <a class="nav-item" href="pay.html"><span class="icon">💳</span>繳費頁範例</a>
+    <a class="nav-item" href="pay.html"><span class="icon">💳</span>繳費範例</a>
     <div class="nav-section">我的活動</div>
     <div id="sidebarEvents"></div>
     <a class="nav-item" href="index.html"><span class="icon">🌐</span>首頁</a>
@@ -63,88 +69,79 @@ body{display:flex;}
     <div><div class="page-title">總覽儀表板</div><div class="page-sub" id="greetMsg"></div></div>
   </div>
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">總收款金額</div><div class="stat-val" id="sTotal" style="color:var(--green)">$0</div><div class="stat-sub green">所有活動合計</div></div>
-    <div class="stat-card"><div class="stat-label">應收金額</div><div class="stat-val" id="sExpected">$0</div><div class="stat-sub">全部活動總應收</div></div>
+    <div class="stat-card"><div class="stat-label">總收款</div><div class="stat-val" id="sTotal" style="color:var(--green)">$0</div><div class="stat-sub">所有活動合計</div></div>
+    <div class="stat-card"><div class="stat-label">應收金額</div><div class="stat-val" id="sExpected">$0</div><div class="stat-sub">全部總應收</div></div>
     <div class="stat-card"><div class="stat-label">整體繳費率</div><div class="stat-val" id="sRate">0%</div><div class="stat-sub" id="sRateSub"></div></div>
     <div class="stat-card"><div class="stat-label">進行中活動</div><div class="stat-val" id="sActive">0</div><div class="stat-sub">個活動</div></div>
   </div>
-  <div class="section-title">所有活動</div>
+  <div class="bulk-bar" id="bulkBar" style="display:none">
+    <span id="bulkCount">已選 0 個</span>
+    <button class="btn btn-danger" onclick="deleteBulk()">🗑 刪除所選</button>
+    <button class="btn btn-ghost" onclick="clearSel()">取消</button>
+  </div>
+  <div class="section-header">
+    <div class="section-title">所有活動</div>
+    <button class="btn btn-ghost" id="selBtn" onclick="toggleSel()" style="font-size:0.8rem;padding:6px 12px;">☑ 選取</button>
+  </div>
   <div class="events-grid" id="eventsGrid"></div>
 </main>
 <div class="toast" id="toast"></div>
 <script>
-const user=PC_requireLogin();if(!user)throw new Error('redirect');
-PC_fillSidebarUser();
+const user=PC_requireLogin();if(!user)throw new Error('r');
+PC_logActivity(user,'view_dashboard');
 const h=new Date().getHours();
 document.getElementById('greetMsg').textContent=(h<12?'早安':h<18?'午安':'晚安')+'，'+user.name+'！';
-
+let selMode=false,selIds=new Set();
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
 function renderSidebar(){
   const evts=PC_getEvents();
-  document.getElementById('sidebarEvents').innerHTML=evts.map(e=>{
-    const payers=PC_getPayers(e),paid=payers.filter(m=>m.status==='paid').length,pct=payers.length?Math.round(paid/payers.length*100):0;
-    return `<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span><span style="font-size:0.72rem;color:var(--text3);flex-shrink:0;margin-left:6px">${pct}%</span></a>`;
-  }).join('');
+  document.getElementById('sidebarEvents').innerHTML=evts.map(e=>{const p=PC_getPayers(e),paid=p.filter(m=>m.status==='paid').length,pct=p.length?Math.round(paid/p.length*100):0;return `<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span><span style="font-size:0.7rem;color:var(--text3);flex-shrink:0;margin-left:5px">${pct}%</span></a>`}).join('');
+  PC_fillSidebarUser();
 }
-
 function renderStats(){
-  const evts=PC_getEvents();
-  let collected=0,expected=0,paidCount=0,payerTotal=0,active=0;
-  evts.forEach(e=>{
-    if(e.status==='active')active++;
-    collected+=PC_getCollected(e);expected+=PC_getExpected(e);
-    const payers=PC_getPayers(e);payerTotal+=payers.length;paidCount+=payers.filter(m=>m.status==='paid').length;
-  });
-  document.getElementById('sTotal').textContent='$'+collected.toLocaleString();
-  document.getElementById('sExpected').textContent='$'+expected.toLocaleString();
-  const rate=payerTotal?Math.round(paidCount/payerTotal*100):0;
-  document.getElementById('sRate').textContent=rate+'%';
-  document.getElementById('sRateSub').textContent=paidCount+' / '+payerTotal+' 人';
-  document.getElementById('sActive').textContent=active;
+  const evts=PC_getEvents();let c=0,ex=0,pc=0,pt=0,ac=0;
+  evts.forEach(e=>{if(e.status==='active')ac++;c+=PC_getCollected(e);ex+=PC_getExpected(e);const p=PC_getPayers(e);pt+=p.length;pc+=p.filter(m=>m.status==='paid').length;});
+  document.getElementById('sTotal').textContent='$'+c.toLocaleString();
+  document.getElementById('sExpected').textContent='$'+ex.toLocaleString();
+  const r=pt?Math.round(pc/pt*100):0;
+  document.getElementById('sRate').textContent=r+'%';
+  document.getElementById('sRateSub').textContent=pc+' / '+pt+' 人';
+  document.getElementById('sActive').textContent=ac;
 }
-
-function deleteEvent(id,title,e){
-  e.stopPropagation();
-  if(!confirm('確定要刪除活動「'+title+'」？此操作無法復原。'))return;
-  const evts=PC_getEvents().filter(ev=>ev.id!==id);
-  PC_saveEvents(evts);renderAll();PC_toast('已刪除活動「'+title+'」');
-}
-
+function toggleSel(){selMode=!selMode;selIds.clear();document.getElementById('selBtn').textContent=selMode?'✕ 結束':'☑ 選取';document.getElementById('selBtn').className=selMode?'btn btn-danger':'btn btn-ghost';document.getElementById('bulkBar').style.display='none';renderEvents();}
+function toggleCard(id,e){e.stopPropagation();if(selIds.has(id))selIds.delete(id);else selIds.add(id);const bar=document.getElementById('bulkBar');bar.style.display=selIds.size>0?'flex':'none';document.getElementById('bulkCount').textContent='已選 '+selIds.size+' 個';renderEvents();}
+function deleteBulk(){if(!selIds.size)return;if(!confirm('確定刪除 '+selIds.size+' 個活動？'))return;const evts=PC_getEvents().filter(e=>!selIds.has(e.id));PC_saveEvents(evts);const n=selIds.size;selIds.clear();document.getElementById('bulkBar').style.display='none';renderAll();PC_toast('已刪除 '+n+' 個活動');}
+function clearSel(){selIds.clear();document.getElementById('bulkBar').style.display='none';renderEvents();}
 function renderEvents(){
-  const evts=PC_getEvents();
-  const grid=document.getElementById('eventsGrid');
-  if(!evts.length){
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📭</div><p>還沒有任何活動，點左側「建立活動」開始</p></div>`;
-    return;
-  }
+  const evts=PC_getEvents();const grid=document.getElementById('eventsGrid');
+  if(!evts.length){grid.innerHTML='<div class="empty-state"><div style="font-size:2.5rem;opacity:0.4;margin-bottom:12px">📭</div><p>還沒有活動，點左側「建立活動」開始</p></div>';return;}
   grid.innerHTML=evts.map(e=>{
-    const payers=PC_getPayers(e);
-    const paid=payers.filter(m=>m.status==='paid').length;
-    const pct=payers.length?Math.round(paid/payers.length*100):0;
-    const collected=PC_getCollected(e),expected=PC_getExpected(e);
-    const tagCls=e.status==='active'?'badge-green':e.status==='overdue'?'badge-red':'badge-gray';
-    const tagTxt=e.status==='active'?'進行中':e.status==='overdue'?'已逾期':'已結束';
-    const pctColor=pct===100?'green':'';
-    return `<div class="event-card" onclick="location.href='event.html?id=${e.id}'">
-      <button class="ec-delete" onclick="deleteEvent('${e.id}','${e.title.replace(/'/g,"\\'")}',event)">刪除</button>
-      <div class="ec-top">
+    const p=PC_getPayers(e),paid=p.filter(m=>m.status==='paid').length,pct=p.length?Math.round(paid/p.length*100):0;
+    const c=PC_getCollected(e),ex=PC_getExpected(e);
+    const tc=e.status==='active'?'badge-green':e.status==='overdue'?'badge-red':'badge-gray';
+    const tt=e.status==='active'?'進行中':e.status==='overdue'?'已逾期':'已結束';
+    const isSel=selIds.has(e.id);
+    const oc=selMode?`toggleCard('${e.id}',event)`:`location.href='event.html?id=${e.id}'`;
+    return `<div class="event-card${isSel?' selected':''}" data-id="${e.id}" onclick="${oc}">
+      ${selMode?`<div class="ec-check${isSel?' checked':''}">${isSel?'✓':''}</div>`:''}
+      <div class="ec-top" style="${selMode?'padding-left:26px':''}">
         <div class="ec-title">${e.title}</div>
-        <span class="badge ${tagCls}">${tagTxt}</span>
+        <span class="badge ${tc}">${tt}</span>
       </div>
-      <div class="ec-meta">
-        <span>👥 ${payers.length} 位繳費成員</span>
-        <span>📅 ${e.deadline}</span>
+      <div class="ec-meta" style="${selMode?'padding-left:26px':''}">
+        <span>👥 ${p.length} 人</span><span>📅 ${e.deadline}</span>
       </div>
       <div class="ec-revenue">
-        <div class="rev-box"><div class="rev-label">實收金額</div><div class="rev-val collected">$${collected.toLocaleString()}</div></div>
-        <div class="rev-box"><div class="rev-label">應收金額</div><div class="rev-val">$${expected.toLocaleString()}</div></div>
+        <div class="rev-box"><div class="rev-label">實收</div><div class="rev-val g">$${c.toLocaleString()}</div></div>
+        <div class="rev-box"><div class="rev-label">應收</div><div class="rev-val">$${ex.toLocaleString()}</div></div>
       </div>
-      <div class="progress-bar"><div class="progress-fill ${pctColor}" style="width:${pct}%"></div></div>
-      <div class="ec-progress-text"><span>${paid}/${payers.length} 人已繳</span><span style="font-weight:700;color:${pct===100?'var(--green)':'var(--text2)'}">${pct}%</span></div>
-      <div class="ec-arrow">→</div>
+      <div class="progress-bar"><div class="progress-fill${pct===100?' green':''}" style="width:${pct}%"></div></div>
+      <div class="ec-foot"><span>${paid}/${p.length} 人已繳</span><span style="font-weight:700;color:${pct===100?'var(--green)':'var(--text2)'}">${pct}%</span></div>
+      ${!selMode?'<div class="ec-arrow">→</div>':''}
     </div>`;
   }).join('');
 }
-
 function renderAll(){renderStats();renderEvents();renderSidebar();}
 renderAll();
 </script>
