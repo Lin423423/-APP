@@ -55,7 +55,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC','Plus Jak
 
 /* BUTTONS */
 .btn{padding:9px 18px;border-radius:9px;font-size:0.87rem;font-weight:600;cursor:pointer;border:none;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;text-decoration:none;}
-.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary{background:var(--accent);color:#fff!important;}
 .btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,110,247,0.3);}
 .btn-secondary{background:var(--white);color:var(--text);border:1.5px solid var(--border);}
 .btn-secondary:hover{border-color:var(--border2);background:var(--surface);}

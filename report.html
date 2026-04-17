@@ -8,62 +8,65 @@
 <script src="pc_auth.js"></script>
 <style>
 body{display:flex;}
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+/* Event selector */
+.evt-selector-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow);}
+.evt-selector-title{font-size:0.82rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}
+.evt-checkboxes{display:flex;flex-wrap:wrap;gap:8px;}
+.evt-chip{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:0.83rem;font-weight:600;color:var(--text2);transition:all 0.15s;user-select:none;}
+.evt-chip:hover{border-color:var(--accent);color:var(--accent);}
+.evt-chip.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+.evt-chip input{display:none;}
+.select-all-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:100px;padding:6px 14px;font-size:0.82rem;font-weight:600;color:var(--text2);cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
+.select-all-btn:hover{border-color:var(--border2);color:var(--text);}
+.selector-actions{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 .sum-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
 .sum-label{font-size:0.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
 .sum-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.7rem;font-weight:800;letter-spacing:-0.03em;line-height:1;}
-
-.filter-row{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
-.ftab{padding:6px 16px;border-radius:100px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text2);font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
-.ftab.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
-
-.chart-grid{display:grid;grid-template-columns:200px 1fr;gap:16px;margin-bottom:24px;}
-.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
-.chart-title{font-size:0.8rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px;}
-.donut-wrap{display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
-.donut{position:relative;width:90px;height:90px;}
+.chart-grid{display:grid;grid-template-columns:180px 1fr;gap:16px;margin-bottom:20px;}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.chart-title{font-size:0.78rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:14px;}
+.donut-wrap{display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.donut{position:relative;width:84px;height:84px;}
 .donut-svg{transform:rotate(-90deg);}
 .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.donut-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;color:var(--text);}
-.donut-sub{font-size:0.62rem;color:var(--text3);margin-top:1px;}
-.legend{display:flex;flex-direction:column;gap:8px;}
-.legend-row{display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text2);}
-.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.donut-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.1rem;font-weight:800;}
+.donut-sub{font-size:0.6rem;color:var(--text3);}
+.legend{display:flex;flex-direction:column;gap:7px;}
+.legend-row{display:flex;align-items:center;gap:7px;font-size:0.78rem;color:var(--text2);}
+.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .leg-val{font-weight:700;margin-left:auto;}
-
-.bar-list{display:flex;flex-direction:column;gap:12px;}
-.bar-row{display:flex;align-items:center;gap:12px;}
-.bar-label{font-size:0.82rem;color:var(--text2);width:120px;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-list{display:flex;flex-direction:column;gap:10px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-label{font-size:0.8rem;color:var(--text2);width:110px;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .bar-track{flex:1;height:8px;background:var(--surface);border-radius:100px;overflow:hidden;}
 .bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),#06b6d4);transition:width 1s ease;}
-.bar-pct{font-size:0.78rem;font-weight:700;color:var(--text2);width:38px;text-align:right;flex-shrink:0;}
-
+.bar-pct{font-size:0.76rem;font-weight:700;color:var(--text2);width:34px;text-align:right;flex-shrink:0;}
 .table-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
-.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.table-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .table-title{font-size:0.9rem;font-weight:700;}
 table{width:100%;border-collapse:collapse;}
-thead th{padding:10px 20px;font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;text-align:left;background:var(--surface);border-bottom:1px solid var(--border);}
-tbody tr{transition:background 0.1s;}
+thead th{padding:9px 18px;font-size:0.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;text-align:left;background:var(--surface);border-bottom:1px solid var(--border);}
 tbody tr:hover{background:var(--surface);}
-tbody td{padding:12px 20px;font-size:0.87rem;border-bottom:1px solid var(--border);}
+tbody td{padding:11px 18px;font-size:0.86rem;border-bottom:1px solid var(--border);}
 tbody tr:last-child td{border-bottom:none;}
-
-/* PDF modal */
+/* PDF overlay */
 .pdf-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(3px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
 .pdf-overlay.show{display:flex;}
-.pdf-doc{background:#fff;color:#111;border-radius:12px;padding:40px;width:100%;max-width:640px;max-height:85vh;overflow-y:auto;position:relative;}
-.pdf-close{position:absolute;top:16px;right:16px;background:var(--surface);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text2);}
-.pdf-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;color:var(--accent);margin-bottom:4px;}
-.pdf-sep{height:3px;background:var(--accent);border-radius:100px;margin:16px 0;}
-.pdf-section-title{font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin:16px 0 8px;border-bottom:1px solid #e0e0f0;padding-bottom:4px;}
-.pdf-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
-.pdf-stat{background:#f5f5ff;border-radius:8px;padding:12px;text-align:center;}
-.pdf-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;font-weight:800;color:var(--accent);}
-.pdf-stat-label{font-size:0.72rem;color:#666;margin-top:3px;}
-.pdf-table{width:100%;border-collapse:collapse;font-size:0.83rem;}
-.pdf-table th{background:#f0f0ff;padding:7px 10px;text-align:left;font-size:0.7rem;color:var(--accent);font-weight:700;}
-.pdf-table td{padding:8px 10px;border-bottom:1px solid #eee;color:#333;}
-.pdf-dl-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:0.92rem;font-weight:700;cursor:pointer;margin-top:18px;font-family:'Noto Sans TC',sans-serif;}
+.pdf-doc{background:#fff;color:#111;border-radius:12px;padding:38px;width:100%;max-width:620px;max-height:85vh;overflow-y:auto;position:relative;}
+.pdf-close{position:absolute;top:14px;right:14px;background:var(--surface);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text2);}
+.pdf-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;color:#4f6ef7;}
+.pdf-sep{height:3px;background:#4f6ef7;border-radius:100px;margin:14px 0;}
+.pdf-section-title{font-size:0.7rem;font-weight:700;color:#4f6ef7;text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px;border-bottom:1px solid #e0e0f0;padding-bottom:4px;}
+.pdf-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.pdf-stat{background:#f5f5ff;border-radius:8px;padding:11px;text-align:center;}
+.pdf-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;color:#4f6ef7;}
+.pdf-stat-label{font-size:0.7rem;color:#666;margin-top:3px;}
+.pdf-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+.pdf-table th{background:#f0f0ff;padding:7px 10px;text-align:left;font-size:0.68rem;color:#4f6ef7;font-weight:700;}
+.pdf-table td{padding:7px 10px;border-bottom:1px solid #eee;color:#333;}
+.pdf-dl-btn{width:100%;padding:12px;background:#4f6ef7;color:#fff;border:none;border-radius:9px;font-size:0.9rem;font-weight:700;cursor:pointer;margin-top:16px;font-family:'Noto Sans TC',sans-serif;}
 </style>
 </head>
 <body>
@@ -76,29 +79,35 @@ tbody tr:last-child td{border-bottom:none;}
     <a class="nav-item" href="pay.html"><span class="icon">💳</span>繳費頁範例</a>
     <div class="nav-section">我的活動</div>
     <div id="sidebarEvents"></div>
+    <a class="nav-item" href="index.html"><span class="icon">🌐</span>首頁</a>
   </nav>
   <div class="sidebar-bottom">
     <div class="user-card">
       <div class="avatar" id="avatarInitial">幹</div>
       <div class="user-info"><div class="user-name" id="userName">載入中</div><div class="user-role">社團幹部</div></div>
-      <button class="logout-btn" onclick="PC_logout()" title="登出">↩</button>
+      <button class="logout-btn" onclick="PC_logout()">登出</button>
     </div>
   </div>
 </aside>
 
 <main class="main">
   <div class="topbar">
-    <div><div class="page-title">財務報表</div><div class="page-sub">查看所有活動的收款統計與明細</div></div>
+    <div><div class="page-title">財務報表</div><div class="page-sub">選擇活動，查看對應收款統計與明細</div></div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-ghost" onclick="showPdf()">📄 匯出 PDF</button>
-      <button class="btn btn-primary" onclick="PC_toast('Excel 匯出功能（後端串接後啟用）')">📊 匯出 Excel</button>
+      <button class="btn btn-primary" style="color:#fff" onclick="PC_toast('Excel 匯出（後端串接後啟用）')">📊 匯出 Excel</button>
     </div>
   </div>
 
-  <div class="filter-row">
-    <button class="ftab active" onclick="setFilter(this,'all')">全部活動</button>
-    <button class="ftab" onclick="setFilter(this,'active')">進行中</button>
-    <button class="ftab" onclick="setFilter(this,'closed')">已結束</button>
+  <!-- Event selector -->
+  <div class="evt-selector-card">
+    <div class="evt-selector-title">選擇要查看的活動</div>
+    <div class="selector-actions">
+      <button class="select-all-btn" onclick="selectAll()">全選</button>
+      <button class="select-all-btn" onclick="selectNone()">清除</button>
+      <span style="font-size:0.8rem;color:var(--text3);margin-left:4px;" id="selectedCount">已選 0 個活動</span>
+    </div>
+    <div class="evt-checkboxes" id="evtCheckboxes"></div>
   </div>
 
   <div class="summary-grid">
@@ -113,31 +122,31 @@ tbody tr:last-child td{border-bottom:none;}
       <div class="chart-title">繳費分佈</div>
       <div class="donut-wrap">
         <div class="donut">
-          <svg class="donut-svg" width="90" height="90" viewBox="0 0 90 90">
-            <circle cx="45" cy="45" r="34" fill="none" stroke="#f0f1f6" stroke-width="12"/>
-            <circle id="dPaid" cx="45" cy="45" r="34" fill="none" stroke="url(#dg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 214"/>
-            <circle id="dPend" cx="45" cy="45" r="34" fill="none" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 214" stroke-dashoffset="0"/>
+          <svg class="donut-svg" width="84" height="84" viewBox="0 0 84 84">
+            <circle cx="42" cy="42" r="30" fill="none" stroke="#f0f1f6" stroke-width="11"/>
+            <circle id="dPaid" cx="42" cy="42" r="30" fill="none" stroke="url(#dg)" stroke-width="11" stroke-linecap="round" stroke-dasharray="0 189"/>
+            <circle id="dPend" cx="42" cy="42" r="30" fill="none" stroke="#fbbf24" stroke-width="11" stroke-linecap="round" stroke-dasharray="0 189" stroke-dashoffset="0"/>
             <defs><linearGradient id="dg" x1="0%" y1="0%" x2="100%"><stop offset="0%" stop-color="#4f6ef7"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
           </svg>
           <div class="donut-center"><div class="donut-pct" id="dPct">0%</div><div class="donut-sub">已繳</div></div>
         </div>
       </div>
       <div class="legend">
-        <div class="legend-row"><div class="leg-dot" style="background:var(--accent)"></div>已繳費<span class="leg-val" id="lPaid">0人</span></div>
-        <div class="legend-row"><div class="leg-dot" style="background:#fbbf24"></div>待繳費<span class="leg-val" id="lPending">0人</span></div>
+        <div class="legend-row"><div class="leg-dot" style="background:var(--accent)"></div>已繳<span class="leg-val" id="lPaid">0人</span></div>
+        <div class="legend-row"><div class="leg-dot" style="background:#fbbf24"></div>待繳<span class="leg-val" id="lPending">0人</span></div>
         <div class="legend-row"><div class="leg-dot" style="background:var(--red)"></div>逾期<span class="leg-val" id="lOverdue">0人</span></div>
       </div>
     </div>
     <div class="chart-card">
       <div class="chart-title">各活動收款進度</div>
-      <div class="bar-list" id="barList"></div>
+      <div class="bar-list" id="barList"><div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:20px;">請選擇活動</div></div>
     </div>
   </div>
 
   <div class="table-card">
     <div class="table-header"><div class="table-title">收款明細</div></div>
     <table><thead><tr><th>成員</th><th>活動</th><th>角色</th><th>金額</th><th>繳費時間</th><th>狀態</th></tr></thead>
-    <tbody id="detailBody"></tbody></table>
+    <tbody id="detailBody"><tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text3);">請選擇活動</td></tr></tbody></table>
   </div>
 </main>
 
@@ -146,13 +155,13 @@ tbody tr:last-child td{border-bottom:none;}
   <div class="pdf-doc">
     <button class="pdf-close" onclick="document.getElementById('pdfOverlay').classList.remove('show')">✕</button>
     <div class="pdf-logo">PayClub</div>
-    <div style="font-size:0.78rem;color:#888;">財務報告 · <span id="pdfDate"></span></div>
+    <div style="font-size:0.76rem;color:#888;">財務報告 · <span id="pdfDate"></span></div>
     <div class="pdf-sep"></div>
     <div class="pdf-section-title">收款摘要</div>
     <div class="pdf-stat-row">
       <div class="pdf-stat"><div class="pdf-stat-val" id="pdfTotal">$0</div><div class="pdf-stat-label">總實收</div></div>
       <div class="pdf-stat"><div class="pdf-stat-val" id="pdfRate">0%</div><div class="pdf-stat-label">繳費率</div></div>
-      <div class="pdf-stat"><div class="pdf-stat-val" id="pdfEvts">0</div><div class="pdf-stat-label">活動數</div></div>
+      <div class="pdf-stat"><div class="pdf-stat-val" id="pdfEvts">0</div><div class="pdf-stat-label">選取活動數</div></div>
     </div>
     <div class="pdf-section-title">各活動明細</div>
     <table class="pdf-table"><thead><tr><th>活動名稱</th><th>實收</th><th>應收</th><th>繳費率</th></tr></thead><tbody id="pdfBody"></tbody></table>
@@ -165,17 +174,43 @@ tbody tr:last-child td{border-bottom:none;}
 const user=PC_requireLogin();if(!user)throw new Error('redirect');
 PC_fillSidebarUser();
 
-let currentFilter='all';
-function setFilter(el,f){currentFilter=f;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderAll();}
+let selectedIds=new Set();
 
 function renderSidebar(){
   const evts=PC_getEvents();
   document.getElementById('sidebarEvents').innerHTML=evts.map(e=>`<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
 }
 
-function renderAll(){
+function renderSelector(){
+  const evts=PC_getEvents();
+  const box=document.getElementById('evtCheckboxes');
+  if(!evts.length){box.innerHTML='<div style="color:var(--text3);font-size:0.85rem;">尚無活動</div>';return;}
+  box.innerHTML=evts.map(e=>`
+    <label class="evt-chip${selectedIds.has(e.id)?' selected':''}" onclick="toggleEvt('${e.id}',this)">
+      <span>${e.title}</span>
+      <span class="badge ${e.status==='active'?'badge-green':'badge-gray'}" style="font-size:0.65rem;">${e.status==='active'?'進行中':'已結束'}</span>
+    </label>`).join('');
+  document.getElementById('selectedCount').textContent='已選 '+selectedIds.size+' 個活動';
+}
+
+function toggleEvt(id,el){
+  if(selectedIds.has(id)){selectedIds.delete(id);el.classList.remove('selected');}
+  else{selectedIds.add(id);el.classList.add('selected');}
+  document.getElementById('selectedCount').textContent='已選 '+selectedIds.size+' 個活動';
+  renderReport();
+}
+
+function selectAll(){
+  PC_getEvents().forEach(e=>selectedIds.add(e.id));
+  renderSelector();renderReport();
+}
+function selectNone(){
+  selectedIds.clear();renderSelector();renderReport();
+}
+
+function renderReport(){
   const allEvts=PC_getEvents();
-  const evts=currentFilter==='all'?allEvts:allEvts.filter(e=>e.status===currentFilter);
+  const evts=allEvts.filter(e=>selectedIds.has(e.id));
   let collected=0,expected=0,paidCount=0,pendCount=0,ovdCount=0,totalPayers=0;
   evts.forEach(e=>{
     collected+=PC_getCollected(e);expected+=PC_getExpected(e);
@@ -190,11 +225,17 @@ function renderAll(){
   document.getElementById('lPending').textContent=pendCount+'人';
   document.getElementById('lOverdue').textContent=ovdCount+'人';
   document.getElementById('dPct').textContent=rate+'%';
-  const circ=2*Math.PI*34;
+  const circ=2*Math.PI*30;
   document.getElementById('dPaid').setAttribute('stroke-dasharray',`${circ*rate/100} ${circ}`);
   const pendPct=totalPayers?(pendCount+ovdCount)/totalPayers:0;
   document.getElementById('dPend').setAttribute('stroke-dasharray',`${circ*pendPct} ${circ}`);
   document.getElementById('dPend').setAttribute('stroke-dashoffset',`-${circ*rate/100}`);
+
+  if(!evts.length){
+    document.getElementById('barList').innerHTML='<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:20px;">請選擇活動</div>';
+    document.getElementById('detailBody').innerHTML='<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text3);">請選擇活動</td></tr>';
+    return;
+  }
 
   document.getElementById('barList').innerHTML=evts.map(e=>{
     const c=PC_getCollected(e),ex=PC_getExpected(e);
@@ -203,19 +244,20 @@ function renderAll(){
   }).join('');
 
   const rows=[];
-  evts.forEach(e=>e.members.forEach(m=>rows.push({evt:e,m})));
-  document.getElementById('detailBody').innerHTML=rows.map(({evt:e,m})=>{
+  evts.forEach(e=>(e.members||[]).forEach(m=>rows.push({e,m})));
+  document.getElementById('detailBody').innerHTML=rows.map(({e,m})=>{
     const amt=m.role==='payer'?'$'+PC_getExpectedAmount(e,m):'—';
     const st=m.role!=='payer'?'badge-gray':(m.status==='paid'?'badge-green':m.status==='overdue'?'badge-red':'badge-orange');
     const stTxt=m.role!=='payer'?({counter:'統計者',observer:'觀察者'}[m.role]||'—'):(m.status==='paid'?'已繳費':m.status==='overdue'?'逾期未繳':'待繳費');
     const roleBadge=m.role==='payer'?'badge-blue':m.role==='counter'?'badge-orange':'badge-gray';
     const roleTxt=m.role==='payer'?'繳費者':m.role==='counter'?'統計者':'觀察者';
-    return `<tr><td style="font-weight:600">${m.name}</td><td style="color:var(--text2)">${e.title}</td><td><span class="badge ${roleBadge}">${roleTxt}</span></td><td style="font-weight:700">${amt}</td><td style="color:var(--text3)">${m.paidAt||'—'}</td><td><span class="badge ${st}">${stTxt}</span></td></tr>`;
-  }).join('');
+    return `<tr><td style="font-weight:600">${m.name||'—'}</td><td style="color:var(--text2)">${e.title}</td><td><span class="badge ${roleBadge}">${roleTxt}</span></td><td style="font-weight:700">${amt}</td><td style="color:var(--text3)">${m.paidAt||'—'}</td><td><span class="badge ${st}">${stTxt}</span></td></tr>`;
+  }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3);">無資料</td></tr>';
 }
 
 function showPdf(){
-  const evts=PC_getEvents();
+  const evts=PC_getEvents().filter(e=>selectedIds.has(e.id));
+  if(!evts.length){PC_toast('請先選擇至少一個活動');return;}
   let c=0,ex=0,tp=0,paid=0;
   evts.forEach(e=>{c+=PC_getCollected(e);ex+=PC_getExpected(e);const p=PC_getPayers(e);tp+=p.length;paid+=p.filter(m=>m.status==='paid').length;});
   document.getElementById('pdfDate').textContent=new Date().toLocaleDateString('zh-TW');
@@ -230,6 +272,9 @@ function showPdf(){
   document.getElementById('pdfOverlay').classList.add('show');
 }
 
-renderAll(); renderSidebar();
+// Init: select all by default
+const allEvts=PC_getEvents();
+allEvts.forEach(e=>selectedIds.add(e.id));
+renderSelector();renderReport();renderSidebar();
 </script>
 </body></html>
