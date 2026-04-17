@@ -1,98 +1,44 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>儀表板 — PayClub</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <script src="pc_auth.js"></script>
 <style>
-  :root { --bg:#0a0a0f; --surface:#12121a; --card:#1a1a26; --accent:#5b5ef4; --accent2:#00e5c0; --accent3:#ff6b6b; --text:#f0f0ff; --muted:#8888aa; --border:rgba(255,255,255,0.07); }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Noto Sans TC',sans-serif; display:flex; min-height:100vh; }
-  .sidebar { width:240px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; bottom:0; z-index:50; }
-  .sidebar-logo { padding:28px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem; }
-  .logo-dot { width:9px; height:9px; background:var(--accent2); border-radius:50%; animation:pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4);opacity:0.7} }
-  .sidebar-nav { padding:16px 12px; flex:1; overflow-y:auto; }
-  .nav-section { font-size:0.7rem; font-weight:700; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; padding:8px 14px 4px; margin-top:8px; }
-  .nav-item { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; color:var(--muted); font-size:0.87rem; font-weight:500; cursor:pointer; transition:all 0.2s; margin-bottom:2px; text-decoration:none; }
-  .nav-item:hover { background:rgba(255,255,255,0.04); color:var(--text); }
-  .nav-item.active { background:rgba(91,94,244,0.15); color:var(--accent); font-weight:600; }
-  .nav-item .icon { font-size:1.05rem; width:20px; text-align:center; flex-shrink:0; }
-  .nav-event { font-size:0.82rem; padding:8px 14px 8px 46px; border-radius:8px; color:var(--muted); display:flex; align-items:center; justify-content:space-between; text-decoration:none; transition:all 0.2s; margin-bottom:2px; cursor:pointer; }
-  .nav-event:hover { background:rgba(255,255,255,0.03); color:var(--text); }
-  .nav-event .evt-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-  .sidebar-bottom { padding:16px 12px; border-top:1px solid var(--border); }
-  .user-card { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; background:var(--card); border:1px solid var(--border); }
-  .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
-  .user-info { flex:1; min-width:0; }
-  .user-name { font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .user-role { font-size:0.7rem; color:var(--accent2); }
-  .logout-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-size:0.95rem; padding:4px; transition:color 0.2s; }
-  .logout-btn:hover { color:var(--accent3); }
+body{display:flex;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.stat-label{font-size:0.74rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;line-height:1;}
+.stat-sub{font-size:0.74rem;color:var(--text3);margin-top:5px;}
+.stat-sub.green{color:var(--green);}
+.stat-sub.orange{color:var(--orange);}
 
-  .main { margin-left:240px; flex:1; padding:36px 40px; max-width:calc(100vw - 240px); }
-  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
-  .page-title { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; letter-spacing:-0.03em; }
-  .page-sub { color:var(--muted); font-size:0.88rem; margin-top:4px; }
-  .btn { padding:11px 20px; border-radius:10px; font-size:0.88rem; font-weight:700; cursor:pointer; border:none; font-family:'Noto Sans TC',sans-serif; transition:all 0.2s; display:inline-flex; align-items:center; gap:7px; text-decoration:none; }
-  .btn-accent { background:var(--accent); color:#fff; }
-  .btn-accent:hover { background:#7b7ef8; transform:translateY(-1px); box-shadow:0 6px 20px rgba(91,94,244,0.4); }
-  .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
-  .btn-ghost:hover { border-color:rgba(255,255,255,0.15); color:var(--text); }
+.section-title{font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:14px;}
 
-  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
-  .stat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px 22px; }
-  .stat-label { font-size:0.75rem; color:var(--muted); font-weight:600; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:8px; }
-  .stat-val { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; letter-spacing:-0.04em; line-height:1; }
-  .stat-sub { font-size:0.75rem; margin-top:6px; color:var(--muted); }
-  .stat-sub.green { color:var(--accent2); }
-  .stat-sub.orange { color:#fb923c; }
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.event-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);position:relative;}
+.event-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(79,110,247,0.1);transform:translateY(-2px);}
+.ec-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:10px;}
+.ec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;flex:1;}
+.ec-meta{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.ec-meta span{font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:4px;}
+.ec-revenue{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.rev-box{background:var(--surface);border-radius:8px;padding:8px 12px;}
+.rev-label{font-size:0.68rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;}
+.rev-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;}
+.rev-val.collected{color:var(--green);}
+.rev-val.expected{color:var(--text);}
+.ec-progress-wrap{margin-top:2px;}
+.ec-progress-text{display:flex;justify-content:space-between;font-size:0.74rem;color:var(--text2);margin-top:4px;}
+.ec-arrow{position:absolute;bottom:18px;right:18px;color:var(--text3);font-size:0.85rem;transition:all 0.15s;}
+.event-card:hover .ec-arrow{color:var(--accent);transform:translateX(3px);}
 
-  .section-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .section-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; }
-
-  .events-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px,1fr)); gap:16px; }
-  .event-card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:22px; cursor:pointer; transition:all 0.25s; position:relative; overflow:hidden; }
-  .event-card::after { content:''; position:absolute; inset:0; border-radius:18px; box-shadow:0 0 0 2px var(--accent); opacity:0; transition:opacity 0.2s; }
-  .event-card:hover { transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,0,0,0.3); }
-  .event-card:hover::after { opacity:1; }
-  .ec-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
-  .ec-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; line-height:1.3; flex:1; margin-right:12px; }
-  .tag { display:inline-block; padding:3px 10px; border-radius:100px; font-size:0.7rem; font-weight:700; flex-shrink:0; }
-  .tag-active { background:rgba(0,229,192,0.12); color:var(--accent2); }
-  .tag-closed { background:rgba(255,255,255,0.06); color:var(--muted); }
-  .tag-overdue { background:rgba(255,107,107,0.12); color:var(--accent3); }
-  .ec-meta { display:flex; gap:14px; margin-bottom:14px; flex-wrap:wrap; }
-  .ec-meta span { font-size:0.78rem; color:var(--muted); display:flex; align-items:center; gap:4px; }
-  .ec-progress { }
-  .progress-bar { height:6px; background:rgba(255,255,255,0.05); border-radius:100px; overflow:hidden; margin-bottom:5px; }
-  .progress-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.8s cubic-bezier(0.16,1,0.3,1); }
-  .progress-text { display:flex; justify-content:space-between; font-size:0.75rem; color:var(--muted); }
-  .ec-arrow { position:absolute; bottom:20px; right:20px; color:var(--muted); font-size:1rem; transition:all 0.2s; opacity:0; }
-  .event-card:hover .ec-arrow { opacity:1; transform:translateX(3px); color:var(--accent); }
-
-  .empty-wrap { text-align:center; padding:80px 20px; }
-  .empty-wrap .empty-icon { font-size:3.5rem; margin-bottom:16px; opacity:0.5; }
-  .empty-wrap p { color:var(--muted); margin-bottom:24px; }
-
-  /* CREATE MODAL */
-  .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; padding:24px; }
-  .overlay.show { display:flex; }
-  .modal { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:36px; width:100%; max-width:480px; animation:slideUp 0.3s ease; max-height:90vh; overflow-y:auto; }
-  @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-  .modal-title { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:22px; }
-  .form-group { margin-bottom:16px; }
-  label { display:block; font-size:0.78rem; font-weight:600; color:var(--muted); margin-bottom:7px; letter-spacing:0.05em; text-transform:uppercase; }
-  input,textarea,select { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; color:var(--text); font-size:0.92rem; font-family:'Noto Sans TC',sans-serif; outline:none; transition:border-color 0.2s; resize:vertical; }
-  input:focus,textarea:focus { border-color:var(--accent); }
-  .modal-actions { display:flex; gap:12px; margin-top:20px; }
-
-  .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(60px); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:13px 20px; font-size:0.88rem; opacity:0; transition:all 0.3s; z-index:999; white-space:nowrap; }
-  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
-
-  @media(max-width:900px) { .sidebar{display:none} .main{margin-left:0;padding:24px 20px;max-width:100vw} .stats-grid{grid-template-columns:1fr 1fr} .events-grid{grid-template-columns:1fr} }
+.empty-state{text-align:center;padding:60px 20px;color:var(--text2);}
+.empty-icon{font-size:3rem;margin-bottom:14px;opacity:0.4;}
+.empty-state p{margin-bottom:20px;}
 </style>
 </head>
 <body>
@@ -105,169 +51,99 @@
     <a class="nav-item" href="pay.html"><span class="icon">💳</span>繳費頁範例</a>
     <div class="nav-section">我的活動</div>
     <div id="sidebarEvents"></div>
-    <a class="nav-item" href="index.html"><span class="icon">🌐</span>回首頁</a>
   </nav>
   <div class="sidebar-bottom">
     <div class="user-card">
       <div class="avatar" id="avatarInitial">幹</div>
-      <div class="user-info">
-        <div class="user-name" id="userName">載入中</div>
-        <div class="user-role">社團幹部</div>
-      </div>
-      <button class="logout-btn" onclick="PC_logout()" title="登出">⏏</button>
+      <div class="user-info"><div class="user-name" id="userName">載入中</div><div class="user-role">社團幹部</div></div>
+      <button class="logout-btn" onclick="PC_logout()" title="登出">↩</button>
     </div>
   </div>
 </aside>
 
 <main class="main">
   <div class="topbar">
-    <div>
-      <div class="page-title">總覽儀表板</div>
-      <div class="page-sub" id="greetMsg">載入中...</div>
-    </div>
-    <button class="btn btn-accent" onclick="openModal()">➕ 建立新活動</button>
+    <div><div class="page-title">總覽儀表板</div><div class="page-sub" id="greetMsg"></div></div>
   </div>
 
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">總收款金額</div><div class="stat-val" id="sTotal" style="color:var(--accent2)">$0</div><div class="stat-sub green">本月累計</div></div>
-    <div class="stat-card"><div class="stat-label">進行中活動</div><div class="stat-val" id="sActive">0</div><div class="stat-sub green">個活動</div></div>
-    <div class="stat-card"><div class="stat-label">整體繳費率</div><div class="stat-val" id="sRate">0%</div><div class="stat-sub" id="sRateSub">已繳 / 總人數</div></div>
-    <div class="stat-card"><div class="stat-label">待催款人數</div><div class="stat-val" id="sPending" style="color:#fb923c">0</div><div class="stat-sub orange">人尚未繳費</div></div>
+    <div class="stat-card"><div class="stat-label">總收款金額</div><div class="stat-val" id="sTotal" style="color:var(--green)">$0</div><div class="stat-sub green">所有活動合計</div></div>
+    <div class="stat-card"><div class="stat-label">應收金額</div><div class="stat-val" id="sExpected">$0</div><div class="stat-sub">全部活動總應收</div></div>
+    <div class="stat-card"><div class="stat-label">整體繳費率</div><div class="stat-val" id="sRate">0%</div><div class="stat-sub" id="sRateSub"></div></div>
+    <div class="stat-card"><div class="stat-label">進行中活動</div><div class="stat-val" id="sActive">0</div><div class="stat-sub">個活動</div></div>
   </div>
 
-  <div class="section-bar">
-    <div class="section-title">所有活動</div>
-    <button class="btn btn-ghost" onclick="openModal()">+ 新增</button>
-  </div>
+  <div class="section-title">所有活動</div>
   <div class="events-grid" id="eventsGrid"></div>
 </main>
-
-<!-- CREATE MODAL -->
-<div class="overlay" id="createOverlay">
-  <div class="modal">
-    <div class="modal-title">建立新活動</div>
-    <div class="form-group"><label>活動名稱 *</label><input type="text" id="mTitle" placeholder="例：2025 迎新活動費用"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-      <div class="form-group"><label>每人金額（$）*</label><input type="number" id="mAmount" placeholder="300" min="1"></div>
-      <div class="form-group"><label>截止日期 *</label><input type="date" id="mDeadline"></div>
-    </div>
-    <div class="form-group"><label>活動說明</label><textarea id="mDesc" rows="2" placeholder="成員繳費時會看到這段說明..."></textarea></div>
-    <div class="form-group"><label>成員名單（每行一位姓名）</label><textarea id="mMembers" rows="4" placeholder="林小明&#10;陳美玲&#10;王大衛"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">取消</button>
-      <button class="btn btn-accent" style="flex:2" onclick="createEvent()">建立活動 →</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
-
 <script>
-// ── Auth guard ──
-const user = PC_requireLogin();
-if (!user) throw new Error('redirect');
+const user=PC_requireLogin(); if(!user)throw new Error('redirect');
 PC_fillSidebarUser();
+const h=new Date().getHours();
+document.getElementById('greetMsg').textContent=(h<12?'早安':h<18?'午安':'晚安')+'，'+user.name+'！';
 
-const h = new Date().getHours();
-document.getElementById('greetMsg').textContent = (h<12?'早安':h<18?'午安':'晚安') + '，' + user.name + '！';
-
-// ── Sidebar events list ──
-function renderSidebarEvents() {
-  const evts = PC_getEvents();
-  document.getElementById('sidebarEvents').innerHTML = evts.map(e => {
-    const paid = e.members.filter(m=>m.status==='paid').length;
-    const pct  = e.members.length ? Math.round(paid/e.members.length*100) : 0;
-    const color = e.status==='active' ? 'var(--accent2)' : 'var(--muted)';
-    return `<a class="nav-event" href="event.html?id=${e.id}">
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span>
-      <span style="font-size:0.72rem;color:${color};flex-shrink:0;margin-left:8px">${pct}%</span>
-    </a>`;
+function renderSidebar(){
+  const evts=PC_getEvents();
+  document.getElementById('sidebarEvents').innerHTML=evts.map(e=>{
+    const payers=PC_getPayers(e),paid=payers.filter(m=>m.status==='paid').length,pct=payers.length?Math.round(paid/payers.length*100):0;
+    return `<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span><span style="font-size:0.72rem;color:var(--text3);flex-shrink:0;margin-left:6px">${pct}%</span></a>`;
   }).join('');
 }
 
-// ── Stats ──
-function renderStats() {
-  const evts = PC_getEvents();
-  let total=0, paidAmt=0, paidCount=0, allCount=0, pendingCount=0, active=0;
-  evts.forEach(e => {
-    if (e.status==='active') active++;
-    e.members.forEach(m => {
-      allCount++;
-      if (m.status==='paid') { paidAmt += e.amount; paidCount++; }
-      else pendingCount++;
-    });
+function renderStats(){
+  const evts=PC_getEvents();
+  let collected=0,expected=0,paidCount=0,payerTotal=0,active=0;
+  evts.forEach(e=>{
+    if(e.status==='active')active++;
+    collected+=PC_getCollected(e); expected+=PC_getExpected(e);
+    const payers=PC_getPayers(e); payerTotal+=payers.length; paidCount+=payers.filter(m=>m.status==='paid').length;
   });
-  document.getElementById('sTotal').textContent   = '$' + paidAmt.toLocaleString();
-  document.getElementById('sActive').textContent  = active;
-  const rate = allCount ? Math.round(paidCount/allCount*100) : 0;
-  document.getElementById('sRate').textContent    = rate + '%';
-  document.getElementById('sRateSub').textContent = paidCount + ' / ' + allCount + ' 人';
-  document.getElementById('sPending').textContent = pendingCount;
+  document.getElementById('sTotal').textContent='$'+collected.toLocaleString();
+  document.getElementById('sExpected').textContent='$'+expected.toLocaleString();
+  const rate=payerTotal?Math.round(paidCount/payerTotal*100):0;
+  document.getElementById('sRate').textContent=rate+'%';
+  document.getElementById('sRateSub').textContent=paidCount+' / '+payerTotal+' 人';
+  document.getElementById('sActive').textContent=active;
 }
 
-// ── Event cards ──
-function renderEvents() {
-  const evts = PC_getEvents();
-  const grid = document.getElementById('eventsGrid');
-  if (!evts.length) {
-    grid.innerHTML = `<div class="empty-wrap" style="grid-column:1/-1"><div class="empty-icon">📭</div><p>還沒有任何活動</p><button class="btn btn-accent" onclick="openModal()">建立第一個活動</button></div>`;
+function renderEvents(){
+  const evts=PC_getEvents();
+  const grid=document.getElementById('eventsGrid');
+  if(!evts.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📭</div><p>還沒有任何活動，點左側「建立活動」開始</p></div>`;
     return;
   }
-  grid.innerHTML = evts.map(e => {
-    const paid  = e.members.filter(m=>m.status==='paid').length;
-    const total = e.members.length;
-    const pct   = total ? Math.round(paid/total*100) : 0;
-    const tagCls = e.status==='active' ? 'tag-active' : e.status==='overdue' ? 'tag-overdue' : 'tag-closed';
-    const tagTxt = e.status==='active' ? '進行中'    : e.status==='overdue' ? '已逾期'      : '已結束';
+  grid.innerHTML=evts.map(e=>{
+    const payers=PC_getPayers(e);
+    const paid=payers.filter(m=>m.status==='paid').length;
+    const pct=payers.length?Math.round(paid/payers.length*100):0;
+    const collected=PC_getCollected(e),expected=PC_getExpected(e);
+    const tagCls=e.status==='active'?'badge-green':e.status==='overdue'?'badge-red':'badge-gray';
+    const tagTxt=e.status==='active'?'進行中':e.status==='overdue'?'已逾期':'已結束';
+    const pctColor=pct===100?'green':'';
     return `<div class="event-card" onclick="location.href='event.html?id=${e.id}'">
       <div class="ec-top">
         <div class="ec-title">${e.title}</div>
-        <span class="tag ${tagCls}">${tagTxt}</span>
+        <span class="badge ${tagCls}">${tagTxt}</span>
       </div>
       <div class="ec-meta">
-        <span>💰 $${e.amount}/人</span>
-        <span>👥 ${total} 位成員</span>
+        <span>👥 ${payers.length} 位繳費成員</span>
         <span>📅 ${e.deadline}</span>
       </div>
-      <div class="ec-progress">
-        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-        <div class="progress-text"><span>${paid}/${total} 人已繳</span><span style="color:var(--accent2);font-weight:700">${pct}%</span></div>
+      <div class="ec-revenue">
+        <div class="rev-box"><div class="rev-label">實收金額</div><div class="rev-val collected">$${collected.toLocaleString()}</div></div>
+        <div class="rev-box"><div class="rev-label">應收金額</div><div class="rev-val expected">$${expected.toLocaleString()}</div></div>
+      </div>
+      <div class="ec-progress-wrap">
+        <div class="progress-bar"><div class="progress-fill ${pctColor}" style="width:${pct}%"></div></div>
+        <div class="ec-progress-text"><span>${paid}/${payers.length} 人已繳</span><span style="font-weight:700;color:${pct===100?'var(--green)':'var(--text2)'}">${pct}%</span></div>
       </div>
       <div class="ec-arrow">→</div>
     </div>`;
   }).join('');
 }
 
-// ── Create modal ──
-const defaultDL = new Date(); defaultDL.setDate(defaultDL.getDate()+14);
-document.getElementById('mDeadline').value = defaultDL.toISOString().split('T')[0];
-
-function openModal()  { document.getElementById('createOverlay').classList.add('show'); }
-function closeModal() { document.getElementById('createOverlay').classList.remove('show'); }
-document.getElementById('createOverlay').addEventListener('click', e => { if (e.target===e.currentTarget) closeModal(); });
-
-function createEvent() {
-  const title   = document.getElementById('mTitle').value.trim();
-  const amount  = parseInt(document.getElementById('mAmount').value);
-  const deadline= document.getElementById('mDeadline').value;
-  const desc    = document.getElementById('mDesc').value.trim();
-  const raw     = document.getElementById('mMembers').value.trim();
-  if (!title||!amount||!deadline) { PC_toast('❌ 請填寫必填欄位'); return; }
-  const names   = raw ? raw.split('\n').map(n=>n.trim()).filter(Boolean) : ['成員A','成員B','成員C'];
-  const members = names.map(name => ({name, status:'pending', paidAt:''}));
-  const evts    = PC_getEvents();
-  const newEvt  = { id:'e'+Date.now(), title, amount, deadline, desc, status:'active', members };
-  evts.unshift(newEvt);
-  PC_saveEvents(evts);
-  closeModal();
-  ['mTitle','mAmount','mDesc','mMembers'].forEach(id => document.getElementById(id).value='');
-  renderAll();
-  PC_toast('🎉 活動「' + title + '」建立成功！');
-  setTimeout(() => location.href='event.html?id='+newEvt.id, 800);
-}
-
-function renderAll() { renderStats(); renderEvents(); renderSidebarEvents(); }
-renderAll();
+renderStats(); renderEvents(); renderSidebar();
 </script>
-</body>
-</html>
+</body></html>

@@ -1,0 +1,107 @@
+/* PayClub Shared Styles - Clean Fintech Theme */
+:root{
+  --bg:#f5f6fa;
+  --white:#ffffff;
+  --surface:#f0f1f6;
+  --accent:#4f6ef7;
+  --accent-light:#eef0fe;
+  --accent-dark:#3a56d4;
+  --green:#16a34a;
+  --green-light:#dcfce7;
+  --orange:#d97706;
+  --orange-light:#fef3c7;
+  --red:#dc2626;
+  --red-light:#fee2e2;
+  --text:#111827;
+  --text2:#6b7280;
+  --text3:#9ca3af;
+  --border:#e5e7eb;
+  --border2:#d1d5db;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC','Plus Jakarta Sans',sans-serif;}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;z-index:50;box-shadow:var(--shadow);}
+.sidebar-logo{padding:22px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.2rem;color:var(--accent);}
+.logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
+.sidebar-nav{padding:12px 10px;flex:1;overflow-y:auto;}
+.nav-section{font-size:0.68rem;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;padding:10px 12px 4px;margin-top:6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;color:var(--text2);font-size:0.87rem;font-weight:500;cursor:pointer;transition:all 0.15s;margin-bottom:2px;text-decoration:none;}
+.nav-item:hover{background:var(--surface);color:var(--text);}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600;}
+.nav-item .icon{font-size:1rem;width:18px;text-align:center;flex-shrink:0;}
+.nav-event{font-size:0.82rem;padding:7px 12px 7px 40px;border-radius:8px;color:var(--text2);display:flex;align-items:center;justify-content:space-between;text-decoration:none;transition:all 0.15s;margin-bottom:2px;}
+.nav-event:hover{background:var(--surface);color:var(--text);}
+.nav-event.current{background:var(--accent-light);color:var(--accent);font-weight:600;}
+.sidebar-bottom{padding:12px 10px;border-top:1px solid var(--border);}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;background:var(--surface);cursor:pointer;transition:background 0.15s;}
+.user-card:hover{background:var(--border);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;color:#fff;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:0.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:0.7rem;color:var(--text3);}
+.logout-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.85rem;padding:4px;transition:color 0.15s;}
+.logout-btn:hover{color:var(--red);}
+
+/* MAIN */
+.main{margin-left:240px;flex:1;padding:32px 36px;min-height:100vh;}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text);letter-spacing:-0.02em;}
+.page-sub{color:var(--text2);font-size:0.88rem;margin-top:4px;}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:9px;font-size:0.87rem;font-weight:600;cursor:pointer;border:none;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;text-decoration:none;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,110,247,0.3);}
+.btn-secondary{background:var(--white);color:var(--text);border:1.5px solid var(--border);}
+.btn-secondary:hover{border-color:var(--border2);background:var(--surface);}
+.btn-ghost{background:transparent;color:var(--text2);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:var(--surface);color:var(--text);}
+.btn-green{background:var(--green-light);color:var(--green);border:1px solid #bbf7d0;}
+.btn-green:hover{background:#bbf7d0;}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #fecaca;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:700;}
+.badge-green{background:var(--green-light);color:var(--green);}
+.badge-orange{background:var(--orange-light);color:var(--orange);}
+.badge-red{background:var(--red-light);color:var(--red);}
+.badge-gray{background:var(--surface);color:var(--text2);}
+.badge-blue{background:var(--accent-light);color:var(--accent);}
+
+/* FORM */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:0.8rem;font-weight:600;color:var(--text2);margin-bottom:6px;}
+.form-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-size:0.92rem;font-family:'Noto Sans TC',sans-serif;outline:none;transition:border-color 0.15s;}
+.form-input:focus{border-color:var(--accent);}
+select.form-input{cursor:pointer;}
+textarea.form-input{resize:vertical;}
+
+/* PROGRESS */
+.progress-bar{height:6px;background:var(--surface);border-radius:100px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),#06b6d4);transition:width 0.8s cubic-bezier(0.16,1,0.3,1);}
+.progress-fill.green{background:linear-gradient(90deg,var(--green),#4ade80);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;border-radius:10px;padding:12px 18px;font-size:0.87rem;transform:translateY(60px);opacity:0;transition:all 0.3s;z-index:9999;box-shadow:var(--shadow-md);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(2px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:32px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.15);animation:slideUp 0.25s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:20px;color:var(--text);}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:20px 16px;}
+}
