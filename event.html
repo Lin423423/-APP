@@ -208,7 +208,7 @@ body{display:flex;}
 </div>
 <div class="toast" id="toast"></div>
 <script>
-const user=PC_requireAdmin();if(!user)throw new Error('r');
+const user = PC_requireAdmin(); if(!user) throw new Error('r');
 PC_fillSidebarUser();
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
