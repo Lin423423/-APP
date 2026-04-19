@@ -71,20 +71,23 @@ body{display:flex;}
   <div class="sidebar-logo"><div class="logo-dot"></div>PayClub</div>
   <nav class="sidebar-nav">
     <a class="nav-item" href="dashboard.html"><span class="icon">🏠</span>總覽</a>
-    <a class="nav-item active" href="create.html"><span class="icon">➕</span>建立活動</a>
+    <a class="nav-item" href="create.html"><span class="icon">➕</span>建立活動</a>
     <a class="nav-item" href="member.html"><span class="icon">🤝</span>加入活動</a>
     <a class="nav-item" href="report.html"><span class="icon">📊</span>財務報表</a>
-    <a class="nav-item" href="pay.html"><span class="icon">💳</span>繳費範例</a>
     <div class="nav-section">我的活動</div>
     <div id="sidebarEvents"></div>
     <a class="nav-item" href="index.html"><span class="icon">🌐</span>首頁</a>
+    <a class="nav-item" href="notifications.html" style="position:relative">
+      <span class="icon">🔔</span>通知
+      <span class="badge-notify" id="notifBadge" style="display:none">0</span>
+    </a>
   </nav>
   <div class="sidebar-bottom">
     <div class="user-card">
-      <div class="avatar" id="avatarInitial">幹</div>
+      <div class="avatar" id="avatarInitial">?</div>
       <div class="user-info">
         <div class="user-name" id="userName">載入中</div>
-        <div class="user-role" id="userEmail">PayClub 會員</div>
+        <div class="user-role" id="userEmail" style="font-size:0.6rem; opacity:0.8">email...</div>
       </div>
       <button class="logout-btn" onclick="PC_logout()">登出</button>
     </div>
@@ -105,15 +108,6 @@ body{display:flex;}
       <div class="form-card">
         <div class="form-card-title">📋 活動基本資訊</div>
         <div class="form-group"><label class="form-label">活動名稱 *</label><input type="text" id="s1Title" class="form-input" placeholder="例：2025 迎新活動費用"></div>
-        <div class="form-group">
-          <label class="form-label">收款金額設定 *</label>
-          <div class="amount-tabs">
-            <button class="amt-tab active" id="tabPer" onclick="setAmtMode('per_person')">每人固定金額</button>
-            <button class="amt-tab" id="tabCustom" onclick="setAmtMode('custom')">各自設定金額</button>
-          </div>
-          <div id="perPersonWrap"><input type="number" id="s1Amount" class="form-input" placeholder="每人應繳金額（例：300）" min="1"></div>
-          <div id="customWrap" style="display:none"><div class="info-note">💡 選擇此模式後，可在成員設定中為每人指定不同金額</div></div>
-        </div>
         <div class="form-group">
           <label class="form-label">截止日期 *</label>
           <div class="date-row">
@@ -263,10 +257,10 @@ function renderMemberList(){
   list.innerHTML=members.map((m,i)=>`<div class="member-tag"><div class="member-tag-left"><div class="m-av" style="background:${RC[m.role]||'#9ca3af'}">${m.email.slice(0,1).toUpperCase()}</div><div class="m-email-text">${m.email}</div><span class="role-badge ${RB[m.role]||''}">${RL[m.role]||m.role}</span></div><button class="m-remove" onclick="removeMember(${i})">✕</button></div>`).join('');
 }
 function goStep(n){[1,2,3].forEach(i=>{document.getElementById('s'+i).style.display=i===n?'block':'none';document.getElementById('si'+i).className='step-item'+(i<n?' done':i===n?' active':'');if(i<3)document.getElementById('sl'+i).className='step-line'+(i<n?' done':'');});document.getElementById('sSuccess').style.display='none';}
-function goStep2(){const title=document.getElementById('s1Title').value.trim();const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value,d=document.getElementById('dlDay').value;if(!title){PC_toast('請填寫活動名稱');return;}if(amtMode==='per_person'&&!document.getElementById('s1Amount').value){PC_toast('請填寫每人金額');return;}if(!y||!mo||!d){PC_toast('請選擇完整截止日期');return;}goStep(2);}
-function goStep3(){const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const dl=`${y}-${mo}-${d}`;const amt=parseFloat(document.getElementById('s1Amount').value)||0;document.getElementById('previewInfo').innerHTML=`<div class="prev-box"><div class="prev-label">活動名稱</div><div class="prev-val">${document.getElementById('s1Title').value}</div></div><div class="prev-box"><div class="prev-label">截止日期</div><div class="prev-val">${dl}</div></div><div class="prev-box"><div class="prev-label">金額模式</div><div class="prev-val">${amtMode==='per_person'?'每人 $'+amt:'各自設定'}</div></div><div class="prev-box"><div class="prev-label">預先新增成員</div><div class="prev-val">${members.length} 人</div></div>`;document.getElementById('previewMembers').innerHTML=members.length?members.map(m=>`<tr><td>${m.email}</td><td><span class="badge ${m.role==='counter'?'badge-orange':'badge-green'}">${RL[m.role]}</span></td></tr>`).join(''):'<tr><td colspan="2" style="color:var(--text3);text-align:center">無（繳費者將透過邀請碼加入）</td></tr>';goStep(3);}
+function goStep2(){const title=document.getElementById('s1Title').value.trim();const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value,d=document.getElementById('dlDay').value;if(!title){PC_toast('請填寫活動名稱');return;}if(!y||!mo||!d){PC_toast('請選擇完整截止日期');return;}goStep(2);}
+function goStep3(){const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const dl=`${y}-${mo}-${d}`;const amt=0;document.getElementById('previewInfo').innerHTML=`<div class="prev-box"><div class="prev-label">活動名稱</div><div class="prev-val">${document.getElementById('s1Title').value}</div></div><div class="prev-box"><div class="prev-label">截止日期</div><div class="prev-val">${dl}</div></div><div class="prev-box"><div class="prev-label">金額模式</div><div class="prev-val">${amtMode==='per_person'?'每人 $'+amt:'建立後設定'}</div></div><div class="prev-box"><div class="prev-label">預先新增成員</div><div class="prev-val">${members.length} 人</div></div>`;document.getElementById('previewMembers').innerHTML=members.length?members.map(m=>`<tr><td>${m.email}</td><td><span class="badge ${m.role==='counter'?'badge-orange':'badge-green'}">${RL[m.role]}</span></td></tr>`).join(''):'<tr><td colspan="2" style="color:var(--text3);text-align:center">無（繳費者將透過邀請碼加入）</td></tr>';goStep(3);}
 let createdId=null,createdCode='';
-function submitCreate(){const title=document.getElementById('s1Title').value.trim();const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const dl=`${y}-${mo}-${d}`;const desc=document.getElementById('s1Desc').value.trim();const amt=parseFloat(document.getElementById('s1Amount').value)||0;const code=PC_genInviteCode();const evts=PC_getEvents();createdId='e'+Date.now();createdCode=code;const newEvt={id:createdId,title,amountMode:amtMode,amount:amt,deadline:dl,desc,status:'active',inviteCode:code,members:members.map(m=>({...m}))};evts.unshift(newEvt);PC_saveEvents(evts);document.getElementById('inviteCode').textContent=code;const link=location.href.replace('create.html','pay.html')+'?event='+createdId;document.getElementById('generatedLink').textContent=link;[1,2,3].forEach(i=>{document.getElementById('s'+i).style.display='none';document.getElementById('si'+i).className='step-item done';if(i<3)document.getElementById('sl'+i).className='step-line done';});document.getElementById('sSuccess').style.display='block';}
+function submitCreate(){const title=document.getElementById('s1Title').value.trim();const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const dl=`${y}-${mo}-${d}`;const desc=document.getElementById('s1Desc').value.trim();const amt=0;const code=PC_genInviteCode();const evts=PC_getEvents();createdId='e'+Date.now();createdCode=code;const newEvt={id:createdId,title,amountMode:amtMode,amount:amt,deadline:dl,desc,status:'active',inviteCode:code,members:members.map(m=>({...m}))};evts.unshift(newEvt);PC_saveEvents(evts);document.getElementById('inviteCode').textContent=code;const link=location.href.replace('create.html','pay.html')+'?event='+createdId;document.getElementById('generatedLink').textContent=link;[1,2,3].forEach(i=>{document.getElementById('s'+i).style.display='none';document.getElementById('si'+i).className='step-item done';if(i<3)document.getElementById('sl'+i).className='step-line done';});document.getElementById('sSuccess').style.display='block';}
 function copyInviteCode(){PC_copyText(createdCode,'🔑 邀請碼已複製：'+createdCode);}
 function copyLink(){PC_copyText(document.getElementById('generatedLink').textContent,'🔗 連結已複製');}
 function goToEvent(){location.href='event.html?id='+createdId;}
