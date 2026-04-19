@@ -105,23 +105,37 @@ document.getElementById('navName').textContent=user.name;
 function getMemberJoined(){ return JSON.parse(localStorage.getItem('pc_member_joined__'+user.email)||'[]'); }
 function saveMemberJoined(e){ localStorage.setItem('pc_member_joined__'+user.email,JSON.stringify(e)); }
 
-function joinEvent(){
-  const code=document.getElementById('inviteInput').value.trim().toUpperCase();
-  const errEl=document.getElementById('inviteErr');
-  if(code.length<4){errEl.textContent='請輸入邀請碼';errEl.style.display='block';return;}
-  const result=PC_findEventByCode(code);
-  if(!result){errEl.textContent='找不到此邀請碼，請確認後重試';errEl.style.display='block';return;}
-  errEl.style.display='none';
-  const joined=getMemberJoined();
-  if(joined.find(j=>j.eventId===result.event.id)){PC_toast('你已送出申請或加入此活動');return;}
-  const reqs=PC_getJoinRequests(result.event.id);
-  const alreadyReq=reqs.find(r=>r.email===user.email);
-  if(alreadyReq){PC_toast(alreadyReq.status==='pending'?'申請已送出，等待審核':alreadyReq.status==='rejected'?'申請已被拒絕':'已加入此活動');return;}
-  reqs.push({email:user.email,name:user.name,requestedAt:new Date().toISOString(),status:'pending',suggestedRole:'payer'});
-  PC_saveJoinRequests(result.event.id,reqs);
-  joined.push({eventId:result.event.id,eventTitle:result.event.title,ownerKey:result.ownerKey});
+function joinEvent() {
+  const code = document.getElementById('inviteInput').value.trim().toUpperCase();
+  const errEl = document.getElementById('inviteErr');
+  if(code.length < 4) { errEl.textContent = '請輸入邀請碼'; errEl.style.display = 'block'; return; }
+  
+  const result = PC_findEventByCode(code);
+  if(!result) { errEl.textContent = '找不到此邀請碼，請確認後重試'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+
+  const joined = getMemberJoined();
+  if(joined.find(j => j.eventId === result.event.id)) { PC_toast('你已在活動中'); return; }
+
+  const reqs = PC_getJoinRequests(result.event.id);
+  let myReq = reqs.find(r => r.email === user.email);
+
+  if(myReq && myReq.status === 'pending') {
+    PC_toast('申請已送出，等待審核中'); return;
+  }
+
+  if(myReq) {
+    myReq.status = 'pending';
+    myReq.requestedAt = new Date().toISOString();
+  } else {
+    reqs.push({ email: user.email, name: user.name, requestedAt: new Date().toISOString(), status: 'pending' });
+  }
+  PC_saveJoinRequests(result.event.id, reqs);
+
+  joined.push({ eventId: result.event.id, eventTitle: result.event.title, ownerKey: result.ownerKey });
   saveMemberJoined(joined);
-  document.getElementById('inviteInput').value='';
+  PC_sendNotify(result.ownerEmail, "新加入申請", `${user.name} 申請加入活動《${result.event.title}》`);
+  document.getElementById('inviteInput').value = '';
   PC_toast('✅ 申請已送出！等待管理員審核');
   renderJoined();
 }
@@ -218,8 +232,26 @@ function renderJoined(){
 }
 
 function toggleDetail(id){ const el=document.getElementById('detail_'+id); if(el)el.classList.toggle('open'); }
-function leaveEvent(e,idx){ e.stopPropagation(); const joined=getMemberJoined(); if(!confirm('確定退出「'+joined[idx].eventTitle+'」？'))return; joined.splice(idx,1); saveMemberJoined(joined); renderJoined(); PC_toast('已退出活動'); }
+function leaveEvent(e, idx) {
+  e.stopPropagation();
+  const joined = getMemberJoined();
+  const j = joined[idx];
+  
+  if(!confirm('確定退出「' + j.eventTitle + '」？')) return;
 
+  const res = PC_findEventById(j.eventId);
+  if(res) {
+    PC_updateEventInStorage(res.ownerKey, j.eventId, evt => {
+      const m = evt.members.find(x => x.email === user.email);
+      if(m) m.status = 'exited'; 
+    });
+        PC_sendNotify(res.ownerEmail, "成員退出", `${user.name} 已退出活動《${j.eventTitle}》`);
+  }
+  joined.splice(idx, 1);
+  saveMemberJoined(joined);
+  renderJoined();
+  PC_toast('✅ 已退出活動');
+}
 renderJoined();
 </script>
 </body></html>
