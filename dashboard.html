@@ -175,10 +175,13 @@ function getPayMethods(){
   return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_METHODS));
 }
 function savePayMethods(){
-  localStorage.setItem('pc_pay_methods__'+user.email, JSON.stringify(getPayMethods().map((m,i)=>{
-    const chip = document.querySelectorAll('.method-chip')[i];
-    return chip ? {...m, active: chip.classList.contains('active')} : m;
-  })));
+  const methods = getPayMethods();
+  const chips = document.querySelectorAll('.method-chip');
+  const updated = methods.map((m, i) => {
+    if(chips[i]) return { ...m, active: chips[i].classList.contains('active') };
+    return m;
+  });
+  localStorage.setItem('pc_pay_methods__' + user.email, JSON.stringify(updated));
   PC_toast('✅ 繳費方式已儲存');
 }
 function renderPayMethods(){
@@ -271,7 +274,12 @@ function renderEvents(){
   }).join('');
 }
 
-function renderAll(){ renderStats(); renderEvents(); renderSidebar(); }
+function renderAll(){ 
+  renderStats(); 
+  renderEvents(); 
+  renderSidebar(); 
+}
+
 renderPayMethods();
 renderAll();
 </script>
