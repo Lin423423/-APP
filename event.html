@@ -130,6 +130,7 @@ body{display:flex;}
       <button class="btn btn-ghost" onclick="renderPage()">🔄 更新</button>
       <button class="btn btn-ghost" id="joinReqBtn" onclick="toggleJoinPanel()" style="display:none">👥 加入申請 <span id="joinReqCount" class="badge badge-orange" style="margin-left:4px;display:none"></span></button>
       <button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>
+      <button class="btn btn-ghost" onclick="batchUpdateAmount()">💰 批次改金額</button>
       <button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>
       <button class="btn btn-primary" onclick="openAdd()">+ 新增成員</button>
     </div>
@@ -302,23 +303,34 @@ function renderMembers(){
   else if(cf==='pending')ms=ms.filter(m=>m.status==='pending');
   else if(cf==='overdue')ms=ms.filter(m=>m.status==='overdue');
   if(!ms.length){document.getElementById('memberList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);font-size:0.84rem;">沒有符合的成員</div>';return;}
+  
   document.getElementById('memberList').innerHTML=ms.map(m=>{
     const ri=(evt.members||[]).indexOf(m);
-    const amt=m.role==='payer'?'$'+PC_getExpectedAmount(evt,m):'—';
-    const bc=m.role!=='payer'?'badge-gray':(m.status==='paid'?'badge-green':m.status==='overdue'?'badge-red':'badge-orange');
-    const bt=m.role!=='payer'?RL[m.role]:(m.status==='paid'?'已繳費':m.status==='overdue'?'逾期':'待繳費');
+    const roles = Array.isArray(m.role) ? m.role : [m.role];
+    const isPayer = roles.includes('payer');
+    const amt = isPayer ? '$'+PC_getExpectedAmount(evt,m) : '—';
+    
+    let bc = 'badge-gray', bt = '';
+    if(!isPayer) {
+      bt = roles.map(r=>RL[r]||r).join('+');
+    } else {
+      bc = m.status==='paid'?'badge-green':m.status==='overdue'?'badge-red':'badge-orange';
+      bt = m.status==='paid'?'已繳費':m.status==='overdue'?'逾期':'待繳費';
+    }
+    const roleBadges = roles.map(r=>`<span class="badge ${RB[r]||'badge-gray'}" style="font-size:0.63rem;padding:1px 6px">${RL[r]||r}</span>`).join(' ');
+    
     const txDetail=m.txId?`<div style="font-size:0.72rem;color:var(--text3);margin-top:3px;">編號：${m.txId}${m.remark?' | 備註：'+m.remark:''}</div>`:'';
     return `<div>
-      <div class="member-row" onclick="toggleMemberDetail(${ri})" style="cursor:pointer;">
-        <div class="m-av" style="background:${RC[m.role]||'#9ca3af'}">${(m.email||m.name||'?').slice(0,1).toUpperCase()}</div>
+      <div class="member-row" onclick="toggleMemberDetail(${ri})" style="cursor:pointer; ${m.status==='exited'?'opacity:0.5;filter:grayscale(1);':''}">
+        <div class="m-av" style="background:#9ca3af">${(m.email||m.name||'?').slice(0,1).toUpperCase()}</div>
         <div class="m-info">
-          <div class="m-name">${m.email||m.name||'—'} <span class="badge ${RB[m.role]||'badge-gray'}" style="font-size:0.63rem;padding:1px 6px">${RL[m.role]||m.role}</span></div>
+          <div class="m-name">${m.email||m.name||'—'} ${roleBadges} ${m.status==='exited'?'<span class="badge badge-gray">已退出</span>':''}</div>
           <div class="m-email">${m.paidAt||'—'}</div>
           ${txDetail}
         </div>
         <div class="m-amount">${amt}</div>
         <span class="badge ${bc}">${bt}</span>
-        ${m.role==='payer'&&m.status!=='paid'?`<button class="mark-btn" onclick="event.stopPropagation();markPaid(${ri})">✓</button>`:''}
+        ${isPayer&&m.status!=='paid'&&m.status!=='exited'?`<button class="mark-btn" onclick="event.stopPropagation();markPaid(${ri})">✓</button>`:''}
         <button class="del-btn" onclick="event.stopPropagation();delMember(${ri})">✕</button>
       </div>
       <div id="mdetail_${ri}" style="display:none;background:var(--surface);padding:10px 18px;border-bottom:1px solid var(--border);font-size:0.8rem;color:var(--text2);">
