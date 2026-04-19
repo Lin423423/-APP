@@ -139,7 +139,14 @@ body{display:flex;}
   </div>
 
   <div class="section-header">
-    <div class="section-title">所有活動</div>
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <div class="section-title">活動列表</div>
+      <div class="dash-filter-wrap">
+        <button class="dash-filter-btn active" onclick="setDashFilter('all', this)">全部</button>
+        <button class="dash-filter-btn" onclick="setDashFilter('created', this)">已建立</button>
+        <button class="dash-filter-btn" onclick="setDashFilter('joined', this)">已加入</button>
+      </div>
+    </div>
     <button class="btn btn-ghost" id="selBtn" onclick="toggleSel()" style="font-size:0.8rem;padding:6px 12px;">☑ 選取</button>
   </div>
   <div class="events-grid" id="eventsGrid"></div>
@@ -217,14 +224,46 @@ function addCustomMethod(){
   PC_toast('✅ 已新增「'+name+'」');
 }
 
-// ── Sidebar ──
+// ── Sidebar (升級版下拉選單) ──
+let currentDashFilter = 'all';
+
+function setDashFilter(filter, el) {
+  currentDashFilter = filter;
+  document.querySelectorAll('.dash-filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderEvents();
+}
+
+function toggleSideMenu(id) {
+  document.getElementById(id).classList.toggle('open');
+  document.getElementById(id + '_icon').classList.toggle('open');
+}
+
 function renderSidebar(){
-  const evts = PC_getEvents();
-  document.getElementById('sidebarEvents').innerHTML = evts.map(e=>{
-    const p=PC_getPayers(e),paid=p.filter(m=>m.status==='paid').length,pct=p.length?Math.round(paid/p.length*100):0;
-    return `<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span><span style="font-size:0.7rem;color:var(--text3);flex-shrink:0;margin-left:5px">${pct}%</span></a>`;
-  }).join('');
-  PC_fillSidebarUser();
+  const evts = PC_getAllMyEvents();
+  const created = evts.filter(e => e._isOwner);
+  const joined = evts.filter(e => !e._isOwner);
+  
+  const curId = (typeof eventId !== 'undefined') ? eventId : null;
+  let html = '';
+  
+  // 已建立活動區塊
+  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('menu_created')">已建立活動 <span class="chevron open" id="menu_created_icon">▼</span></div>`;
+  html += `<div class="sidebar-menu-list open" id="menu_created">`;
+  if(!created.length) html += `<div style="padding:6px 12px; font-size:0.75rem; color:var(--text3)">無資料</div>`;
+  html += created.map(e => `<a class="nav-event${e.id===curId?' current':''}" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
+  html += `</div>`;
+
+  // 已加入活動區塊
+  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('menu_joined')">已加入活動 <span class="chevron open" id="menu_joined_icon">▼</span></div>`;
+  html += `<div class="sidebar-menu-list open" id="menu_joined">`;
+  if(!joined.length) html += `<div style="padding:6px 12px; font-size:0.75rem; color:var(--text3)">無資料</div>`;
+  html += joined.map(e => `<a class="nav-event" href="member.html"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
+  html += `</div>`;
+
+  const container = document.getElementById('sidebarEvents');
+  if(container) container.innerHTML = html;
+  if(typeof PC_fillSidebarUser === 'function') PC_fillSidebarUser();
 }
 
 // ── Stats ──
@@ -268,11 +307,16 @@ function clearSel(){selIds.clear();document.getElementById('bulkBar').style.disp
 // ── Copy invite ──
 function copyInvite(code,e){e.stopPropagation();PC_copyText(code,'🔑 邀請碼已複製：'+code);}
 
-// ── Events ──
+// ── Events (支援分類過濾) ──
 function renderEvents(){
-  const evts = PC_getAllMyEvents(); 
+  let evts = PC_getAllMyEvents(); 
+  
+  // 🌟 核心修改：根據選擇的分類進行過濾
+  if(currentDashFilter === 'created') evts = evts.filter(e => e._isOwner);
+  if(currentDashFilter === 'joined') evts = evts.filter(e => !e._isOwner);
+
   const grid = document.getElementById('eventsGrid');
-  if(!evts.length){grid.innerHTML='<div class="empty-state"><div style="font-size:2.5rem;opacity:0.4;margin-bottom:12px">📭</div><p>還沒有活動，點左側「建立活動」開始</p></div>';return;}
+  if(!evts.length){grid.innerHTML='<div class="empty-state"><div style="font-size:2.5rem;opacity:0.4;margin-bottom:12px">📭</div><p>沒有符合的活動資料</p></div>';return;}
   
   grid.innerHTML = evts.map(e => {
     const isOwner = e._isOwner;
@@ -289,7 +333,7 @@ function renderEvents(){
     const reqs=PC_getJoinRequests(e.id);
     const pending=reqs.filter(r=>r.status==='pending').length;
     
-    // 🌟 修正：加回選取模式的判斷邏輯與打勾 UI
+    // 選取模式判斷
     const isSel = selIds.has(e.id);
     const oc = selMode ? `toggleCard('${e.id}',event)` : `location.href='${isOwner ? 'event.html?id='+e.id : 'member.html'}'`;
 
@@ -310,7 +354,6 @@ function renderEvents(){
     </div>`;
   }).join('');
 }
-
 function renderAll(){ renderStats(); renderEvents(); renderSidebar(); }
 renderPayMethods();
 renderAll();
