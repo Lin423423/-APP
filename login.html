@@ -9,10 +9,9 @@
 body{display:flex;min-height:100vh;}
 .left{flex:1;background:#2d3a8c;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 40px;position:relative;overflow:hidden;}
 .left::before{content:'';position:absolute;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,0.05);top:-80px;right:-80px;}
-.left::after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.04);bottom:-40px;left:-40px;}
 .left-inner{position:relative;z-index:1;color:#fff;text-align:center;max-width:300px;}
 .left-icon{font-size:2.2rem;margin-bottom:16px;}
-.left-inner h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:2rem;font-weight:800;margin-bottom:10px;letter-spacing:-0.03em;}
+.left-inner h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:2rem;font-weight:800;margin-bottom:10px;}
 .left-inner p{color:rgba(255,255,255,0.65);font-size:0.9rem;line-height:1.7;margin-bottom:36px;}
 .feat-list{display:flex;flex-direction:column;gap:9px;text-align:left;width:100%;}
 .feat-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.08);border-radius:9px;padding:11px 14px;font-size:0.85rem;color:rgba(255,255,255,0.9);font-weight:500;}
@@ -30,7 +29,6 @@ body{display:flex;min-height:100vh;}
 .role-btn{flex:1;padding:10px 8px;border:1.5px solid var(--border);border-radius:9px;background:var(--white);color:var(--text2);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;text-align:center;}
 .role-btn.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
 .role-desc{font-size:0.75rem;color:var(--text3);margin-bottom:14px;padding:8px 12px;background:var(--surface);border-radius:7px;line-height:1.6;}
-.role-desc strong{color:var(--text2);}
 .submit-btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;margin-top:4px;}
 .submit-btn:hover{background:var(--accent-dark);}
 .divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
@@ -64,46 +62,40 @@ input.err{border-color:var(--red)!important;}
     <button class="tab active" id="tabLogin" onclick="switchTab('login')">登入</button>
     <button class="tab" id="tabReg" onclick="switchTab('register')">註冊</button>
   </div>
-
-  <!-- LOGIN -->
   <div id="loginForm">
     <div class="form-title">歡迎回來</div>
-    <div class="form-sub">登入後狀態持久保存，主動登出才失效</div>
-    <div class="demo-box">🎮 <strong>Demo 帳號：</strong>demo@payclub.app　密碼：demo123<br><button class="demo-fill" onclick="fillDemo()">⚡ 一鍵填入</button></div>
+    <div class="form-sub">登入後此分頁保持登入狀態，不影響其他分頁</div>
+    <div class="demo-box">🎮 <strong>Demo 管理員：</strong>demo@payclub.app　密碼：demo123<br><button class="demo-fill" onclick="fillDemo()">⚡ 一鍵填入</button></div>
     <div class="form-group"><label class="form-label">Email</label><input type="email" id="lEmail" class="form-input" placeholder="your@email.com"><div class="err-msg" id="lEmailErr">請輸入有效 Email</div></div>
     <div class="form-group"><label class="form-label">密碼</label><input type="password" id="lPwd" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleLogin()"><div class="err-msg" id="lPwdErr">密碼不得少於 6 字</div></div>
     <button class="submit-btn" onclick="handleLogin()">登入</button>
     <div class="divider"><span>或</span></div>
-    <button class="google-btn" onclick="handleGoogle()"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>使用 Google 帳號登入（幹部）</button>
+    <button class="google-btn" onclick="handleGoogle()"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>使用 Google 帳號登入（管理員）</button>
   </div>
-
-  <!-- REGISTER -->
   <div id="regForm" style="display:none">
     <div class="form-title">建立帳號</div>
-    <div class="form-sub">選擇你的身份，功能權限會有所不同</div>
+    <div class="form-sub">選擇身份，功能權限會有所不同</div>
     <div class="form-group"><label class="form-label">姓名</label><input type="text" id="rName" class="form-input" placeholder="林小明"></div>
     <div class="form-group"><label class="form-label">Email</label><input type="email" id="rEmail" class="form-input" placeholder="your@email.com"></div>
     <div class="form-group"><label class="form-label">密碼（至少 6 字）</label><input type="password" id="rPwd" class="form-input" placeholder="••••••••"></div>
     <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:8px;">選擇身份</div>
     <div class="role-row">
-      <button class="role-btn active" id="rLeader" onclick="setRole('leader')">👑 社團幹部</button>
-      <button class="role-btn" id="rMember" onclick="setRole('member')">🎓 一般成員</button>
+      <button class="role-btn active" id="rAdmin" onclick="setRole('admin')">👑 管理員</button>
+      <button class="role-btn" id="rObs" onclick="setRole('observer')">👁 觀察者</button>
+      <button class="role-btn" id="rPayer" onclick="setRole('payer')">💳 繳費者</button>
     </div>
     <div class="role-desc" id="roleDesc">
-      <strong>社團幹部：</strong>可建立活動、管理成員、查看報表、發送催款提醒。每個活動會自動生成邀請碼供成員加入。
+      <strong>管理員：</strong>可建立活動、管理成員、審核加入申請、查看完整報表、發送催款提醒。
     </div>
     <button class="submit-btn" onclick="handleRegister()">建立帳號</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
-if(PC_isLoggedIn()){
-  const u=PC_getUser();
-  const p=new URLSearchParams(location.search);
-  location.href=p.get('next')||(u.role==='leader'?'dashboard.html':'member.html');
-}
-const urlp=new URLSearchParams(location.search);
-if(urlp.get('mode')==='register')switchTab('register');
+// Use sessionStorage for per-tab isolation - don't auto-redirect if already logged in
+// (User may want to log into different account in new tab)
+const urlp = new URLSearchParams(location.search);
+if(urlp.get('mode')==='register') switchTab('register');
 
 function switchTab(t){
   document.getElementById('loginForm').style.display=t==='login'?'block':'none';
@@ -112,29 +104,27 @@ function switchTab(t){
   document.getElementById('tabReg').classList.toggle('active',t==='register');
 }
 function fillDemo(){document.getElementById('lEmail').value='demo@payclub.app';document.getElementById('lPwd').value='demo123';}
-
-let selectedRole='leader';
+let selectedRole='admin';
 const ROLE_DESCS={
-  leader:'<strong>社團幹部：</strong>可建立活動、管理成員、查看報表、發送催款提醒。每個活動自動生成邀請碼。',
-  member:'<strong>一般成員：</strong>需輸入幹部提供的邀請碼加入活動，可查看活動資訊並繳費。無法建立活動或查看報表。'
+  admin:'<strong>管理員：</strong>可建立活動、管理成員、審核加入申請、查看完整報表、發送催款提醒。',
+  observer:'<strong>觀察者：</strong>輸入邀請碼後加入活動，可查看總覽資訊，無法建立活動或管理成員。',
+  payer:'<strong>繳費者：</strong>輸入邀請碼後加入活動，可查看成員名單、各人應繳金額及自己的繳費狀態。'
 };
 function setRole(r){
   selectedRole=r;
-  document.getElementById('rLeader').classList.toggle('active',r==='leader');
-  document.getElementById('rMember').classList.toggle('active',r==='member');
+  ['rAdmin','rObs','rPayer'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(r==='admin'?'rAdmin':r==='observer'?'rObs':'rPayer').classList.add('active');
   document.getElementById('roleDesc').innerHTML=ROLE_DESCS[r];
 }
-
 function redirect(user){
   PC_registerUser(user);
   PC_logActivity(user,'login');
-  localStorage.setItem('pc_current_user',JSON.stringify(user));
+  // Store in sessionStorage (per-tab)
+  sessionStorage.setItem('pc_current_user',JSON.stringify(user));
   PC_toast('✓ 登入成功');
-  const p=new URLSearchParams(location.search);
-  const next=p.get('next')||(user.role==='leader'?'dashboard.html':'member.html');
-  setTimeout(()=>location.href=next,700);
+  const next = urlp.get('next') || (user.role==='admin'?'dashboard.html':'member.html');
+  setTimeout(()=>location.href=next, 700);
 }
-
 function handleLogin(){
   const email=document.getElementById('lEmail').value.trim(),pwd=document.getElementById('lPwd').value;
   let ok=true;
@@ -144,7 +134,8 @@ function handleLogin(){
   else{document.getElementById('lPwd').classList.remove('err');document.getElementById('lPwdErr').classList.remove('show');}
   if(!ok)return;
   if(email==='demo@payclub.app'&&pwd==='demo123'){return redirect({...DEMO_USER});}
-  const users=JSON.parse(localStorage.getItem('pc_users')||'[]'),user=users.find(u=>u.email===email&&u.pwd===pwd);
+  const users=JSON.parse(localStorage.getItem('pc_users')||'[]');
+  const user=users.find(u=>u.email===email&&u.pwd===pwd);
   if(user){return redirect(user);}
   PC_toast('Email 或密碼錯誤');
 }
@@ -158,8 +149,7 @@ function handleRegister(){
   redirect(nu);
 }
 function handleGoogle(){
-  // Google login = leader by default
-  const u={name:'Google 用戶',email:'google_'+Date.now()+'@gmail.com',role:'leader'};
+  const u={name:'Google 用戶',email:'google_'+Date.now()+'@gmail.com',role:'admin'};
   redirect(u);
 }
 </script>

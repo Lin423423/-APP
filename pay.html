@@ -4,122 +4,114 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>線上繳費 — PayClub</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css">
-<script src="pc_auth.js"></script>
+<link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{min-height:100vh;background:var(--bg);}
-.pay-nav{background:var(--white);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);}
-.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text2);font-size:0.87rem;font-weight:600;text-decoration:none;cursor:pointer;padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
+.pay-nav{background:var(--white);border-bottom:1px solid var(--border);padding:13px 28px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);}
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text2);font-size:0.86rem;font-weight:600;text-decoration:none;cursor:pointer;padding:7px 13px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
 .back-btn:hover{border-color:var(--border2);background:var(--surface);color:var(--text);}
 .nav-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);margin-left:auto;display:flex;align-items:center;gap:6px;}
-.nav-logo-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;}
-
-/* HORIZONTAL LAYOUT for desktop */
-.pay-wrap{max-width:900px;margin:40px auto;padding:0 24px;}
+.pay-wrap{max-width:860px;margin:32px auto;padding:0 20px;}
 .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
 .pay-info-card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);}
-.pay-info-header{background:var(--accent);padding:24px 28px;color:#fff;}
-.pay-badge{display:inline-block;background:rgba(255,255,255,0.2);border-radius:100px;padding:4px 12px;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px;}
-.pay-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:6px;line-height:1.2;}
-.pay-desc{color:rgba(255,255,255,0.8);font-size:0.87rem;line-height:1.6;}
-.pay-info-body{padding:24px 28px;}
-.amount-display{text-align:center;padding:20px;background:var(--surface);border-radius:12px;margin-bottom:16px;}
-.amount-label{font-size:0.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
-.amount-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:3rem;font-weight:800;color:var(--accent);letter-spacing:-0.04em;line-height:1;}
-.deadline-tag{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:8px;font-size:0.8rem;color:var(--text2);}
+.pay-info-header{background:var(--accent);padding:22px 26px;color:#fff;}
+.pay-badge{display:inline-block;background:rgba(255,255,255,0.2);border-radius:100px;padding:4px 12px;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;}
+.pay-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:5px;line-height:1.2;}
+.pay-desc{color:rgba(255,255,255,0.8);font-size:0.86rem;line-height:1.6;}
+.pay-info-body{padding:22px 26px;}
+.amount-display{text-align:center;padding:18px;background:var(--surface);border-radius:12px;margin-bottom:14px;}
+.amount-label{font-size:0.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;}
+.amount-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.8rem;font-weight:800;color:var(--accent);letter-spacing:-0.04em;line-height:1;}
+.deadline-tag{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:7px;font-size:0.8rem;color:var(--text2);}
 .deadline-tag.urgent{color:var(--red);}
-.info-rows{display:flex;flex-direction:column;gap:10px;}
-.info-row{display:flex;justify-content:space-between;align-items:center;font-size:0.87rem;}
+.info-rows{display:flex;flex-direction:column;gap:9px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;font-size:0.86rem;}
 .info-row-label{color:var(--text2);}
 .info-row-val{font-weight:600;}
-
-.pay-form-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:var(--shadow);}
-.pay-form-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:20px;color:var(--text);}
+.pay-form-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:26px;box-shadow:var(--shadow);}
+.pay-form-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:18px;}
 .pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
-.pay-method{padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:all 0.15s;}
+.pay-method{padding:13px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:all 0.15s;}
 .pay-method:hover{border-color:var(--accent);background:var(--accent-light);}
 .pay-method.selected{border-color:var(--accent);background:var(--accent-light);}
-.pay-method-icon{font-size:1.5rem;margin-bottom:5px;}
-.pay-method-name{font-size:0.78rem;font-weight:600;color:var(--text);}
+.pay-method-icon{font-size:1.4rem;margin-bottom:5px;}
+.pay-method-name{font-size:0.78rem;font-weight:600;}
 .submit-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.98rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;}
 .submit-btn:hover{background:var(--accent-dark);box-shadow:0 4px 16px rgba(79,110,247,0.3);}
-.security-note{text-align:center;font-size:0.75rem;color:var(--text3);margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px;}
-
-/* SUCCESS */
-.success-wrap{max-width:520px;margin:60px auto;padding:0 24px;text-align:center;display:none;}
-.success-circle{width:80px;height:80px;border-radius:50%;background:var(--green-light);border:3px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;animation:pop 0.4s cubic-bezier(0.16,1,0.3,1);}
+.security-note{text-align:center;font-size:0.75rem;color:var(--text3);margin-top:9px;}
+.success-wrap{max-width:500px;margin:48px auto;padding:0 20px;text-align:center;}
+.success-circle{width:76px;height:76px;border-radius:50%;background:var(--green-light);border:3px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 18px;animation:pop 0.4s cubic-bezier(0.16,1,0.3,1);}
 @keyframes pop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
-.success-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:8px;color:var(--text);}
-.success-sub{color:var(--text2);font-size:0.92rem;line-height:1.6;margin-bottom:24px;}
-.receipt-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:left;margin-bottom:20px;box-shadow:var(--shadow);}
-.receipt-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.88rem;}
+.success-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.7rem;font-weight:800;margin-bottom:7px;}
+.success-sub{color:var(--text2);font-size:0.9rem;line-height:1.6;margin-bottom:22px;}
+.receipt-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:left;margin-bottom:18px;box-shadow:var(--shadow);}
+.receipt-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.87rem;}
 .receipt-row:last-child{border-bottom:none;}
 .receipt-row span:last-child{font-weight:700;color:var(--green);}
-
-/* Loading overlay */
-.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:999;}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:999;}
 .loading-overlay.show{display:flex;}
-.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+.spinner{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:0.88rem;color:var(--text2);}
-
-/* Mobile: stack vertically */
-@media(max-width:700px){.pay-grid{grid-template-columns:1fr;}.pay-wrap{margin:20px auto;}.amount-value{font-size:2.2rem;}}
+.not-found{text-align:center;padding:60px 20px;color:var(--text2);}
+@media(max-width:680px){.pay-grid{grid-template-columns:1fr;}.pay-wrap{margin:20px auto;}.amount-value{font-size:2.2rem;}}
 </style>
 </head>
 <body>
 <nav class="pay-nav">
   <button class="back-btn" onclick="history.back()">← 上一頁</button>
-  <div class="nav-logo"><div class="nav-logo-dot"></div>PayClub</div>
+  <div class="nav-logo"><div style="width:7px;height:7px;background:var(--accent);border-radius:50%;"></div>PayClub</div>
 </nav>
 
-<div class="pay-wrap" id="payWrap">
-  <div class="pay-grid">
-    <!-- LEFT: Event info -->
-    <div class="pay-info-card">
-      <div class="pay-info-header">
-        <div class="pay-badge">🎓 社團收款</div>
-        <div class="pay-title" id="payTitle">載入中...</div>
-        <div class="pay-desc" id="payDesc">請稍候</div>
-      </div>
-      <div class="pay-info-body">
-        <div class="amount-display">
-          <div class="amount-label">每人應繳金額</div>
-          <div class="amount-value" id="payAmount">$—</div>
-          <div class="deadline-tag" id="deadlineTag">📅 截止日期：—</div>
-        </div>
-        <div class="info-rows">
-          <div class="info-row"><span class="info-row-label">發起人</span><span class="info-row-val">PayClub 幹部</span></div>
-          <div class="info-row"><span class="info-row-label">支付方式</span><span class="info-row-val">LINE Pay · 街口 · 信用卡</span></div>
-          <div class="info-row"><span class="info-row-label">資料加密</span><span class="info-row-val" style="color:var(--green)">🔒 256-bit SSL</span></div>
-        </div>
-      </div>
+<div id="payWrap">
+  <div class="pay-wrap">
+    <div id="notFound" style="display:none" class="not-found">
+      <div style="font-size:3rem;margin-bottom:14px">🔍</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:8px;">找不到此活動</div>
+      <div style="margin-bottom:20px">活動連結可能已過期或不存在</div>
+      <button class="back-btn" onclick="history.back()">← 返回上一頁</button>
     </div>
-
-    <!-- RIGHT: Form -->
-    <div class="pay-form-card">
-      <div class="pay-form-title">填寫繳費資訊</div>
-      <div class="form-group"><label class="form-label">你的姓名</label><input type="text" id="payerName" class="form-input" placeholder="林小明"></div>
-      <div class="form-group">
-        <label class="form-label">選擇支付方式</label>
-        <div class="pay-methods">
-          <div class="pay-method selected" onclick="selectMethod(this,'LINE Pay')"><div class="pay-method-icon">💚</div><div class="pay-method-name">LINE Pay</div></div>
-          <div class="pay-method" onclick="selectMethod(this,'街口支付')"><div class="pay-method-icon">🔵</div><div class="pay-method-name">街口支付</div></div>
-          <div class="pay-method" onclick="selectMethod(this,'信用卡')"><div class="pay-method-icon">💳</div><div class="pay-method-name">信用卡</div></div>
-          <div class="pay-method" onclick="selectMethod(this,'ATM 轉帳')"><div class="pay-method-icon">🏧</div><div class="pay-method-name">ATM 轉帳</div></div>
+    <div class="pay-grid" id="payGrid" style="display:none">
+      <div class="pay-info-card">
+        <div class="pay-info-header">
+          <div class="pay-badge">🎓 社團收款</div>
+          <div class="pay-title" id="payTitle">載入中...</div>
+          <div class="pay-desc" id="payDesc"></div>
+        </div>
+        <div class="pay-info-body">
+          <div class="amount-display">
+            <div class="amount-label">每人應繳金額</div>
+            <div class="amount-value" id="payAmount">$—</div>
+            <div class="deadline-tag" id="deadlineTag">📅 載入中...</div>
+          </div>
+          <div class="info-rows">
+            <div class="info-row"><span class="info-row-label">支付方式</span><span class="info-row-val">LINE Pay · 街口 · 信用卡</span></div>
+            <div class="info-row"><span class="info-row-label">資料加密</span><span class="info-row-val" style="color:var(--green)">🔒 256-bit SSL</span></div>
+          </div>
         </div>
       </div>
-      <button class="submit-btn" onclick="submitPayment()">立即繳費 <span id="payBtnAmt">$—</span></button>
-      <div class="security-note">🔒 使用 256-bit SSL 加密，安全有保障</div>
+      <div class="pay-form-card">
+        <div class="pay-form-title">填寫繳費資訊</div>
+        <div class="form-group"><label class="form-label">你的姓名</label><input type="text" id="payerName" class="form-input" placeholder="林小明"></div>
+        <div class="form-group">
+          <label class="form-label">選擇支付方式</label>
+          <div class="pay-methods">
+            <div class="pay-method selected" onclick="selectMethod(this,'LINE Pay')"><div class="pay-method-icon">💚</div><div class="pay-method-name">LINE Pay</div></div>
+            <div class="pay-method" onclick="selectMethod(this,'街口支付')"><div class="pay-method-icon">🔵</div><div class="pay-method-name">街口支付</div></div>
+            <div class="pay-method" onclick="selectMethod(this,'信用卡')"><div class="pay-method-icon">💳</div><div class="pay-method-name">信用卡</div></div>
+            <div class="pay-method" onclick="selectMethod(this,'ATM 轉帳')"><div class="pay-method-icon">🏧</div><div class="pay-method-name">ATM 轉帳</div></div>
+          </div>
+        </div>
+        <button class="submit-btn" onclick="submitPayment()">立即繳費 <span id="payBtnAmt">$—</span></button>
+        <div class="security-note">🔒 使用 256-bit SSL 加密，安全有保障</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- SUCCESS -->
-<div class="success-wrap" id="successWrap">
+<div class="success-wrap" id="successWrap" style="display:none">
   <div class="success-circle">✓</div>
   <div class="success-title">繳費成功！</div>
-  <div class="success-sub" id="successSub">你的繳費已完成，幹部將會收到通知。</div>
+  <div class="success-sub" id="successSub">你的繳費已完成！</div>
   <div class="receipt-card">
     <div style="font-size:0.72rem;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">繳費收據</div>
     <div class="receipt-row"><span>活動名稱</span><span id="rcTitle">—</span></div>
@@ -132,37 +124,52 @@ body{min-height:100vh;background:var(--bg);}
   <button class="back-btn" onclick="history.back()" style="margin:0 auto">← 返回上一頁</button>
 </div>
 
-<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div class="loading-text">處理付款中，請稍候...</div></div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div style="font-size:0.88rem;color:var(--text2)">處理付款中...</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const SEED=[
-  {id:'e1',title:'大成',amountMode:'per_person',amount:5000,deadline:'2026-04-28',desc:'大成活動費用',members:[{name:'林小明',role:'payer',status:'paid'},{name:'陳美玲',role:'payer',status:'pending'},{name:'王大衛',role:'payer',status:'pending'}]},
-  {id:'e2',title:'社團贊助',amountMode:'per_person',amount:1000,deadline:'2026-04-28',desc:'社團贊助費用',members:[{name:'林小明',role:'payer',status:'pending'}]},
-];
-function getEvents(){return JSON.parse(localStorage.getItem('pc_events')||'null')||SEED;}
+// Find event across ALL users' localStorage data
+function findEvent(eventId){
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key&&key.startsWith('pc_events__')){
+      try{
+        const evts=JSON.parse(localStorage.getItem(key)||'[]');
+        const found=evts.find(e=>e.id===eventId);
+        if(found) return {event:found, ownerKey:key};
+      }catch(e){}
+    }
+  }
+  return null;
+}
 
 const params=new URLSearchParams(location.search);
-const eventId=params.get('event')||'e1';
-const evts=getEvents();
-const event=evts.find(e=>e.id===eventId)||SEED[0];
+const eventId=params.get('event');
+let foundEvent=null,ownerKey=null,amt=0;
 
-document.getElementById('payTitle').textContent=event.title;
-document.getElementById('payDesc').textContent=event.desc||'請完成繳費，謝謝！';
-const amt=event.amount||0;
-document.getElementById('payAmount').textContent='$'+amt.toLocaleString();
-document.getElementById('payBtnAmt').textContent='$'+amt.toLocaleString();
-
-const dl=new Date(event.deadline),days=Math.ceil((dl-new Date())/(1000*60*60*24));
-const dtag=document.getElementById('deadlineTag');
-dtag.textContent='📅 截止：'+event.deadline+'（剩 '+days+' 天）';
-if(days<=3)dtag.classList.add('urgent');
+if(!eventId){
+  document.getElementById('notFound').style.display='block';
+} else {
+  const result=findEvent(eventId);
+  if(!result){
+    document.getElementById('notFound').style.display='block';
+  } else {
+    foundEvent=result.event;ownerKey=result.ownerKey;
+    amt=Number(foundEvent.amount)||0;
+    document.getElementById('payGrid').style.display='grid';
+    document.getElementById('payTitle').textContent=foundEvent.title;
+    document.getElementById('payDesc').textContent=foundEvent.desc||'請完成繳費，謝謝！';
+    document.getElementById('payAmount').textContent='$'+amt.toLocaleString();
+    document.getElementById('payBtnAmt').textContent='$'+amt.toLocaleString();
+    const dl=new Date(foundEvent.deadline),days=Math.ceil((dl-new Date())/(1000*60*60*24));
+    const dtag=document.getElementById('deadlineTag');
+    dtag.textContent='📅 截止：'+foundEvent.deadline+'（剩 '+days+' 天）';
+    if(days<=3)dtag.classList.add('urgent');
+  }
+}
 
 let selectedMethod='LINE Pay';
-function selectMethod(el,method){
-  document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('selected'));
-  el.classList.add('selected'); selectedMethod=method;
-}
+function selectMethod(el,method){document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('selected'));el.classList.add('selected');selectedMethod=method;}
 
 function submitPayment(){
   const name=document.getElementById('payerName').value.trim();
@@ -170,16 +177,20 @@ function submitPayment(){
   document.getElementById('loadingOverlay').classList.add('show');
   setTimeout(()=>{
     document.getElementById('loadingOverlay').classList.remove('show');
-    const allEvts=getEvents();const e=allEvts.find(x=>x.id===eventId);
-    if(e){
-      const m=e.members.find(x=>x.name===name);
-      const now=PC_nowStr();
-      if(m&&m.role==='payer'){m.status='paid';m.paidAt=now;}
-      else if(!m){e.members.push({name,role:'payer',status:'paid',paidAt:now,customAmount:null});}
-      localStorage.setItem('pc_events',JSON.stringify(allEvts));
+    // Update event in correct owner's storage
+    if(ownerKey){
+      const evts=JSON.parse(localStorage.getItem(ownerKey)||'[]');
+      const e=evts.find(x=>x.id===eventId);
+      if(e){
+        const now=new Date();const ts=(now.getMonth()+1).toString().padStart(2,'0')+'/'+(now.getDate()).toString().padStart(2,'0')+' '+now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+        const m=e.members&&e.members.find(x=>x.name===name||x.email===name);
+        if(m){m.status='paid';m.paidAt=ts;}
+        else{if(!e.members)e.members=[];e.members.push({name,email:'',role:'payer',status:'paid',paidAt:ts,customAmount:null});}
+        localStorage.setItem(ownerKey,JSON.stringify(evts));
+      }
     }
     const txId='PC'+Date.now().toString(36).toUpperCase();
-    document.getElementById('rcTitle').textContent=event.title;
+    document.getElementById('rcTitle').textContent=foundEvent.title;
     document.getElementById('rcName').textContent=name;
     document.getElementById('rcAmount').textContent='$'+amt.toLocaleString();
     document.getElementById('rcMethod').textContent=selectedMethod;

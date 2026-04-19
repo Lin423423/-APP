@@ -27,21 +27,19 @@ body{display:flex;}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
 .chip{padding:6px 13px;border-radius:100px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text2);transition:all 0.15s;user-select:none;font-family:'Noto Sans TC',sans-serif;}
 .chip.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
-/* Member builder */
-.member-add-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:10px;align-items:start;}
-.member-add-row input[type=text]{width:100%;min-width:0;}
+/* Member builder - email input */
+.member-add-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:10px;align-items:center;}
 .member-list{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 .member-tag{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;gap:8px;}
 .member-tag-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
 .m-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0;}
-.m-name-text{font-size:0.87rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.m-email-text{font-size:0.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .role-badge{font-size:0.7rem;padding:2px 8px;border-radius:100px;font-weight:600;flex-shrink:0;}
-.role-payer{background:var(--accent-light);color:var(--accent);}
 .role-counter{background:var(--orange-light);color:var(--orange);}
-.role-observer{background:var(--surface);color:var(--text3);border:1px solid var(--border);}
+.role-admin{background:var(--green-light);color:var(--green);}
 .m-remove{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:2px;flex-shrink:0;}
 .m-remove:hover{color:var(--red);}
-.info-note{background:var(--surface);border-radius:8px;padding:10px 14px;font-size:0.8rem;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.info-note{background:var(--accent-light);border-radius:8px;padding:10px 14px;font-size:0.8rem;color:var(--accent);line-height:1.6;margin-bottom:12px;border:1px solid #c7d2fe;}
 /* Preview */
 .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 .prev-box{background:var(--surface);border-radius:9px;padding:12px 14px;}
@@ -56,8 +54,9 @@ body{display:flex;}
 .link-box{background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;align-items:center;gap:10px;margin:14px 0;text-align:left;}
 .link-url{font-size:0.8rem;color:var(--accent);flex:1;word-break:break-all;}
 .copy-btn-sm{background:var(--accent);color:#fff;border:none;padding:6px 13px;border-radius:7px;font-size:0.76rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Noto Sans TC',sans-serif;}
-.invite-display{background:var(--white);border:2px dashed var(--accent);border-radius:10px;padding:14px 18px;margin:10px 0;text-align:center;}
-.invite-code{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:0.15em;color:var(--accent);}
+.invite-display{background:var(--white);border:2px dashed var(--accent);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center;cursor:pointer;}
+.invite-display:hover{background:var(--accent-light);}
+.invite-code{font-family:'Plus Jakarta Sans',sans-serif;font-size:2rem;font-weight:800;letter-spacing:0.15em;color:var(--accent);}
 .invite-label{font-size:0.75rem;color:var(--text2);margin-top:4px;}
 @media(max-width:768px){.date-row{grid-template-columns:1fr 1fr;}.member-add-row{grid-template-columns:1fr auto;}.preview-grid{grid-template-columns:1fr;}}
 </style>
@@ -82,15 +81,13 @@ body{display:flex;}
   <div class="sidebar-bottom">
     <div class="user-card">
       <div class="avatar" id="avatarInitial">幹</div>
-      <div class="user-info"><div class="user-name" id="userName">載入中</div><div class="user-role">社團幹部</div></div>
+      <div class="user-info"><div class="user-name" id="userName">載入中</div><div class="user-role">管理員</div></div>
       <button class="logout-btn" onclick="PC_logout()">登出</button>
     </div>
   </div>
 </aside>
 <main class="main">
-  <div class="topbar">
-    <div><div class="page-title">建立收款活動</div><div class="page-sub">填寫資訊，系統自動生成收款連結與邀請碼</div></div>
-  </div>
+  <div class="topbar"><div><div class="page-title">建立收款活動</div><div class="page-sub">填寫資訊，系統自動生成收款連結與邀請碼</div></div></div>
   <div class="steps" id="stepsBar">
     <div class="step-item active" id="si1"><div class="step-circle">1</div><div class="step-label">活動資訊</div></div>
     <div class="step-line" id="sl1"></div>
@@ -110,18 +107,8 @@ body{display:flex;}
             <button class="amt-tab active" id="tabPer" onclick="setAmtMode('per_person')">每人固定金額</button>
             <button class="amt-tab" id="tabCustom" onclick="setAmtMode('custom')">各自設定金額</button>
           </div>
-          <div id="perPersonWrap">
-            <input type="number" id="s1Amount" class="form-input" placeholder="每人應繳金額（例：300）" min="1" oninput="updateTotalEst()">
-          </div>
-          <div id="customWrap" style="display:none">
-            <div class="info-note">💡 選擇此模式後，可在成員設定中為每人指定不同金額</div>
-          </div>
-          <!-- 預估總收款 -->
-          <div style="margin-top:10px;">
-            <label class="form-label">預估收取總金額（選填）</label>
-            <input type="number" id="s1TotalEst" class="form-input" placeholder="例：15000（可手動輸入或自動計算）" min="0">
-            <div style="font-size:0.74rem;color:var(--text3);margin-top:4px;" id="totalEstHint">填入總金額後，系統會自動顯示於活動統計中</div>
-          </div>
+          <div id="perPersonWrap"><input type="number" id="s1Amount" class="form-input" placeholder="每人應繳金額（例：300）" min="1"></div>
+          <div id="customWrap" style="display:none"><div class="info-note">💡 選擇此模式後，可在成員設定中為每人指定不同金額</div></div>
         </div>
         <div class="form-group">
           <label class="form-label">截止日期 *</label>
@@ -144,27 +131,21 @@ body{display:flex;}
       </div>
       <button class="btn btn-primary" onclick="goStep2()">下一步：設定成員 →</button>
     </div>
-
     <!-- STEP 2 -->
     <div id="s2" style="display:none">
       <div class="form-card">
-        <div class="form-card-title">👥 成員名單</div>
-        <div class="info-note">成員角色：<strong>繳費者</strong>（需繳款）｜ <strong>統計者</strong>（管帳，不需繳款）｜ <strong>觀察者</strong>（查看，不需繳款）</div>
+        <div class="form-card-title">👥 成員名單（選填）</div>
+        <div class="info-note">💡 繳費者可透過邀請碼自行申請加入，無需在此預先輸入。<br>此處可預先新增<strong>統計者</strong>（管帳協助）或<strong>管理員協同</strong>。</div>
         <div class="member-add-row">
-          <input type="text" id="addName" class="form-input" placeholder="輸入成員姓名" onkeydown="if(event.key==='Enter')addMember()">
-          <select id="addRole" class="form-input" style="min-width:90px" onchange="toggleCustomAmt()">
-            <option value="payer">繳費者</option>
+          <input type="email" id="addEmail" class="form-input" placeholder="member@email.com" onkeydown="if(event.key==='Enter')addMember()">
+          <select id="addRole" class="form-input" style="min-width:100px" onchange="toggleCustomAmt()">
             <option value="counter">統計者</option>
-            <option value="observer">觀察者</option>
+            <option value="admin_member">管理員協同</option>
           </select>
           <button class="btn btn-primary" onclick="addMember()" style="white-space:nowrap">＋ 新增</button>
         </div>
-        <!-- Custom amount only for payer in custom mode -->
-        <div id="addAmtRow" style="display:none;margin-bottom:10px;">
-          <input type="number" id="addAmt" class="form-input" placeholder="此成員應繳金額" min="0">
-        </div>
         <div class="member-list" id="memberList">
-          <div style="text-align:center;padding:20px;color:var(--text3);font-size:0.84rem;">尚未新增任何成員</div>
+          <div style="text-align:center;padding:16px;color:var(--text3);font-size:0.84rem;">尚未預先新增成員（繳費者可透過邀請碼加入）</div>
         </div>
       </div>
       <div style="display:flex;gap:10px;">
@@ -172,35 +153,30 @@ body{display:flex;}
         <button class="btn btn-primary" style="flex:1" onclick="goStep3()">下一步：確認建立 →</button>
       </div>
     </div>
-
     <!-- STEP 3 -->
     <div id="s3" style="display:none">
       <div class="form-card">
         <div class="form-card-title">✅ 確認活動資訊</div>
         <div class="preview-grid" id="previewInfo"></div>
-        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">成員名單</div>
-        <table class="prev-table">
-          <thead><tr><th>姓名</th><th>角色</th><th>應繳金額</th></tr></thead>
-          <tbody id="previewMembers"></tbody>
-        </table>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;">預先新增成員</div>
+        <table class="prev-table"><thead><tr><th>Email</th><th>角色</th></tr></thead><tbody id="previewMembers"></tbody></table>
       </div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-ghost" onclick="goStep(2)">← 上一步</button>
         <button class="btn btn-primary" style="flex:1" onclick="submitCreate()">🚀 建立活動</button>
       </div>
     </div>
-
     <!-- SUCCESS -->
     <div id="sSuccess" style="display:none">
       <div class="success-box">
         <div style="font-size:2rem;margin-bottom:10px">🎉</div>
         <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:6px;">活動建立成功！</div>
-        <div style="color:var(--green);font-size:0.88rem;margin-bottom:12px;">邀請碼已生成，分享給成員加入活動</div>
-        <div class="invite-display">
+        <div style="color:var(--green);font-size:0.88rem;margin-bottom:4px;">分享邀請碼給繳費者，讓他們申請加入</div>
+        <div class="invite-display" onclick="copyInviteCode()" title="點擊複製">
           <div class="invite-code" id="inviteCode">——</div>
-          <div class="invite-label">活動邀請碼（成員登入後輸入此碼加入）</div>
+          <div class="invite-label">📋 點擊複製邀請碼</div>
         </div>
-        <div style="font-size:0.78rem;color:var(--text2);margin-bottom:8px;">或分享收款連結</div>
+        <div style="font-size:0.78rem;color:var(--text2);margin-bottom:6px;">或分享收款連結</div>
         <div class="link-box">
           <div class="link-url" id="generatedLink">—</div>
           <button class="copy-btn-sm" onclick="copyLink()">複製</button>
@@ -215,175 +191,48 @@ body{display:flex;}
 </main>
 <div class="toast" id="toast"></div>
 <script>
-const user=PC_requireLeader();if(!user)throw new Error('r');
+const user=PC_requireAdmin();if(!user)throw new Error('r');
 PC_fillSidebarUser();
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
-
-// Sidebar events
-(function(){
-  const evts=PC_getEvents();
-  document.getElementById('sidebarEvents').innerHTML=evts.map(e=>`<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
-})();
-
+(function(){const evts=PC_getEvents();document.getElementById('sidebarEvents').innerHTML=evts.map(e=>`<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');})();
 // Date init
 (function(){
-  const cy=new Date().getFullYear();
-  const yr=document.getElementById('dlYear');
-  for(let y=cy;y<=cy+5;y++){const o=document.createElement('option');o.value=y;o.textContent=y+'年';yr.appendChild(o);}
-  yr.value=cy;
-  const mn=document.getElementById('dlMonth');
-  for(let m=1;m<=12;m++){const o=document.createElement('option');o.value=m;o.textContent=m+'月';mn.appendChild(o);}
-  mn.value=new Date().getMonth()+1;
-  updateDays();
-  const dl=new Date();dl.setDate(dl.getDate()+14);
-  document.getElementById('dlYear').value=dl.getFullYear();
-  document.getElementById('dlMonth').value=dl.getMonth()+1;
-  updateDays();
-  document.getElementById('dlDay').value=dl.getDate();
+  const cy=new Date().getFullYear();const yr=document.getElementById('dlYear');
+  for(let y=cy;y<=cy+5;y++){const o=document.createElement('option');o.value=y;o.textContent=y+'年';yr.appendChild(o);}yr.value=cy;
+  const mn=document.getElementById('dlMonth');for(let m=1;m<=12;m++){const o=document.createElement('option');o.value=m;o.textContent=m+'月';mn.appendChild(o);}mn.value=new Date().getMonth()+1;
+  updateDays();const dl=new Date();dl.setDate(dl.getDate()+14);
+  document.getElementById('dlYear').value=dl.getFullYear();document.getElementById('dlMonth').value=dl.getMonth()+1;updateDays();document.getElementById('dlDay').value=dl.getDate();
 })();
-
-function updateDays(){
-  const y=parseInt(document.getElementById('dlYear').value)||new Date().getFullYear();
-  const m=parseInt(document.getElementById('dlMonth').value)||1;
-  const days=new Date(y,m,0).getDate();
-  const dd=document.getElementById('dlDay');
-  const prev=dd.value;
-  dd.innerHTML='<option value="">日</option>';
-  for(let d=1;d<=days;d++){const o=document.createElement('option');o.value=d;o.textContent=d+'日';dd.appendChild(o);}
-  if(prev&&parseInt(prev)<=days)dd.value=prev;
-}
-
-function updateTotalEst(){
-  const amt=parseFloat(document.getElementById('s1Amount').value)||0;
-  const count=members.filter(m=>m.role==='payer').length;
-  if(amt>0&&count>0&&amtMode==='per_person'){
-    document.getElementById('s1TotalEst').value=amt*count;
-    document.getElementById('totalEstHint').textContent='依 '+count+' 位繳費者 × $'+amt+' 自動計算';
-  }
-}
-
+function updateDays(){const y=parseInt(document.getElementById('dlYear').value)||new Date().getFullYear(),m=parseInt(document.getElementById('dlMonth').value)||1,days=new Date(y,m,0).getDate();const dd=document.getElementById('dlDay');const prev=dd.value;dd.innerHTML='<option value="">日</option>';for(let d=1;d<=days;d++){const o=document.createElement('option');o.value=d;o.textContent=d+'日';dd.appendChild(o);}if(prev&&parseInt(prev)<=days)dd.value=prev;}
 let amtMode='per_person';
-function setAmtMode(m){
-  amtMode=m;
-  document.getElementById('tabPer').classList.toggle('active',m==='per_person');
-  document.getElementById('tabCustom').classList.toggle('active',m==='custom');
-  document.getElementById('perPersonWrap').style.display=m==='per_person'?'block':'none';
-  document.getElementById('customWrap').style.display=m==='custom'?'block':'none';
-  toggleCustomAmt();
-}
-
+function setAmtMode(m){amtMode=m;document.getElementById('tabPer').classList.toggle('active',m==='per_person');document.getElementById('tabCustom').classList.toggle('active',m==='custom');document.getElementById('perPersonWrap').style.display=m==='per_person'?'block':'none';document.getElementById('customWrap').style.display=m==='custom'?'block':'none';}
 let members=[];
-const RC={payer:'#4f6ef7',counter:'#d97706',observer:'#9ca3af'};
-const RL={payer:'繳費者',counter:'統計者',observer:'觀察者'};
-const RB={payer:'role-payer',counter:'role-counter',observer:'role-observer'};
-
-function toggleCustomAmt(){
-  const role=document.getElementById('addRole').value;
-  // Only show amount input for payer in custom mode
-  document.getElementById('addAmtRow').style.display=(amtMode==='custom'&&role==='payer')?'block':'none';
-}
-
+const RC={counter:'#d97706',admin_member:'#16a34a'};
+const RL={counter:'統計者',admin_member:'管理員協同'};
+const RB={counter:'role-counter',admin_member:'role-admin'};
+function toggleCustomAmt(){}
 function addMember(){
-  const nameEl=document.getElementById('addName');
-  const name=nameEl.value.trim();
+  const email=document.getElementById('addEmail').value.trim();
   const role=document.getElementById('addRole').value;
-  if(!name){PC_toast('請輸入成員姓名');nameEl.focus();return;}
-  if(members.find(m=>m.name===name)){PC_toast('已有同名成員');return;}
-  let customAmount=null;
-  if(amtMode==='custom'&&role==='payer'){
-    customAmount=parseFloat(document.getElementById('addAmt').value)||0;
-    document.getElementById('addAmt').value='';
-  }
-  members.push({name,role,status:role==='payer'?'pending':'none',paidAt:'',customAmount});
-  nameEl.value='';
-  nameEl.focus();
-  renderMemberList();
-  updateTotalEst();
+  if(!email||!email.includes('@')){PC_toast('請輸入有效 Email');document.getElementById('addEmail').focus();return;}
+  if(members.find(m=>m.email===email)){PC_toast('此 Email 已新增');return;}
+  members.push({email,name:email.split('@')[0],role,status:'none',paidAt:'',customAmount:null});
+  document.getElementById('addEmail').value='';document.getElementById('addEmail').focus();renderMemberList();
 }
-
-function removeMember(i){members.splice(i,1);renderMemberList();updateTotalEst();}
-
+function removeMember(i){members.splice(i,1);renderMemberList();}
 function renderMemberList(){
   const list=document.getElementById('memberList');
-  if(!members.length){list.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:0.84rem;">尚未新增任何成員</div>';return;}
-  list.innerHTML=members.map((m,i)=>`
-    <div class="member-tag">
-      <div class="member-tag-left">
-        <div class="m-av" style="background:${RC[m.role]}">${m.name.slice(0,1)}</div>
-        <div class="m-name-text">${m.name}</div>
-        <span class="role-badge ${RB[m.role]}">${RL[m.role]}</span>
-        ${m.role==='payer'&&m.customAmount!=null?`<span style="font-size:0.78rem;color:var(--text2)">$${m.customAmount}</span>`:''}
-      </div>
-      <button class="m-remove" onclick="removeMember(${i})">✕</button>
-    </div>`).join('');
+  if(!members.length){list.innerHTML='<div style="text-align:center;padding:16px;color:var(--text3);font-size:0.84rem;">尚未預先新增成員（繳費者可透過邀請碼加入）</div>';return;}
+  list.innerHTML=members.map((m,i)=>`<div class="member-tag"><div class="member-tag-left"><div class="m-av" style="background:${RC[m.role]||'#9ca3af'}">${m.email.slice(0,1).toUpperCase()}</div><div class="m-email-text">${m.email}</div><span class="role-badge ${RB[m.role]||''}">${RL[m.role]||m.role}</span></div><button class="m-remove" onclick="removeMember(${i})">✕</button></div>`).join('');
 }
-
-function goStep(n){
-  [1,2,3].forEach(i=>{
-    document.getElementById('s'+i).style.display=i===n?'block':'none';
-    const it=document.getElementById('si'+i);
-    it.className='step-item'+(i<n?' done':i===n?' active':'');
-    if(i<3)document.getElementById('sl'+i).className='step-line'+(i<n?' done':'');
-  });
-  document.getElementById('sSuccess').style.display='none';
-}
-
-function goStep2(){
-  const title=document.getElementById('s1Title').value.trim();
-  const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value,d=document.getElementById('dlDay').value;
-  if(!title){PC_toast('請填寫活動名稱');return;}
-  if(amtMode==='per_person'&&!document.getElementById('s1Amount').value){PC_toast('請填寫每人金額');return;}
-  if(!y||!mo||!d){PC_toast('請選擇完整截止日期');return;}
-  goStep(2);
-}
-
-function goStep3(){
-  const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');
-  const dl=`${y}-${mo}-${d}`;
-  const amt=parseFloat(document.getElementById('s1Amount').value)||0;
-  const totalEst=parseFloat(document.getElementById('s1TotalEst').value)||0;
-  const payers=members.filter(m=>m.role==='payer');
-  const expectedTotal=amtMode==='per_person'?amt*payers.length:members.reduce((s,m)=>s+(m.customAmount||0),0);
-  document.getElementById('previewInfo').innerHTML=`
-    <div class="prev-box"><div class="prev-label">活動名稱</div><div class="prev-val">${document.getElementById('s1Title').value}</div></div>
-    <div class="prev-box"><div class="prev-label">截止日期</div><div class="prev-val">${dl}</div></div>
-    <div class="prev-box"><div class="prev-label">金額模式</div><div class="prev-val">${amtMode==='per_person'?'每人 $'+amt:'各自設定'}</div></div>
-    <div class="prev-box"><div class="prev-label">預估應收總額</div><div class="prev-val" style="color:var(--green)">$${(totalEst||expectedTotal).toLocaleString()}</div></div>
-    <div class="prev-box"><div class="prev-label">繳費成員數</div><div class="prev-val">${payers.length} 人</div></div>
-    <div class="prev-box"><div class="prev-label">總成員數</div><div class="prev-val">${members.length} 人</div></div>`;
-  document.getElementById('previewMembers').innerHTML=members.map(m=>{
-    const a=m.role==='payer'?(amtMode==='custom'&&m.customAmount!=null?'$'+m.customAmount:amtMode==='per_person'?'$'+(parseFloat(document.getElementById('s1Amount').value)||0):'—'):'—';
-    const rb=m.role==='payer'?'badge-blue':m.role==='counter'?'badge-orange':'badge-gray';
-    return `<tr><td style="font-weight:600">${m.name}</td><td><span class="badge ${rb}">${RL[m.role]}</span></td><td style="font-weight:700;color:var(--green)">${a}</td></tr>`;
-  }).join('');
-  goStep(3);
-}
-
-let createdId=null;
-function submitCreate(){
-  const title=document.getElementById('s1Title').value.trim();
-  const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');
-  const dl=`${y}-${mo}-${d}`;
-  const desc=document.getElementById('s1Desc').value.trim();
-  const amt=parseFloat(document.getElementById('s1Amount').value)||0;
-  const totalEst=parseFloat(document.getElementById('s1TotalEst').value)||0;
-  const inviteCode=PC_genInviteCode();
-  const evts=PC_getEvents();
-  createdId='e'+Date.now();
-  const newEvt={
-    id:createdId,title,amountMode:amtMode,amount:amt,totalEstimate:totalEst,
-    deadline:dl,desc,status:'active',inviteCode,
-    members:members.map(m=>({...m,status:m.role==='payer'?'pending':'none',paidAt:''}))
-  };
-  evts.unshift(newEvt);PC_saveEvents(evts);
-  document.getElementById('inviteCode').textContent=inviteCode;
-  const link=location.href.replace('create.html','pay.html')+'?event='+createdId;
-  document.getElementById('generatedLink').textContent=link;
-  [1,2,3].forEach(i=>{document.getElementById('s'+i).style.display='none';document.getElementById('si'+i).className='step-item done';if(i<3)document.getElementById('sl'+i).className='step-line done';});
-  document.getElementById('sSuccess').style.display='block';
-}
-function copyLink(){navigator.clipboard.writeText(document.getElementById('generatedLink').textContent).catch(()=>{});PC_toast('🔗 連結已複製');}
+function goStep(n){[1,2,3].forEach(i=>{document.getElementById('s'+i).style.display=i===n?'block':'none';document.getElementById('si'+i).className='step-item'+(i<n?' done':i===n?' active':'');if(i<3)document.getElementById('sl'+i).className='step-line'+(i<n?' done':'');});document.getElementById('sSuccess').style.display='none';}
+function goStep2(){const title=document.getElementById('s1Title').value.trim();const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value,d=document.getElementById('dlDay').value;if(!title){PC_toast('請填寫活動名稱');return;}if(amtMode==='per_person'&&!document.getElementById('s1Amount').value){PC_toast('請填寫每人金額');return;}if(!y||!mo||!d){PC_toast('請選擇完整截止日期');return;}goStep(2);}
+function goStep3(){const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const dl=`${y}-${mo}-${d}`;const amt=parseFloat(document.getElementById('s1Amount').value)||0;document.getElementById('previewInfo').innerHTML=`<div class="prev-box"><div class="prev-label">活動名稱</div><div class="prev-val">${document.getElementById('s1Title').value}</div></div><div class="prev-box"><div class="prev-label">截止日期</div><div class="prev-val">${dl}</div></div><div class="prev-box"><div class="prev-label">金額模式</div><div class="prev-val">${amtMode==='per_person'?'每人 $'+amt:'各自設定'}</div></div><div class="prev-box"><div class="prev-label">預先新增成員</div><div class="prev-val">${members.length} 人</div></div>`;document.getElementById('previewMembers').innerHTML=members.length?members.map(m=>`<tr><td>${m.email}</td><td><span class="badge ${m.role==='counter'?'badge-orange':'badge-green'}">${RL[m.role]}</span></td></tr>`).join(''):'<tr><td colspan="2" style="color:var(--text3);text-align:center">無（繳費者將透過邀請碼加入）</td></tr>';goStep(3);}
+let createdId=null,createdCode='';
+function submitCreate(){const title=document.getElementById('s1Title').value.trim();const y=document.getElementById('dlYear').value,mo=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const dl=`${y}-${mo}-${d}`;const desc=document.getElementById('s1Desc').value.trim();const amt=parseFloat(document.getElementById('s1Amount').value)||0;const code=PC_genInviteCode();const evts=PC_getEvents();createdId='e'+Date.now();createdCode=code;const newEvt={id:createdId,title,amountMode:amtMode,amount:amt,deadline:dl,desc,status:'active',inviteCode:code,members:members.map(m=>({...m}))};evts.unshift(newEvt);PC_saveEvents(evts);document.getElementById('inviteCode').textContent=code;const link=location.href.replace('create.html','pay.html')+'?event='+createdId;document.getElementById('generatedLink').textContent=link;[1,2,3].forEach(i=>{document.getElementById('s'+i).style.display='none';document.getElementById('si'+i).className='step-item done';if(i<3)document.getElementById('sl'+i).className='step-line done';});document.getElementById('sSuccess').style.display='block';}
+function copyInviteCode(){PC_copyText(createdCode,'🔑 邀請碼已複製：'+createdCode);}
+function copyLink(){PC_copyText(document.getElementById('generatedLink').textContent,'🔗 連結已複製');}
 function goToEvent(){location.href='event.html?id='+createdId;}
 </script>
 </body></html>
