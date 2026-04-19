@@ -7,750 +7,42 @@
 <link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{display:flex;}
-.breadcrumb{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text3);margin-bottom:14px;}
-.breadcrumb a{color:var(--text2);text-decoration:none;}.breadcrumb a:hover{color:var(--accent);}
-.title-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
-.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text);letter-spacing:-0.02em;}
-/* Invite badge clickable */
-.invite-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);border:1px solid #c7d2fe;border-radius:8px;padding:5px 12px;cursor:pointer;transition:all 0.15s;}
-.invite-badge:hover{background:#c7d2fe;}
-.invite-badge-label{font-size:0.68rem;color:var(--accent);opacity:0.7;}
-.invite-badge-code{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:800;color:var(--accent);letter-spacing:0.1em;}
-.invite-badge-icon{font-size:0.72rem;color:var(--accent);opacity:0.6;}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
-.sbox{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
-.sbox-label{font-size:0.7rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
-.sbox-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1;}
-.sbox-sub{font-size:0.7rem;color:var(--text3);margin-top:3px;}
-.two-col{display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start;}
-.section-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-.sc-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.sc-title{font-size:0.86rem;font-weight:700;}
-.filter-row{display:flex;gap:5px;flex-wrap:wrap;}
-.ftab{padding:4px 10px;border-radius:100px;font-size:0.74rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text2);font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
-.ftab.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
-.member-row{display:flex;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border);gap:10px;transition:background 0.1s;flex-wrap:wrap;}
-.member-row:last-child{border-bottom:none;}
+.member-row{display:flex;align-items:center;padding:14px 18px;background:var(--white);border-bottom:1px solid var(--border);transition:all 0.2s;}
 .member-row:hover{background:var(--surface);}
-.m-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.74rem;font-weight:700;color:#fff;flex-shrink:0;}
-.m-info{flex:1;min-width:0;}
-.m-name{font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
-.m-email{font-size:0.7rem;color:var(--text3);margin-top:1px;}
-.m-amount{font-size:0.85rem;font-weight:700;color:var(--text2);flex-shrink:0;}
-.mark-btn{background:var(--green-light);border:1px solid #bbf7d0;color:var(--green);padding:4px 8px;border-radius:6px;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;flex-shrink:0;}
-.del-btn{background:var(--red-light);border:1px solid #fecaca;color:var(--red);padding:4px 7px;border-radius:6px;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;flex-shrink:0;}
-.share-card,.progress-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;}
-.share-label{font-size:0.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;}
-.share-url{background:var(--surface);border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;font-size:0.76rem;color:var(--accent);word-break:break-all;margin-bottom:7px;}
-.copy-btn{width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:0.83rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-.prog-dots{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
-.prog-dot-row{display:flex;align-items:center;gap:7px;font-size:0.76rem;color:var(--text2);}
-.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.dl-edit-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;}
-.dl-edit-row select{padding:3px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:0.76rem;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--white);}
-.dl-save{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.73rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-/* Join requests panel */
-.req-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;}
-.req-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.req-title{font-size:0.84rem;font-weight:700;}
-.req-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap;}
-.req-row:last-child{border-bottom:none;}
-.req-info{flex:1;}
-.req-email{font-size:0.84rem;font-weight:600;}
-.req-name{font-size:0.72rem;color:var(--text3);}
-.req-time{font-size:0.7rem;color:var(--text3);}
-.approve-btn{background:var(--green-light);border:1px solid #bbf7d0;color:var(--green);padding:5px 11px;border-radius:7px;font-size:0.76rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-.reject-btn{background:var(--red-light);border:1px solid #fecaca;color:var(--red);padding:5px 9px;border-radius:7px;font-size:0.76rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(2px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
-.overlay.show{display:flex;}
-.modal{background:var(--white);border-radius:14px;padding:22px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.15);animation:slideUp 0.2s ease;}
-@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:14px;}
-.modal-actions{display:flex;gap:8px;margin-top:14px;}
-@media(max-width:900px){.two-col{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}}
-@media(max-width:480px){.stats-row{grid-template-columns:1fr 1fr;}.sbox-val{font-size:1.2rem;}}
+.m-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem;margin-right:12px;flex-shrink:0;}
+.m-info{flex:1;min-width:0;}.m-name{font-weight:700;font-size:0.92rem;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.m-email{font-size:0.75rem;color:var(--text3);}
+.m-amount{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.95rem;color:var(--text);margin:0 12px;}
+/* 操作按鈕樣式 */
+.mark-btn, .del-btn{width:28px;height:28px;border-radius:6px;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;font-size:0.8rem;}
+.mark-btn{background:var(--accent-light);color:var(--accent);}.mark-btn:hover{background:var(--accent);color:#fff;}
+.del-btn{background:var(--red-light);color:var(--red);}.del-btn:hover{background:var(--red);color:#fff;}
 </style>
 </head>
 <body>
-<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
-<nav class="mobile-nav">
-  <div class="mobile-nav-logo"><span style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;margin-right:4px"></span>PayClub</div>
-  <button class="hamburger" onclick="openSidebar()">☰</button>
-</nav>
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo"><div class="logo-dot"></div>PayClub</div>
-  <nav class="sidebar-nav">
-    <a class="nav-item" href="dashboard.html"><span class="icon">🏠</span>總覽</a>
-    <a class="nav-item" href="create.html"><span class="icon">➕</span>建立活動</a>
-    <a class="nav-item" href="member.html"><span class="icon">🤝</span>加入活動</a>
-    <a class="nav-item" href="report.html"><span class="icon">📊</span>財務報表</a>
-    <div class="nav-section">我的活動</div>
-    <div id="sidebarEvents"></div>
-    <a class="nav-item" href="index.html"><span class="icon">🌐</span>首頁</a>
-    <a class="nav-item" href="notifications.html" style="position:relative">
-      <span class="icon">🔔</span>通知
-      <span class="badge-notify" id="notifBadge" style="display:none">0</span>
-    </a>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="user-card">
-      <div class="avatar" id="avatarInitial">?</div>
-      <div class="user-info">
-        <div class="user-name" id="userName">載入中</div>
-        <div class="user-role" id="userEmail" style="font-size:0.6rem; opacity:0.8">email...</div>
-      </div>
-      <button class="logout-btn" onclick="PC_logout()">登出</button>
-    </div>
-  </div>
-</aside>
+
+<script>renderSidebar();</script>
+
 <main class="main">
-  <div class="breadcrumb"><a href="dashboard.html">總覽</a><span>›</span><span id="bcTitle">活動</span></div>
-  <div class="title-row">
-    <div class="page-title" id="evtTitle">載入中...</div>
-    <div class="invite-badge" id="inviteBadge" onclick="copyInviteCode()" title="點擊複製邀請碼" style="display:none">
-      <span class="invite-badge-label">邀請碼</span>
-      <span class="invite-badge-code" id="inviteCodeText">——</span>
-      <span class="invite-badge-icon">📋</span>
+  <div class="content" style="max-width:900px; width:100%;">
+    <div id="eventHeader" class="card" style="padding:24px; margin-bottom:20px;">
+        <h1 id="eventTitle" class="page-title">載入中...</h1>
+        <p id="eventDesc" style="color:var(--text2); font-size:0.9rem; margin-top:8px;"></p>
     </div>
-  </div>
-  <div class="page-sub" id="evtDesc" style="margin-bottom:8px;color:var(--text2);font-size:0.86rem;"></div>
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
-    <span style="font-size:0.8rem;color:var(--text2)">截止：</span>
-    <span id="deadlineDisplay" style="font-size:0.8rem;font-weight:600"></span>
-    <button onclick="toggleDlEdit()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:3px 9px;border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">✏️ 修改</button>
-  </div>
-  <div id="dlEditRow" style="display:none;margin-bottom:14px;" class="dl-edit-row">
-    <select id="dlYear"></select><select id="dlMonth" onchange="updateDlDays()"></select><select id="dlDay"></select>
-    <button class="dl-save" onclick="saveDl()">儲存</button>
-    <button onclick="toggleDlEdit()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 9px;border-radius:6px;font-size:0.72rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">取消</button>
-  </div>
-  <div class="topbar" style="margin-bottom:16px;">
-    <div></div>
-    <div class="topbar-actions">
-      <button class="btn btn-ghost" onclick="renderPage()">🔄 更新</button>
-      <button class="btn btn-ghost" id="joinReqBtn" onclick="toggleJoinPanel()" style="display:none">👥 加入申請 <span id="joinReqCount" class="badge badge-orange" style="margin-left:4px;display:none"></span></button>
-      <button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>
-      <button class="btn btn-ghost" onclick="openAmtModal()">💰 繳費金額更改</button>
-      <button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>
-      <button class="btn btn-primary" onclick="openAdd()">+ 新增成員</button>
-    </div>
-  </div>
 
-  <!-- Join requests panel -->
-  <div id="joinPanel" style="display:none;margin-bottom:16px;">
-    <div class="req-card">
-      <div class="req-header"><div class="req-title">👥 加入申請審核</div><button onclick="toggleJoinPanel()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:1.1rem;">✕</button></div>
-      <div id="joinReqList"></div>
-    </div>
-  </div>
-
-  <div class="stats-row">
-    <div class="sbox"><div class="sbox-label">實收</div><div class="sbox-val" id="sC" style="color:var(--green)">$0</div><div class="sbox-sub">已繳合計</div></div>
-    <div class="sbox"><div class="sbox-label">應收</div><div class="sbox-val" id="sE">$0</div><div class="sbox-sub">繳費者總應收</div></div>
-    <div class="sbox"><div class="sbox-label">待收</div><div class="sbox-val" id="sP" style="color:var(--orange)">$0</div><div class="sbox-sub" id="sPsub"></div></div>
-    <div class="sbox"><div class="sbox-label">截止倒數</div><div class="sbox-val" id="sDays" style="font-size:1rem;padding-top:4px">—</div><div class="sbox-sub" id="sDl"></div></div>
-  </div>
-  <div class="two-col">
-    <div>
-      <div class="section-card">
-        <div class="sc-header">
-          <div>
-            <div class="sc-title">成員繳費狀態</div>
-            <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
-              <span class="badge badge-blue" style="font-size:0.65rem">繳費者</span>
-              <span class="badge badge-orange" style="font-size:0.65rem">統計者</span>
-              <span class="badge badge-gray" style="font-size:0.65rem">管理員</span>
-            </div>
-          </div>
-          <div class="filter-row">
-            <button class="ftab active" onclick="setFilter(this,'all')">全部</button>
-            <button class="ftab" onclick="setFilter(this,'paid')">已繳</button>
-            <button class="ftab" onclick="setFilter(this,'pending')">待繳</button>
-            <button class="ftab" onclick="setFilter(this,'overdue')">逾期</button>
-          </div>
-        </div>
-        <div id="memberList"></div>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--white);">
+        <h3 style="font-size:1rem;">成員列表</h3>
+        <button class="btn btn-primary" id="addBtn" onclick="openAdd()" style="padding:6px 12px; font-size:0.8rem;">+ 新增成員</button>
       </div>
-    </div>
-    <div>
-      <div class="progress-card">
-        <div class="share-label">收款進度</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
-          <span style="font-size:0.82rem;color:var(--text2)">繳費率</span>
-          <span id="progPct" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;font-weight:800">0%</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
-        <div class="prog-dots">
-          <div class="prog-dot-row"><div class="dot" style="background:var(--green)"></div>已繳：<strong id="pPaid">0</strong> 人</div>
-          <div class="prog-dot-row"><div class="dot" style="background:var(--orange)"></div>待繳：<strong id="pPend">0</strong> 人</div>
-          <div class="prog-dot-row"><div class="dot" style="background:var(--red)"></div>逾期：<strong id="pOvd">0</strong> 人</div>
-        </div>
-      </div>
-      <div class="share-card">
-        <div class="share-label">🔗 成員繳費連結</div>
-        <div class="share-url" id="shareUrl">—</div>
-        <button class="copy-btn" onclick="copyLink()">複製連結</button>
-        <a id="previewLink" href="#" class="btn btn-ghost" style="width:100%;margin-top:8px;justify-content:center;font-size:0.83rem;">預覽繳費頁面 →</a>
-      </div>
+      <div id="memberList"></div>
     </div>
   </div>
 </main>
-<!-- ADD MEMBER MODAL -->
-<div class="overlay" id="addOverlay">
-  <div class="modal">
-    <div class="modal-title">新增成員</div>
-    <div class="form-group"><label class="form-label">成員 Email</label><input type="email" id="addEmail" class="form-input" placeholder="member@email.com" onkeydown="if(event.key==='Enter')addMember()"></div>
-    <div class="form-group"><label class="form-label">角色</label>
-      <select id="addRole" class="form-input">
-        <option value="payer">繳費者（需繳款）</option>
-        <option value="counter">統計者（不需繳款）</option>
-        <option value="admin_member">管理員協同（不需繳款）</option>
-      </select>
-    </div>
-    <div class="form-group" id="customAmtWrap" style="display:none"><label class="form-label">各自設定金額</label><input type="number" id="addAmt" class="form-input" placeholder="0" min="0"></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeAdd()">取消</button>
-      <button class="btn btn-primary" style="flex:2" onclick="addMember()">新增</button>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-<script>
-const user = PC_requireAdmin(); if(!user) throw new Error('r');
-PC_fillSidebarUser();
-function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
-function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
-const params=new URLSearchParams(location.search);
-const eventId=params.get('id');
-if(!eventId)location.href='dashboard.html';
-let evt=null,cf='all';
-const RL={payer:'繳費者',counter:'統計者',admin_member:'管理員',observer:'觀察者'};
-const RC={payer:'#4f6ef7',counter:'#d97706',admin_member:'#16a34a',observer:'#9ca3af'};
-const RB={payer:'badge-blue',counter:'badge-orange',admin_member:'badge-green',observer:'badge-gray'};
 
-// ── 金額更改彈窗邏輯 ──
-function openAmtModal() {
-  // 篩選出所有「繳費者」
-  const payers = (evt.members || []).filter(m => {
-    const roles = Array.isArray(m.role) ? m.role : [m.role];
-    return roles.includes('payer') && m.status !== 'exited';
-  });
-
-  if(payers.length === 0) {
-    PC_toast('名單中目前沒有繳費者');
-    return;
-  }
-
-  // 初始化預設狀態
-  document.getElementById('amtSelectAll').checked = true;
-  document.getElementById('batchAmtInput').value = '';
-
-  // 渲染名單列表
-  const listHtml = payers.map((m, i) => {
-    const amt = m.customAmount != null ? m.customAmount : (evt.amount || 0);
-    return `<div style="display:flex; align-items:center; gap:10px; padding:10px; border:1px solid var(--border); border-radius:8px;">
-       <input type="checkbox" class="amt-chk" value="${m.email}" checked style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent);">
-       <div class="m-av" style="background:#4f6ef7">${(m.name||m.email||'?').slice(0,1).toUpperCase()}</div>
-       <div style="flex:1; min-width:0;">
-         <div style="font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.name||'—'}</div>
-         <div style="font-size:0.7rem; color:var(--text3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.email}</div>
-       </div>
-       <div style="display:flex;align-items:center;gap:4px;">
-         <span style="color:var(--text2);font-weight:600;">$</span>
-         <input type="number" class="form-input amt-val-input" data-email="${m.email}" value="${amt}" style="width:80px; padding:6px 10px; font-size:0.85rem;" min="0">
-       </div>
-     </div>`;
-  }).join('');
-
-  document.getElementById('amtPayersList').innerHTML = listHtml;
-  document.getElementById('amtModalOverlay').classList.add('show');
-}
-
-function closeAmtModal() {
-  document.getElementById('amtModalOverlay').classList.remove('show');
-}
-
-function toggleAllAmt(isChecked) {
-  document.querySelectorAll('.amt-chk').forEach(chk => chk.checked = isChecked);
-}
-
-function applyBatchAmt() {
-  const val = document.getElementById('batchAmtInput').value;
-  if(val === '') { PC_toast('請輸入批次金額'); return; }
-  const checkboxes = document.querySelectorAll('.amt-chk');
-  const inputs = document.querySelectorAll('.amt-val-input');
-  
-  let appliedCount = 0;
-  checkboxes.forEach((chk, i) => {
-    if(chk.checked) {
-      inputs[i].value = val;
-      appliedCount++;
-    }
-  });
-  if(appliedCount > 0) PC_toast(`已套用至 ${appliedCount} 位成員`);
-}
-
-function saveAmtModal() {
-  const inputs = document.querySelectorAll('.amt-val-input');
-  let changedCount = 0;
-
-  // 整理每個信箱對應的新金額
-  const newAmts = {};
-  inputs.forEach(inp => {
-    newAmts[inp.getAttribute('data-email')] = Number(inp.value) || 0;
-  });
-
-  // 更新到資料庫
-  evt.members.forEach(m => {
-    const roles = Array.isArray(m.role) ? m.role : [m.role];
-    if(roles.includes('payer') && newAmts[m.email] !== undefined) {
-       const newA = newAmts[m.email];
-       if(m.customAmount !== newA) {
-         m.customAmount = newA;
-         changedCount++;
-         // 發送通知給該成員
-         PC_sendNotify(m.email, "金額更新", `活動《${evt.title}》你的應繳金額已更新為 $${newA}`);
-       }
-    }
-  });
-
-  PC_saveEvents(PC_getEvents().map(x => x.id === eventId ? evt : x));
-  closeAmtModal();
-  renderPage();
-  PC_toast(`✅ 成功更新 ${changedCount} 位成員的金額`);
-}
-  
-// ── 新版側邊欄下拉選單邏輯 ──
-function toggleSideMenu(id) {
-  document.getElementById(id).classList.toggle('open');
-  document.getElementById(id + '_icon').classList.toggle('open');
-}
-
-function renderSidebar(){
-  const evts = PC_getAllMyEvents();
-  const created = evts.filter(e => e._isOwner);
-  const joined = evts.filter(e => !e._isOwner);
-
-  const curId = (typeof eventId !== 'undefined') ? eventId : null;
-  let html = '';
-
-  // 已建立活動區塊
-  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('menu_created')">已建立活動 <span class="chevron open" id="menu_created_icon">▼</span></div>`;
-  html += `<div class="sidebar-menu-list open" id="menu_created">`;
-  if(!created.length) html += `<div style="padding:6px 12px; font-size:0.75rem; color:var(--text3)">無資料</div>`;
-  html += created.map(e => `<a class="nav-event${e.id===curId?' current':''}" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
-  html += `</div>`;
-
-  // 已加入活動區塊
-  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('menu_joined')">已加入活動 <span class="chevron open" id="menu_joined_icon">▼</span></div>`;
-  html += `<div class="sidebar-menu-list open" id="menu_joined">`;
-  if(!joined.length) html += `<div style="padding:6px 12px; font-size:0.75rem; color:var(--text3)">無資料</div>`;
-  html += joined.map(e => `<a class="nav-event" href="member.html"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
-  html += `</div>`;
-
-  const container = document.getElementById('sidebarEvents');
-  if(container) container.innerHTML = html;
-  if(typeof PC_fillSidebarUser === 'function') PC_fillSidebarUser();
-}
-
-// 執行渲染側邊欄
-renderSidebar();
-
-function copyInviteCode(){
-  if(evt&&evt.inviteCode) PC_copyText(evt.inviteCode,'🔑 邀請碼已複製：'+evt.inviteCode);
-}
-function copyLink(){PC_copyText(document.getElementById('shareUrl').textContent,'🔗 連結已複製');}
-
-function renderPage(){
-  evt = PC_getEvent(eventId);
-  if(!evt){ location.href='dashboard.html'; return; }
-
-  // ── 權限檢查邏輯 ──
-  const u = PC_getUser();
-  const mRecord = evt.members.find(m => m.email === u.email);
-  // 取得角色陣列 (支援多重身分)
-  const roles = mRecord ? (Array.isArray(mRecord.role) ? mRecord.role : [mRecord.role]) : [];
-  
-  const isOwner = evt.ownerEmail === u.email;
-  const isCounter = roles.includes('counter');
-  const isPayer = roles.includes('payer') && !isOwner && !isCounter; // 純繳費者
-
-  // ── 基礎資訊渲染 ──
-  document.title = evt.title + ' — PayClub';
-  document.getElementById('bcTitle').textContent = evt.title;
-  document.getElementById('evtTitle').textContent = evt.title;
-  document.getElementById('evtDesc').textContent = evt.desc || '';
-  document.getElementById('deadlineDisplay').textContent = evt.deadline;
-
-  // 邀請碼：僅主辦人與統計者可見
-  if(evt.inviteCode && (isOwner || isCounter)){
-    document.getElementById('inviteBadge').style.display = 'inline-flex';
-    document.getElementById('inviteCodeText').textContent = evt.inviteCode;
-  } else {
-    document.getElementById('inviteBadge').style.display = 'none';
-  }
-
-  // ── 按鈕權限控管 ──
-  // 1. 加入申請審核：僅主辦人可見
-  const reqs = PC_getJoinRequests(eventId);
-  const pending = reqs.filter(r => r.status === 'pending').length;
-  const jBtn = document.getElementById('joinReqBtn');
-  jBtn.style.display = isOwner ? 'inline-flex' : 'none';
-  const jCount = document.getElementById('joinReqCount');
-  if(pending > 0 && isOwner){ jCount.style.display = 'inline-flex'; jCount.textContent = pending; } 
-  else { jCount.style.display = 'none'; }
-
-  // 2. 催款與報表：主辦人與統計者可見
-  const canManage = isOwner || isCounter;
-  document.querySelector('button[onclick="sendReminder()"]').style.display = canManage ? 'inline-flex' : 'none';
-  document.querySelector('button[onclick*="report.html"]').style.display = canManage ? 'inline-flex' : 'none';
-
-  // 3. 修改金額與新增成員：僅限主辦人
-  const amtBtn = document.querySelector('button[onclick="openAmtModal()"]');
-  if(amtBtn) amtBtn.style.display = isOwner ? 'inline-flex' : 'none';
-  document.querySelector('button[onclick="openAdd()"]').style.display = isOwner ? 'inline-flex' : 'none';
-
-  // 4. 右側連結區塊：繳費者隱藏「複製連結」，僅保留「預覽（繳費）」
-  document.querySelector('.share-card').style.display = canManage ? 'block' : 'none';
-
-  // ── 數據計算與渲染 ──
-  const p = PC_getPayers(evt);
-  const paid = p.filter(m => m.status === 'paid').length;
-  const pend = p.filter(m => m.status === 'pending').length;
-  const ovd = p.filter(m => m.status === 'overdue').length;
-  const pct = p.length ? Math.round(paid / p.length * 100) : 0;
-  const c = PC_getCollected(evt);
-  const e = PC_getExpected(evt);
-
-  document.getElementById('sC').textContent = '$' + c.toLocaleString();
-  document.getElementById('sE').textContent = '$' + e.toLocaleString();
-  document.getElementById('sP').textContent = '$' + (e - c).toLocaleString();
-  document.getElementById('sPsub').textContent = (pend + ovd) + ' 人未繳';
-
-  const dl = new Date(evt.deadline);
-  const days = Math.ceil((dl - new Date()) / (1000 * 60 * 60 * 24));
-  const de = document.getElementById('sDays');
-  de.textContent = days > 0 ? '剩 ' + days + ' 天' : '已截止';
-  de.style.color = days <= 3 ? 'var(--red)' : 'inherit';
-  document.getElementById('sDl').textContent = evt.deadline;
-
-  document.getElementById('progPct').textContent = pct + '%';
-  document.getElementById('progFill').style.width = pct + '%';
-  if(pct === 100) document.getElementById('progFill').classList.add('green');
-  else document.getElementById('progFill').classList.remove('green');
-
-  document.getElementById('pPaid').textContent = paid;
-  document.getElementById('pPend').textContent = pend;
-  document.getElementById('pOvd').textContent = ovd;
-
-  const url = location.href.replace(/event\.html.*/, '') + 'pay.html?event=' + evt.id;
-  document.getElementById('shareUrl').textContent = url;
-  document.getElementById('previewLink').href = url;
-  document.getElementById('previewLink').removeAttribute('target');
-
-  // 執行後續渲染，並將角色資訊傳入
-  renderMembers(roles, isOwner); 
-  renderSidebar();
-}
-
-function toggleMemberDetail(i){const el=document.getElementById("mdetail_"+i);if(el)el.style.display=el.style.display==="none"?"block":"none";}
-function renderMembers(userRoles = [], isOwner = false) {
-  // 判斷權限身分
-  const isCounter = userRoles.includes('counter');
-  const isPayer = userRoles.includes('payer') && !isOwner && !isCounter; // 純繳費者
-
-  let ms = evt.members || [];
-  if (cf === 'paid') ms = ms.filter(m => m.status === 'paid');
-  else if (cf === 'pending') ms = ms.filter(m => m.status === 'pending');
-  else if (cf === 'overdue') ms = ms.filter(m => m.status === 'overdue');
-
-  if (!ms.length) {
-    document.getElementById('memberList').innerHTML = '<div style="text-align:center;padding:24px;color:var(--text3);font-size:0.84rem;">沒有符合的成員</div>';
-    return;
-  }
-
-  document.getElementById('memberList').innerHTML = ms.map(m => {
-    const ri = (evt.members || []).indexOf(m);
-    const roles = Array.isArray(m.role) ? m.role : [m.role];
-    const targetIsPayer = roles.includes('payer');
-    const amt = targetIsPayer ? '$' + PC_getExpectedAmount(evt, m) : '—';
-
-    let bc = 'badge-gray', bt = '';
-    if (!targetIsPayer) {
-      bt = roles.map(r => RL[r] || r).join('+');
-    } else {
-      bc = m.status === 'paid' ? 'badge-green' : m.status === 'overdue' ? 'badge-red' : 'badge-orange';
-      bt = m.status === 'paid' ? '已繳費' : m.status === 'overdue' ? '逾期' : '待繳費';
-    }
-    const roleBadges = roles.map(r => `<span class="badge ${RB[r] || 'badge-gray'}" style="font-size:0.63rem;padding:1px 6px">${RL[r] || r}</span>`).join(' ');
-
-    const txDetail = m.txId ? `<div style="font-size:0.72rem;color:var(--text3);margin-top:3px;">編號：${m.txId}${m.remark ? ' | 備註：' + m.remark : ''}</div>` : '';
-
-    // ── 權限控制：純繳費者點擊無效 ──
-    const clickAction = isPayer ? '' : `onclick="toggleMemberDetail(${ri})"`;
-    const cursorStyle = isPayer ? 'cursor:default' : 'cursor:pointer';
-
-    return `<div>
-      <div class="member-row" ${clickAction} style="${cursorStyle}; ${m.status === 'exited' ? 'opacity:0.5;filter:grayscale(1);' : ''}">
-        <div class="m-av" style="background:#9ca3af">${(m.email || m.name || '?').slice(0, 1).toUpperCase()}</div>
-        <div class="m-info">
-          <div class="m-name">${m.email || m.name || '—'} ${roleBadges} ${m.status === 'exited' ? '<span class="badge badge-gray">已退出</span>' : ''}</div>
-          <div class="m-email">${m.paidAt || '—'}</div>
-          ${txDetail}
-        </div>
-        <div class="m-amount">${amt}</div>
-        <span class="badge ${bc}">${bt}</span>
-        
-        ${isOwner ? `
-          <div class="member-ops" style="display:flex; gap:4px; margin-left:8px;">
-            <button class="mark-btn" onclick="event.stopPropagation(); openStatusModal(${ri})">⚙️</button>
-            <button class="del-btn" onclick="event.stopPropagation(); confirmDeleteMember(${ri})">✕</button>
-          </div>
-        ` : ''}
-      </div>
-      
-      <div id="mdetail_${ri}" style="display:none;background:var(--surface);padding:10px 18px;border-bottom:1px solid var(--border);font-size:0.8rem;color:var(--text2);">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-          <div>📧 Email：<strong style="color:var(--text)">${m.email || '—'}</strong></div>
-          <div>💰 金額：<strong style="color:var(--text)">${amt}</strong></div>
-          <div>📅 繳費時間：<strong style="color:var(--text)">${m.paidAt || '—'}</strong></div>
-          <div>🏷 狀態：<strong style="color:var(--text)">${bt}</strong></div>
-          <div>🔢 交易編號：<strong style="color:var(--accent)">${m.txId || '—'}</strong></div>
-          <div>📝 備註：<strong style="color:var(--text)">${m.remark || '—'}</strong></div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-let targetIdx = -1; // 全域變數，紀錄目前操作的是哪一位成員
-
-// --- 調整狀態彈窗邏輯 ---
-function openStatusModal(idx) {
-  targetIdx = idx;
-  const m = evt.members[idx];
-  document.getElementById('newStatusSelect').value = m.status;
-  document.getElementById('statusModalOverlay').classList.add('show');
-}
-
-function closeStatusModal() {
-  document.getElementById('statusModalOverlay').classList.remove('show');
-}
-
-function saveStatusChange() {
-  const newSt = document.getElementById('newStatusSelect').value;
-  evt.members[targetIdx].status = newSt;
-  // 若設為已繳費則自動帶入目前時間，否則清空
-  evt.members[targetIdx].paidAt = (newSt === 'paid') ? PC_nowStr() : '';
-  
-  // 儲存至資料庫
-  const allEvts = PC_getEvents();
-  PC_saveEvents(allEvts.map(e => e.id === eventId ? evt : e));
-  
-  closeStatusModal();
-  renderPage(); // 重新整理頁面顯示新狀態
-  PC_toast('✅ 狀態已更新');
-}
-
-// --- 二次確認刪除邏輯 ---
-function confirmDeleteMember(idx) {
-  targetIdx = idx;
-  document.getElementById('deleteConfirmOverlay').classList.add('show');
-}
-
-function closeDeleteModal() {
-  document.getElementById('deleteConfirmOverlay').classList.remove('show');
-}
-
-function executeDelete() {
-  evt.members.splice(targetIdx, 1);
-  const allEvts = PC_getEvents();
-  PC_saveEvents(allEvts.map(e => e.id === eventId ? evt : e));
-  
-  closeDeleteModal();
-  renderPage();
-  PC_toast('🗑 已移除成員');
-}
-function setFilter(el,f){cf=f;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderMembers();}
-function sendReminder(){const n=(evt.members||[]).filter(m=>m.role==='payer'&&m.status!=='paid').length;PC_toast('📣 已發送催款給 '+n+' 位未繳成員');}
-
-// Deadline editor
-function toggleDlEdit(){const r=document.getElementById('dlEditRow');const s=r.style.display==='none';r.style.display=s?'flex':'none';if(s)initDlSel();}
-function initDlSel(){const[y,m,d]=(evt.deadline||'2026-01-01').split('-').map(Number);const cy=new Date().getFullYear();const yr=document.getElementById('dlYear');yr.innerHTML='';for(let i=cy;i<=cy+5;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'年';yr.appendChild(o);}yr.value=y;const mn=document.getElementById('dlMonth');mn.innerHTML='';for(let i=1;i<=12;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'月';mn.appendChild(o);}mn.value=m;updateDlDays(d);}
-function updateDlDays(sv){const y=parseInt(document.getElementById('dlYear').value)||2026;const m=parseInt(document.getElementById('dlMonth').value)||1;const days=new Date(y,m,0).getDate();const dd=document.getElementById('dlDay');const pv=sv||parseInt(dd.value)||1;dd.innerHTML='';for(let i=1;i<=days;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'日';dd.appendChild(o);}dd.value=Math.min(pv,days);}
-function saveDl(){const y=document.getElementById('dlYear').value,m=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const nd=`${y}-${m}-${d}`;const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);e.deadline=nd;PC_saveEvents(evts);document.getElementById('dlEditRow').style.display='none';renderPage();PC_toast('✅ 截止日期更新為 '+nd);}
-
-// Join requests
-let joinPanelOpen=false;
-function toggleJoinPanel(){joinPanelOpen=!joinPanelOpen;document.getElementById('joinPanel').style.display=joinPanelOpen?'block':'none';if(joinPanelOpen)renderJoinReqs();}
-function renderJoinReqs(){
-  const reqs=PC_getJoinRequests(eventId);
-  const list=document.getElementById('joinReqList');
-  if(!reqs.length){list.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:0.84rem;">目前沒有加入申請</div>';return;}
-  list.innerHTML=reqs.map((r,i)=>{
-    const t=new Date(r.requestedAt).toLocaleString('zh-TW',{dateStyle:'short',timeStyle:'short'});
-    const isPending=r.status==='pending';
-    return `<div class="req-row">
-      <div class="req-info">
-        <div class="req-email">${r.email}</div>
-        <div class="req-name">${r.name} · 申請時間：${t}</div>
-      </div>
-      ${isPending?`<button class="approve-btn" onclick="approveReq(${i})">✓ 同意</button><button class="reject-btn" onclick="rejectReq(${i})">✕ 拒絕</button>`:`<span class="badge ${r.status==='approved'?'badge-green':'badge-red'}">${r.status==='approved'?'已同意':'已拒絕'}</span>`}
-    </div>`;
-  }).join('');
-}
-  
-let currentReqIndex = -1; 
-function approveReq(i) {
-  currentReqIndex = i;
-  const reqs = PC_getJoinRequests(eventId);
-  const req = reqs[i];
-  
-  document.querySelectorAll('.role-option').forEach(el => el.classList.remove('selected'));
-  document.getElementById('roleModalOverlay').classList.add('show');
-}
-
-function toggleRoleOption(el, role) {
-  el.classList.toggle('selected');
-}
-
-function closeRoleModal() {
-  document.getElementById('roleModalOverlay').classList.remove('show');
-}
-
-function confirmApprove() {
-  const selectedRoles = [];
-  const options = document.querySelectorAll('.role-option.selected');
-  options.forEach(opt => {
-    if(opt.innerText.includes('繳費者')) selectedRoles.push('payer');
-    if(opt.innerText.includes('統計者')) selectedRoles.push('counter');
-    if(opt.innerText.includes('觀察者')) selectedRoles.push('observer');
-  });
-
-  if(selectedRoles.length === 0) {
-    PC_toast('請至少選擇一個角色');
-    return;
-  }
-
-  const reqs = PC_getJoinRequests(eventId);
-  const req = reqs[currentReqIndex];
-  
-  req.status = 'approved';
-  req.approvedRole = selectedRoles; 
-  PC_saveJoinRequests(eventId, reqs);
-
-  const evts = PC_getEvents();
-  const e = evts.find(x => x.id === eventId);
-  if(!e.members) e.members = [];
-  
-  if(!e.members.find(m => m.email === req.email)) {
-    e.members.push({
-      email: req.email,
-      name: req.name,
-      role: selectedRoles,
-      status: selectedRoles.includes('payer') ? 'pending' : 'none',
-      paidAt: '',
-      customAmount: null
-    });
-    PC_saveEvents(evts);
-  }
-  PC_sendNotify(req.email, "申請已通過", `您已成功加入活動《${e.title}》！身分：${selectedRoles.map(r=>ROLE_LABELS[r]).join('+')}`);
-
-  closeRoleModal();
-  renderPage();
-  PC_toast('✅ 已核准加入');
-}
-function rejectReq(i){
-  const reqs=PC_getJoinRequests(eventId);
-  reqs[i].status='rejected';
-  PC_saveJoinRequests(eventId,reqs);
-  renderJoinReqs();renderPage();PC_toast('已拒絕申請');
-}
-
-// Add member
-function openAdd(){document.getElementById('addEmail').value='';document.getElementById('addRole').value='payer';document.getElementById('addAmt').value='';toggleAmt();document.getElementById('addOverlay').classList.add('show');}
-function closeAdd(){document.getElementById('addOverlay').classList.remove('show');}
-document.getElementById('addOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAdd();});
-function toggleAmt(){document.getElementById('customAmtWrap').style.display=(evt&&evt.amountMode==='custom'&&document.getElementById('addRole').value==='payer')?'block':'none';}
-document.getElementById('addRole').addEventListener('change',toggleAmt);
-function addMember(){
-  const email=document.getElementById('addEmail').value.trim();
-  const role=document.getElementById('addRole').value;
-  if(!email||!email.includes('@')){PC_toast('請輸入有效 Email');return;}
-  const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
-  if(!e.members)e.members=[];
-  if(e.members.find(m=>m.email===email)){PC_toast('此 Email 已在成員名單中');return;}
-  let ca=null;
-  if(e.amountMode==='custom'&&role==='payer')ca=parseFloat(document.getElementById('addAmt').value)||0;
-  e.members.push({email,name:email.split('@')[0],role,status:role==='payer'?'pending':'none',paidAt:'',customAmount:ca});
-  PC_saveEvents(evts);closeAdd();renderPage();PC_toast('✅ 已新增 '+email);
-}
-
-renderPage();
-</script>
-<div class="overlay" id="roleModalOverlay">
-  <div class="modal">
-    <div class="modal-title">指定成員角色</div>
-    <p style="font-size:0.85rem; color:var(--text2); margin-bottom:16px;">
-      您可以為成員勾選多重身分（例如：同時擔任繳費者與管理幹部）。
-    </p>
-    
-    <div id="roleOptions">
-      <div class="role-option" onclick="toggleRoleOption(this, 'payer')">
-        <div class="role-check"></div>
-        <div>
-          <div style="font-weight:600; font-size:0.9rem;">繳費者</div>
-          <div style="font-size:0.75rem; color:var(--text3);">需支付活動費用，會出現在催款名單。</div>
-        </div>
-      </div>
-      
-      <div class="role-option" onclick="toggleRoleOption(this, 'counter')">
-        <div class="role-check"></div>
-        <div>
-          <div style="font-weight:600; font-size:0.9rem;">統計者</div>
-          <div style="font-size:0.75rem; color:var(--text3);">可查看收款明細，協助管帳。</div>
-        </div>
-      </div>
-
-      <div class="role-option" onclick="toggleRoleOption(this, 'observer')">
-        <div class="role-check"></div>
-        <div>
-          <div style="font-weight:600; font-size:0.9rem;">觀察者</div>
-          <div style="font-size:0.75rem; color:var(--text3);">僅可查看活動進度總覽。</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeRoleModal()">取消</button>
-      <button class="btn btn-primary" style="flex:2" onclick="confirmApprove()">確認加入</button>
-    </div>
-  </div>
-</div>
-<div class="overlay" id="amtModalOverlay">
-  <div class="modal" style="max-width:480px;">
-    <div class="modal-title">💰 繳費金額更改</div>
-    
-    <div style="display:flex; gap:10px; align-items:center; background:var(--surface); padding:12px 14px; border-radius:9px; margin-bottom:16px;">
-       <input type="checkbox" id="amtSelectAll" onchange="toggleAllAmt(this.checked)" checked style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent);">
-       <label for="amtSelectAll" style="font-size:0.85rem; font-weight:600; cursor:pointer;">全選</label>
-       <div style="flex:1;"></div>
-       <input type="number" id="batchAmtInput" class="form-input" style="width:120px; padding:6px 10px; font-size:0.85rem;" placeholder="輸入批次金額">
-       <button class="btn btn-primary" style="padding:6px 12px; font-size:0.8rem;" onclick="applyBatchAmt()">套用</button>
-    </div>
-
-    <div style="font-size:0.78rem; font-weight:700; color:var(--text2); text-transform:uppercase; margin-bottom:8px;">繳費者名單</div>
-    <div id="amtPayersList" style="max-height:40vh; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-bottom:18px; padding-right:4px;">
-       </div>
-
-    <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeAmtModal()">取消</button>
-      <button class="btn btn-primary" style="flex:2" onclick="saveAmtModal()">儲存更改</button>
-    </div>
-  </div>
-</div>
 <div class="overlay" id="statusModalOverlay">
   <div class="modal" style="max-width:320px;">
-    <div class="modal-title">調整繳費狀態</div>
+    <div class="modal-title">⚙️ 調整繳費狀態</div>
     <div class="form-group">
       <label class="form-label">選擇新狀態</label>
       <select id="newStatusSelect" class="form-input">
@@ -761,7 +53,7 @@ renderPage();
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeStatusModal()">取消</button>
-      <button class="btn btn-primary" onclick="saveStatusChange()">儲存</button>
+      <button class="btn btn-primary" onclick="saveStatusChange()">儲存變更</button>
     </div>
   </div>
 </div>
@@ -769,12 +61,103 @@ renderPage();
 <div class="overlay" id="deleteConfirmOverlay">
   <div class="modal" style="max-width:320px; text-align:center;">
     <div style="font-size:2rem; margin-bottom:10px;">⚠️</div>
-    <div class="modal-title">確定要刪除成員嗎？</div>
-    <p style="font-size:0.85rem; color:var(--text2); margin-bottom:20px;">此操作將移除該成員的所有紀錄，且無法復原。</p>
+    <div class="modal-title">確定要刪除嗎？</div>
+    <p style="font-size:0.85rem; color:var(--text2); margin-bottom:20px;">此操作將移除該成員所有紀錄。</p>
     <div class="modal-actions">
       <button class="btn btn-ghost" style="flex:1" onclick="closeDeleteModal()">取消</button>
       <button class="btn btn-danger" style="flex:1" onclick="executeDelete()">確認刪除</button>
     </div>
   </div>
 </div>
-</body></html>
+
+<script>
+const eventId = new URLSearchParams(location.search).get('id');
+let evt = null;
+let targetIdx = -1;
+
+function renderPage(){
+  evt = PC_getEvents().find(e => e.id === eventId);
+  const u = PC_getUser();
+  if(!evt) { location.href='dashboard.html'; return; }
+
+  // 權限判斷：防呆支援舊活動
+  const isOwner = !evt.ownerEmail || evt.ownerEmail === u.email;
+  
+  document.getElementById('eventTitle').textContent = evt.title;
+  document.getElementById('eventDesc').textContent = evt.desc || '暫無說明';
+  document.getElementById('addBtn').style.display = isOwner ? 'block' : 'none';
+
+  renderMembers(isOwner);
+}
+
+function renderMembers(isOwner){
+  const ms = evt.members || [];
+  const list = document.getElementById('memberList');
+  
+  if(!ms.length){
+    list.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text3);">尚無成員</div>';
+    return;
+  }
+
+  list.innerHTML = ms.map((m, ri) => {
+    const stClass = m.status==='paid'?'badge-green':m.status==='overdue'?'badge-red':'badge-orange';
+    const stText = m.status==='paid'?'已繳費':m.status==='overdue'?'逾期':'待繳費';
+    
+    return `
+      <div class="member-row">
+        <div class="m-av" style="background:#94a3b8">${(m.name||m.email||'?')[0].toUpperCase()}</div>
+        <div class="m-info">
+          <div class="m-name">${m.name || m.email}</div>
+          <div class="m-email">${m.email}</div>
+        </div>
+        <div class="m-amount">$${m.customAmount || evt.amount}</div>
+        <span class="badge ${stClass}">${stText}</span>
+        
+        ${isOwner ? `
+          <div style="display:flex; gap:6px; margin-left:12px;">
+            <button class="mark-btn" onclick="openStatusModal(${ri})">⚙️</button>
+            <button class="del-btn" onclick="confirmDeleteMember(${ri})">✕</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// 彈窗邏輯
+function openStatusModal(idx){
+  targetIdx = idx;
+  document.getElementById('newStatusSelect').value = evt.members[idx].status;
+  document.getElementById('statusModalOverlay').classList.add('show');
+}
+function closeStatusModal(){ document.getElementById('statusModalOverlay').classList.remove('show'); }
+function saveStatusChange(){
+  const newSt = document.getElementById('newStatusSelect').value;
+  evt.members[targetIdx].status = newSt;
+  evt.members[targetIdx].paidAt = (newSt === 'paid') ? PC_nowStr() : '';
+  saveAndRefresh();
+  closeStatusModal();
+}
+
+function confirmDeleteMember(idx){
+  targetIdx = idx;
+  document.getElementById('deleteConfirmOverlay').classList.add('show');
+}
+function closeDeleteModal(){ document.getElementById('deleteConfirmOverlay').classList.remove('show'); }
+function executeDelete(){
+  evt.members.splice(targetIdx, 1);
+  saveAndRefresh();
+  closeDeleteModal();
+}
+
+function saveAndRefresh(){
+  const all = PC_getEvents();
+  PC_saveEvents(all.map(e => e.id === eventId ? evt : e));
+  renderPage();
+  PC_toast('更新成功');
+}
+
+renderPage();
+</script>
+</body>
+</html>
