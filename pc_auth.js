@@ -43,10 +43,11 @@ function PC_fillSidebarUser(){
   }
 }
 
-function PC_getExpectedAmount(event, member){
-  if(!member || !(member.role||[]).includes('payer')) return 0;
-  if(member.customAmount != null) return Number(member.customAmount);
-  return Number(event.amount || 0);
+function PC_getExpectedAmount(event, member) {
+  const roles = Array.isArray(member.role) ? member.role : [member.role];
+  if(!member || !roles.includes('payer')) return 0;
+  if(member.customAmount != null) return Number(member.customAmount) || 0;
+  return Number(event.amount) || 0;
 }
 
 function PC_getUser(){ return JSON.parse(sessionStorage.getItem('pc_current_user')); }
@@ -55,8 +56,12 @@ function PC_requireAdmin(){ return PC_requireLogin(); }
 function PC_saveEvents(e){ localStorage.setItem('pc_events__' + PC_getUser().email, JSON.stringify(e)); }
 function PC_nowStr(){ const n = new Date(); return (n.getMonth()+1)+'/'+n.getDate()+' '+n.getHours()+':'+n.getMinutes(); }
 function PC_genTxId(){ return 'PC'+Date.now().toString(36).toUpperCase(); }
-function PC_getPayers(e){ return (e.members||[]).filter(m=>(m.role||[]).includes('payer') && m.status !== 'exited'); }
-function PC_getCollected(e){ return PC_getPayers(e).filter(m=>m.status==='paid').reduce((s,m)=>s+PC_getExpectedAmount(e,m), 0); }
+function PC_getPayers(event) {
+  return (event.members || []).filter(m => {
+    const roles = Array.isArray(m.role) ? m.role : [m.role];
+    return roles.includes('payer') && m.status !== 'exited';
+  });
+}function PC_getCollected(e){ return PC_getPayers(e).filter(m=>m.status==='paid').reduce((s,m)=>s+PC_getExpectedAmount(e,m), 0); }
 function PC_getExpected(e){ return PC_getPayers(e).reduce((s,m)=>s+PC_getExpectedAmount(e,m), 0); }
 function PC_copyText(t,m){ navigator.clipboard.writeText(t).then(()=>PC_toast(m||'✅ 已複製')); }
 const ROLE_LABELS = {admin:'管理員', payer:'繳費者', observer:'觀察者', counter:'統計者'};
