@@ -2,18 +2,15 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>我的活動 — PayClub</title>
+<title>加入活動 — PayClub</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{background:var(--bg);min-height:100vh;}
 .member-nav{background:var(--white);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow);}
 .nav-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.15rem;color:var(--accent);display:flex;align-items:center;gap:7px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text2);font-size:0.86rem;font-weight:600;cursor:pointer;padding:7px 13px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;margin-right:14px;}
-.back-btn:hover{border-color:var(--border2);background:var(--surface);}
 .nav-right{display:flex;align-items:center;gap:10px;}
 .nav-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;}
-.nav-name{font-size:0.86rem;font-weight:600;}
 .content{max-width:720px;margin:0 auto;padding:28px 20px;}
 .invite-section{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:22px;}
 .invite-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:5px;}
@@ -24,9 +21,12 @@ body{background:var(--bg);min-height:100vh;}
 .invite-input::placeholder{letter-spacing:0;font-weight:400;text-transform:none;}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .section-title{font-size:0.9rem;font-weight:700;}
-.event-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden;}
-.ec-main{padding:18px 20px;cursor:pointer;transition:background 0.15s;}
-.ec-main:hover{background:var(--surface);}
+/* Event cards */
+.event-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all 0.15s;}
+.event-card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(79,110,247,0.08);}
+.event-card.no-click{cursor:default;}
+.event-card.no-click:hover{border-color:var(--border);transform:none;box-shadow:var(--shadow);}
+.ec-main{padding:18px 20px;}
 .ec-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
 .ec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;}
 .ec-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
@@ -36,248 +36,263 @@ body{background:var(--bg);min-height:100vh;}
 .sum-box{background:var(--surface);border-radius:8px;padding:10px 12px;text-align:center;}
 .sum-label{font-size:0.68rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;}
 .sum-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;}
-.ec-detail{border-top:1px solid var(--border);padding:16px 20px;display:none;}
-.ec-detail.open{display:block;}
-.my-status-box{background:var(--accent-light);border:1px solid #c7d2fe;border-radius:10px;padding:14px 16px;margin-bottom:14px;}
-.my-status-label{font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
-.my-status-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.tx-info{background:var(--surface);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:0.78rem;color:var(--text2);}
-.tx-info strong{color:var(--text);font-weight:700;}
-.member-table{width:100%;border-collapse:collapse;font-size:0.83rem;margin-bottom:12px;}
-.member-table th{background:var(--surface);padding:8px 10px;text-align:left;font-size:0.7rem;color:var(--text2);font-weight:700;text-transform:uppercase;}
-.member-table td{padding:9px 10px;border-bottom:1px solid var(--border);}
-.member-table tr:last-child td{border-bottom:none;}
-.obs-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-.obs-box{background:var(--surface);border-radius:9px;padding:12px 14px;}
-.obs-label{font-size:0.68rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;}
-.obs-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.1rem;font-weight:700;}
-.pay-btn{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;margin-bottom:4px;}
-.pay-btn:hover{background:var(--accent-dark);}
-.pay-btn:disabled{background:var(--green);cursor:default;}
-.ec-footer{padding:10px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;}
-.leave-btn{background:none;border:none;color:var(--text3);font-size:0.76rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-.leave-btn:hover{color:var(--red);}
-.pending-box{background:var(--orange-light);border-radius:9px;padding:12px 14px;font-size:0.84rem;color:var(--orange);}
-.rejected-box{background:var(--red-light);border-radius:9px;padding:12px 14px;font-size:0.84rem;color:var(--red);}
+.ec-footer{padding:10px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.enter-btn{font-size:0.82rem;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:4px;}
+.leave-btn-sm{background:none;border:none;color:var(--text3);font-size:0.76rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
+.leave-btn-sm:hover{color:var(--red);}
+/* Pending states */
+.pending-box{background:var(--orange-light);border:1px solid #fed7aa;border-radius:9px;padding:12px 14px;font-size:0.84rem;color:var(--orange);}
+.rejected-box{background:var(--red-light);border:1px solid #fecaca;border-radius:9px;padding:12px 14px;font-size:0.84rem;color:var(--red);}
+/* Invite confirm modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:26px;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,0.15);animation:slideUp 0.22s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:8px;}
+.modal-sub{font-size:0.84rem;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.modal-actions{display:flex;gap:8px;margin-top:18px;}
+.invite-confirm-box{background:var(--accent-light);border:1px solid #c7d2fe;border-radius:10px;padding:14px 16px;margin-bottom:14px;}
 .empty-state{text-align:center;padding:40px 20px;color:var(--text2);}
-@media(max-width:480px){.ec-summary{grid-template-columns:1fr 1fr;}.invite-row{flex-direction:column;}.obs-stats{grid-template-columns:1fr;}}
+@media(max-width:480px){.ec-summary{grid-template-columns:1fr 1fr;}.invite-row{flex-direction:column;}}
 </style>
 </head>
 <body>
 <nav class="member-nav">
-  <div style="display:flex; align-items:center;">
-    <button class="back-btn" onclick="location.href='dashboard.html'">← 回總覽</button>
-    <div class="nav-logo" onclick="location.href='dashboard.html'" style="cursor:pointer;">
-      <div style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;margin-right:2px"></div>PayClub
-    </div>
-  </div>
+  <div class="nav-logo"><div style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;margin-right:2px"></div>PayClub</div>
   <div class="nav-right">
-    <div class="nav-avatar" id="navAvatar">?</div>
-    <div class="nav-name" id="navName">載入中</div>
+    <div class="nav-avatar" id="navAvatar">M</div>
+    <div style="font-size:0.86rem;font-weight:600" id="navName">載入中</div>
+    <a href="dashboard.html" class="btn btn-ghost" style="padding:6px 14px;font-size:0.8rem">← 回總覽</a>
     <button class="logout-btn" onclick="PC_logout()">登出</button>
   </div>
 </nav>
+
 <div class="content">
   <div class="invite-section">
     <div class="invite-title">🔑 輸入活動邀請碼</div>
-    <div class="invite-sub">向活動管理員索取 8 位邀請碼，輸入後送出申請，管理員審核通過後即可查看活動內容。</div>
+    <div class="invite-sub">向活動管理員索取 8 位邀請碼，輸入後送出申請。管理員審核通過後可進入活動頁面。</div>
     <div class="invite-row">
-      <input type="text" id="inviteInput" class="invite-input" placeholder="例：ABC12345" maxlength="8" oninput="this.value=this.value.toUpperCase()">
+      <input type="text" id="inviteInput" class="invite-input" placeholder="例：ABC12345" maxlength="8" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')joinEvent()">
       <button class="btn btn-primary" onclick="joinEvent()">加入活動</button>
     </div>
     <div id="inviteErr" style="color:var(--red);font-size:0.78rem;margin-top:8px;display:none;"></div>
   </div>
 
   <div class="section-header">
-    <div class="section-title" id="joinedTitle">我加入的活動</div>
-    <button class="btn btn-ghost" onclick="refreshAll()" style="font-size:0.8rem;padding:6px 12px;" id="refreshBtn">🔄 更新狀態</button>
+    <div class="section-title" id="joinedTitle" style="display:none">我加入的活動</div>
+    <button class="btn btn-ghost" onclick="refreshAll()" id="refreshBtn" style="display:none;font-size:0.8rem;padding:6px 12px">🔄 更新狀態</button>
   </div>
   <div id="joinedEvents"></div>
-  <div class="empty-state" id="emptyState" style="display:none">
+  <div class="empty-state" id="emptyState">
     <div style="font-size:2.5rem;margin-bottom:12px;opacity:0.4">🎫</div>
     <p>尚未加入任何活動<br>輸入邀請碼開始！</p>
   </div>
 </div>
+
+<!-- Invite confirm modal (for pre-invited members) -->
+<div class="overlay" id="inviteConfirmOverlay">
+  <div class="modal">
+    <div class="modal-title">🎫 活動邀請確認</div>
+    <div class="invite-confirm-box" id="inviteConfirmInfo"></div>
+    <div class="modal-sub">請確認是否同意以上述角色加入此活動？</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="rejectInvite()">拒絕邀請</button>
+      <button class="btn btn-primary" style="flex:2" onclick="acceptInvite()">✓ 同意加入</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
-
 <script>
-const user = PC_requireLogin(); if(!user) throw new Error('r');
-document.getElementById('navAvatar').textContent = user.name.slice(0,1);
-document.getElementById('navName').textContent = user.name;
+const user=PC_requireLogin();if(!user)throw new Error('r');
+document.getElementById('navAvatar').textContent=user.name.slice(0,1);
+document.getElementById('navName').textContent=user.name;
 
-function getMemberJoined(){ return JSON.parse(localStorage.getItem('pc_member_joined__'+user.email)||'[]'); }
-function saveMemberJoined(e){ localStorage.setItem('pc_member_joined__'+user.email,JSON.stringify(e)); }
+function getMemberJoined(){return JSON.parse(localStorage.getItem('pc_member_joined__'+user.email)||'[]');}
+function saveMemberJoined(e){localStorage.setItem('pc_member_joined__'+user.email,JSON.stringify(e));}
 
-function joinEvent() {
-  const code = document.getElementById('inviteInput').value.trim().toUpperCase();
-  const errEl = document.getElementById('inviteErr');
-  if(code.length < 4) { errEl.textContent = '請輸入邀請碼'; errEl.style.display = 'block'; return; }
-  
-  const result = PC_findEventByCode(code);
-  if(!result) { errEl.textContent = '找不到此邀請碼，請確認後重試'; errEl.style.display = 'block'; return; }
-  errEl.style.display = 'none';
+let pendingInviteData=null;
 
-  const joined = getMemberJoined();
-  if(joined.find(j => j.eventId === result.event.id)) { PC_toast('你已在活動中'); return; }
-
-  const reqs = PC_getJoinRequests(result.event.id);
-  let myReq = reqs.find(r => r.email === user.email);
-
-  if(myReq && myReq.status === 'pending') {
-    PC_toast('申請已送出，等待審核中'); return;
+// Check for pending invites from notifications
+function checkPendingInvites(){
+  const notifs=JSON.parse(localStorage.getItem('pc_notif__'+user.email)||'[]');
+  const inviteNotif=notifs.find(n=>n.type==='invite'&&!n.read&&!n.handled);
+  if(inviteNotif){
+    // Try to find the event this invite is for
+    const joined=getMemberJoined();
+    // Look for events where user is listed as pending_invite
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(key&&key.startsWith('pc_events__')){
+        try{
+          const evts=JSON.parse(localStorage.getItem(key)||'[]');
+          evts.forEach(e=>{
+            const myM=(e.members||[]).find(m=>m.email===user.email&&m.status==='pending_invite');
+            if(myM&&!joined.find(j=>j.eventId===e.id)){
+              pendingInviteData={notifId:inviteNotif.id,event:e,ownerKey:key,member:myM};
+              showInviteConfirm(e,myM,inviteNotif);
+            }
+          });
+        }catch(err){}
+      }
+    }
   }
+}
 
-  // 如果曾退出或拒絕，允許重設狀態為 pending
-  if(myReq) {
-    myReq.status = 'pending';
-    myReq.requestedAt = new Date().toISOString();
-  } else {
-    reqs.push({ email: user.email, name: user.name, requestedAt: new Date().toISOString(), status: 'pending' });
+function showInviteConfirm(e,m,notif){
+  const roles=Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);
+  const RL_MAP={payer:'繳費者',observer:'觀察者',counter:'統計者',admin:'管理員'};
+  document.getElementById('inviteConfirmInfo').innerHTML=`
+    <div style="font-size:0.9rem;font-weight:700;margin-bottom:6px">${e.title}</div>
+    <div style="font-size:0.8rem;color:var(--text2);margin-bottom:6px">截止日期：${e.deadline}</div>
+    <div style="font-size:0.8rem;color:var(--text2)">邀請角色：${roles.map(r=>`<span class="badge badge-blue" style="font-size:0.7rem">${RL_MAP[r]||r}</span>`).join(' ')}</div>`;
+  document.getElementById('inviteConfirmOverlay').classList.add('show');
+}
+
+function acceptInvite(){
+  if(!pendingInviteData)return;
+  const{event:e,ownerKey,member:m}=pendingInviteData;
+  // Update member status in owner's storage
+  const evts=JSON.parse(localStorage.getItem(ownerKey)||'[]');
+  const ev=evts.find(x=>x.id===e.id);
+  if(ev){
+    const myM=(ev.members||[]).find(x=>x.email===user.email);
+    if(myM){
+      const roles=Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);
+      myM.status=roles.includes('payer')?'pending':'none';
+    }
+    localStorage.setItem(ownerKey,JSON.stringify(evts));
   }
-  PC_saveJoinRequests(result.event.id, reqs);
-
-  joined.push({ eventId: result.event.id, eventTitle: result.event.title, ownerKey: result.ownerKey });
+  // Add to joined list
+  const joined=getMemberJoined();
+  joined.push({eventId:e.id,eventTitle:e.title,ownerKey,joinedAt:new Date().toISOString()});
   saveMemberJoined(joined);
+  // Mark notif as handled
+  markNotifHandled(pendingInviteData.notifId);
+  // Notify owner
+  PC_sendNotify(e.ownerEmail||'','成員已確認加入 ✅',`${user.name}(${user.email}) 已確認加入「${e.title}」。`,'success');
+  document.getElementById('inviteConfirmOverlay').classList.remove('show');
+  pendingInviteData=null;
+  renderJoined();PC_toast('✅ 已加入「'+e.title+'」');
+}
 
-  // 通知主辦人
-  PC_sendNotify(result.ownerEmail, "新加入申請", `${user.name} 申請加入活動《${result.event.title}》`);
+function rejectInvite(){
+  if(!pendingInviteData)return;
+  markNotifHandled(pendingInviteData.notifId);
+  document.getElementById('inviteConfirmOverlay').classList.remove('show');
+  pendingInviteData=null;
+  PC_toast('已拒絕邀請');
+}
 
-  document.getElementById('inviteInput').value = '';
+function markNotifHandled(id){
+  const key='pc_notif__'+user.email;
+  const notifs=JSON.parse(localStorage.getItem(key)||'[]');
+  const n=notifs.find(x=>x.id===id);
+  if(n){n.read=true;n.handled=true;localStorage.setItem(key,JSON.stringify(notifs));}
+}
+
+function joinEvent(){
+  const code=document.getElementById('inviteInput').value.trim().toUpperCase();
+  const errEl=document.getElementById('inviteErr');
+  if(code.length<4){errEl.textContent='請輸入邀請碼';errEl.style.display='block';return;}
+  const result=PC_findEventByCode(code);
+  if(!result){errEl.textContent='找不到此邀請碼，請確認後重試';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  const joined=getMemberJoined();
+  if(joined.find(j=>j.eventId===result.event.id)){PC_toast('你已加入此活動');return;}
+  const reqs=PC_getJoinRequests(result.event.id);
+  const alreadyReq=reqs.find(r=>r.email===user.email);
+  if(alreadyReq){PC_toast(alreadyReq.status==='pending'?'申請已送出，等待審核':alreadyReq.status==='rejected'?'申請已被拒絕':'已加入此活動');return;}
+  reqs.push({email:user.email,name:user.name,requestedAt:new Date().toISOString(),status:'pending'});
+  PC_saveJoinRequests(result.event.id,reqs);
+  joined.push({eventId:result.event.id,eventTitle:result.event.title,ownerKey:result.ownerKey,joinedAt:new Date().toISOString()});
+  saveMemberJoined(joined);
+  document.getElementById('inviteInput').value='';
+  PC_sendNotify(result.ownerEmail||'','新加入申請 👥',`${user.name}(${user.email}) 申請加入「${result.event.title}」，請前往活動頁面審核。`,'info');
   PC_toast('✅ 申請已送出！等待管理員審核');
   renderJoined();
 }
 
-function refreshAll(){ renderJoined(); PC_toast('✅ 狀態已更新'); }
+function refreshAll(){renderJoined();PC_toast('✅ 狀態已更新');}
 
 function renderJoined(){
-  const joined = getMemberJoined();
-  const emptyEl = document.getElementById('emptyState');
-  const titleEl = document.getElementById('joinedTitle');
-  const refreshBtn = document.getElementById('refreshBtn');
-  const container = document.getElementById('joinedEvents');
-  
-  if(!joined.length){
-    emptyEl.style.display = 'block';
-    titleEl.style.display = 'none';
-    refreshBtn.style.display = 'none';
-    container.innerHTML = '';
-    return;
-  }
-  
-  emptyEl.style.display = 'none';
-  titleEl.style.display = 'block';
-  refreshBtn.style.display = 'inline-flex';
+  const joined=getMemberJoined();
+  const emptyEl=document.getElementById('emptyState');
+  const titleEl=document.getElementById('joinedTitle');
+  const refreshBtn=document.getElementById('refreshBtn');
+  const container=document.getElementById('joinedEvents');
+  if(!joined.length){emptyEl.style.display='block';titleEl.style.display='none';refreshBtn.style.display='none';container.innerHTML='';return;}
+  emptyEl.style.display='none';titleEl.style.display='block';refreshBtn.style.display='inline-flex';
 
-  container.innerHTML = joined.map((j, ji) => {
-    const result = PC_findEventById(j.eventId);
-    const evt = result ? result.event : null;
-    
-    if(!evt) return `<div class="event-card"><div class="ec-main" style="cursor:default"><div style="color:var(--text3);display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;">活動「${j.eventTitle}」已被刪除<button onclick="leaveEvent(event,${ji})" style="color:var(--red);background:none;border:none;cursor:pointer;font-family:inherit;font-size:0.8rem">移除紀錄</button></div></div></div>`;
+  container.innerHTML=joined.map((j,ji)=>{
+    const reqs=PC_getJoinRequests(j.eventId);
+    const myReq=reqs.find(r=>r.email===user.email);
+    const approved=myReq&&myReq.status==='approved';
+    const rejected=myReq&&myReq.status==='rejected';
 
-    const reqs = PC_getJoinRequests(j.eventId);
-    const myReq = reqs.find(r => r.email === user.email);
-    const status = myReq ? myReq.status : 'pending';
-    const approved = status === 'approved';
-    const rejected = status === 'rejected';
-    
-    // 處理多重身分 (可能是字串或陣列)
-    const myRoles = myReq && myReq.approvedRole ? (Array.isArray(myReq.approvedRole) ? myReq.approvedRole : [myReq.approvedRole]) : ['payer'];
-    const isPayer = myRoles.includes('payer');
-    const isCounter = myRoles.includes('counter');
-    const isObserver = myRoles.includes('observer');
-    const roleTxt = myRoles.map(r => ROLE_LABELS[r] || r).join(' + ');
+    const result=PC_findEventById(j.eventId);
+    const evt=result?result.event:null;
+    if(!evt)return`<div class="event-card no-click"><div class="ec-main"><div style="color:var(--text3);display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;">活動「${j.eventTitle}」已被刪除<button onclick="leaveEvent(event,${ji})" style="color:var(--red);background:none;border:none;cursor:pointer;font-family:inherit;font-size:0.8rem">移除</button></div></div></div>`;
 
-    const payers = PC_getPayers(evt);
-    const paidCount = payers.filter(m => m.status === 'paid').length;
-    const pct = payers.length ? Math.round(paidCount / payers.length * 100) : 0;
-    const dl = new Date(evt.deadline), days = Math.ceil((dl - new Date()) / 86400000);
+    // Check if user is pre-invited (pending_invite)
+    const myMember=(evt.members||[]).find(m=>m.email===user.email);
+    const isPendingInvite=myMember&&myMember.status==='pending_invite';
 
-    const statusBadge = !approved && !rejected ? '<span class="badge badge-orange">審核中</span>' : rejected ? '<span class="badge badge-red">已拒絕</span>' : `<span class="badge badge-green">${roleTxt}</span>`;
+    const payers=PC_getPayers(evt);
+    const paid=payers.filter(m=>m.status==='paid').length;
+    const pct=payers.length?Math.round(paid/payers.length*100):0;
+    const dl=new Date(evt.deadline),days=Math.ceil((dl-new Date())/86400000);
+    const tagCls=evt.status==='active'?'badge-green':'badge-gray';
 
-    const myMember = approved ? (evt.members || []).find(m => m.email === user.email) : null;
-    const isExited = myMember && myMember.status === 'exited';
-    const myStatusTxt = myMember ? (myMember.status === 'paid' ? '已繳費' : isExited ? '已退出' : '待繳費') : '待確認';
-
-    let detailHtml = '';
-    if(isExited) {
-      detailHtml = `<div class="my-status-box" style="filter:grayscale(1); opacity:0.7"><div class="my-status-label">你已退出此活動</div><p style="font-size:0.8rem">若欲重新加入，請點擊下方「移除紀錄」後重新輸入邀請碼申請。</p></div>`;
-    } else if(!approved && !rejected) {
-      detailHtml = `<div class="pending-box">⏳ 申請已送出，等待管理員審核通過後即可查看活動內容。</div>`;
-    } else if(rejected) {
-      detailHtml = `<div class="rejected-box">❌ 申請已被拒絕，請聯繫活動管理員。</div>`;
-    } else {
-      // 如果是繳費者，顯示繳費狀態與名單
-      if(isPayer) {
-        const myAmt = myMember ? PC_getExpectedAmount(evt, myMember) : (evt.amount || 0);
-        const txInfo = myMember && myMember.txId ? `<div class="tx-info"><div style="margin-bottom:4px">繳費編號：<strong>${myMember.txId}</strong></div><div>繳費時間：<strong>${myMember.paidAt}</strong></div>${myMember.remark?`<div>備註：<strong>${myMember.remark}</strong></div>`:''}</div>` : '';
-        detailHtml += `
-          <div class="my-status-box">
-            <div class="my-status-label">我的繳費狀態</div>
-            <div class="my-status-row">
-              <div style="font-size:0.9rem;font-weight:700">${user.name}</div>
-              <div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:800;font-size:1.1rem;color:var(--accent)">$${myAmt.toLocaleString()}</span><span class="badge ${myMember && myMember.status==='paid'?'badge-green':'badge-orange'}">${myStatusTxt}</span></div>
-            </div>${txInfo}
-          </div>
-          ${myMember && myMember.status!=='paid' ? `<button class="pay-btn" onclick="location.href='pay.html?event=${evt.id}'">前往繳費 →</button>` : ''}
-          ${myMember && myMember.status==='paid' ? `<button class="pay-btn" disabled>✅ 已完成繳費</button>` : ''}
-        `;
-      }
-      
-      // 如果具有統計者或觀察者權限，顯示進度面板
-      if(isCounter || isObserver) {
-        detailHtml += `
-          <div style="font-size:0.78rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin:12px 0 8px;">📊 活動進度總覽 (${isCounter?'統計者':'觀察者'})</div>
-          <div class="obs-stats">
-            <div class="obs-box"><div class="obs-label">實收金額</div><div class="obs-val" style="color:var(--green)">$${PC_getCollected(evt).toLocaleString()}</div></div>
-            <div class="obs-box"><div class="obs-label">繳費率</div><div class="obs-val" style="color:var(--accent)">${pct}%</div></div>
-          </div>
-        `;
-      }
+    let statusBadge='';
+    if(isPendingInvite)statusBadge='<span class="badge badge-orange">待確認邀請</span>';
+    else if(!myReq&&!myMember)statusBadge='<span class="badge badge-orange">審核中</span>';
+    else if(rejected)statusBadge='<span class="badge badge-red">已拒絕</span>';
+    else if(approved||myMember){
+      const roles=myMember?Array.isArray(myMember.roles)?myMember.roles:(myMember.role?[myMember.role]:[]):[];
+      const RL_MAP={payer:'繳費者',observer:'觀察者',counter:'統計者',admin:'管理員'};
+      statusBadge=roles.map(r=>`<span class="badge badge-blue" style="font-size:0.7rem">${RL_MAP[r]||r}</span>`).join('');
     }
 
-    return `<div class="event-card">
-      <div class="ec-main" onclick="toggleDetail('${j.eventId}')">
-        <div class="ec-header"><div class="ec-title">${evt.title}</div><div class="ec-badges">${statusBadge}<span class="badge ${evt.status==='active'?'badge-green':'badge-gray'}">${evt.status==='active'?'進行中':'已結束'}</span></div></div>
-        <div class="ec-meta"><span>📅 截止：${evt.deadline}${days>0?' (剩'+days+'天)':' (已截止)'}</span><span>👥 ${payers.length} 位繳費成員</span></div>
-        <div class="ec-summary">
-          <div class="sum-box"><div class="sum-label">繳費率</div><div class="sum-val" style="color:var(--accent)">${pct}%</div></div>
-          <div class="sum-box"><div class="sum-label">已繳</div><div class="sum-val">${paidCount}/${payers.length}</div></div>
-          <div class="sum-box"><div class="sum-label">截止倒數</div><div class="sum-val" style="${days<=3?'color:var(--red)':''}">${days>0?days+'天':'已到期'}</div></div>
+    const canEnter=(approved||myMember)&&!isPendingInvite&&!rejected;
+    const clickHandler=canEnter?`location.href='event.html?id=${evt.id}'`:'';
+    const cardClass=canEnter?'event-card':'event-card no-click';
+
+    return `<div class="${cardClass}" onclick="${clickHandler}">
+      <div class="ec-main">
+        <div class="ec-header">
+          <div class="ec-title">${evt.title}</div>
+          <div class="ec-badges">${statusBadge}<span class="badge ${tagCls}">${evt.status==='active'?'進行中':'已結束'}</span></div>
         </div>
+        <div class="ec-meta">
+          <span>📅 截止：${evt.deadline}${days>0?' (剩'+days+'天)':' (已截止)'}</span>
+          <span>👥 ${payers.length} 位繳費成員</span>
+        </div>
+        ${isPendingInvite?`<div class="pending-box">📩 管理員邀請你加入此活動，請前往通知頁面確認。</div>`:
+          rejected?`<div class="rejected-box">❌ 申請已被拒絕，請聯繫活動管理員。</div>`:
+          !myMember&&!approved?`<div class="pending-box">⏳ 申請已送出，等待管理員審核通過後可進入活動。</div>`:
+          `<div class="ec-summary">
+            <div class="sum-box"><div class="sum-label">繳費率</div><div class="sum-val" style="color:var(--accent)">${pct}%</div></div>
+            <div class="sum-box"><div class="sum-label">已繳</div><div class="sum-val">${paid}/${payers.length}</div></div>
+            <div class="sum-box"><div class="sum-label">截止倒數</div><div class="sum-val" style="${days<=3?'color:var(--red)':''}">${days>0?days+'天':'已到期'}</div></div>
+          </div>`}
       </div>
-      <div class="ec-detail" id="detail_${j.eventId}">${detailHtml}</div>
-      <div class="ec-footer"><button class="leave-btn" onclick="leaveEvent(event,${ji})">${isExited || !approved ? '移除紀錄' : '退出活動'}</button></div>
+      <div class="ec-footer">
+        ${canEnter?`<div class="enter-btn">進入活動 →</div>`:`<div></div>`}
+        <button class="leave-btn-sm" onclick="leaveEvent(event,${ji})">退出活動</button>
+      </div>
     </div>`;
   }).join('');
 }
 
-function toggleDetail(id){ const el = document.getElementById('detail_'+id); if(el) el.classList.toggle('open'); }
-
-function leaveEvent(e, idx) {
+function leaveEvent(e,idx){
   e.stopPropagation();
-  const joined = getMemberJoined();
-  const j = joined[idx];
-  
-  if(!confirm('確定退出或移除「' + j.eventTitle + '」的紀錄？')) return;
-
-  const res = PC_findEventById(j.eventId);
-  if(res) {
-    // 通知主辦人的資料庫，將狀態標記為「已退出」而不是直接刪除成員
-    PC_updateEventInStorage(res.ownerKey, j.eventId, evt => {
-      const m = evt.members.find(x => x.email === user.email);
-      if(m) m.status = 'exited'; 
-    });
-    // 發送通知給管理員
-    PC_sendNotify(res.ownerEmail, "成員退出", `${user.name} 已退出活動《${j.eventTitle}》`);
-  }
-
-  // 從自己的清單中移除
-  joined.splice(idx, 1);
-  saveMemberJoined(joined);
-  renderJoined();
-  PC_toast('✅ 已更新紀錄');
+  const joined=getMemberJoined();
+  if(!confirm('確定退出「'+joined[idx].eventTitle+'」？'))return;
+  joined.splice(idx,1);saveMemberJoined(joined);renderJoined();PC_toast('已退出活動');
 }
 
+checkPendingInvites();
 renderJoined();
 </script>
 </body></html>

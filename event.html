@@ -9,30 +9,22 @@
 body{display:flex;}
 .breadcrumb{font-size:0.82rem;color:var(--text3);margin-bottom:14px;}
 .breadcrumb a{color:var(--text2);text-decoration:none;}.breadcrumb a:hover{color:var(--accent);}
-/* Title row */
-.title-area{margin-bottom:6px;}
 .title-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px;}
 .page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text);}
 .invite-pill{display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);border:1.5px solid #c7d2fe;border-radius:8px;padding:5px 12px;cursor:pointer;transition:all 0.15s;}
 .invite-pill:hover{background:#c7d2fe;}
-.invite-pill-label{font-size:0.7rem;color:var(--accent);font-weight:600;}
 .invite-pill-code{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:800;color:var(--accent);letter-spacing:0.1em;}
 .dl-row{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
-.dl-text{font-size:0.84rem;color:var(--text2);}
-.dl-val{font-size:0.84rem;font-weight:700;color:var(--text);}
 .dl-edit-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:3px 10px;border-radius:6px;font-size:0.73rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-.dl-edit-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;display:none;}
+.dl-edit-row{align-items:center;gap:6px;flex-wrap:wrap;display:none;}
 .dl-edit-row select{padding:3px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:0.76rem;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--white);}
 .dl-save{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.73rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-/* Stats */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
 .stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
 .stat-label{font-size:0.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:7px;}
 .stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-0.03em;line-height:1;}
 .stat-sub{font-size:0.72rem;color:var(--text3);margin-top:4px;}
-/* Two col layout */
 .two-col{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;}
-/* Member section */
 .section-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
 .sc-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 .sc-title{font-size:0.9rem;font-weight:700;}
@@ -40,23 +32,23 @@ body{display:flex;}
 .filter-row{display:flex;gap:5px;flex-wrap:wrap;}
 .ftab{padding:4px 11px;border-radius:100px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text2);font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
 .ftab.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
-/* Member rows */
 .member-row{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);gap:10px;cursor:pointer;transition:background 0.1s;flex-wrap:wrap;}
 .member-row:last-child{border-bottom:none;}
 .member-row:hover{background:var(--surface);}
 .m-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}
 .m-info{flex:1;min-width:0;}
-.m-name{font-size:0.88rem;font-weight:600;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.m-name-row{font-size:0.88rem;font-weight:600;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
 .m-sub{font-size:0.72rem;color:var(--text3);margin-top:1px;}
 .m-amount{font-size:0.88rem;font-weight:700;color:var(--text2);flex-shrink:0;}
-.mark-btn{background:var(--green-light);border:1px solid #bbf7d0;color:var(--green);padding:4px 9px;border-radius:6px;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;flex-shrink:0;}
-.del-btn{background:var(--red-light);border:1px solid #fecaca;color:var(--red);padding:4px 8px;border-radius:6px;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;flex-shrink:0;}
-/* Member detail panel */
+.m-ops{display:flex;gap:5px;align-items:center;}
+.op-btn{padding:4px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;border:1px solid;}
+.op-status{background:var(--accent-light);border-color:#c7d2fe;color:var(--accent);}
+.op-del{background:var(--red-light);border-color:#fecaca;color:var(--red);}
 .m-detail{display:none;background:var(--surface);padding:12px 20px;border-bottom:1px solid var(--border);font-size:0.8rem;}
 .m-detail.open{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .m-detail div{color:var(--text2);}
 .m-detail strong{color:var(--text);}
-/* Sidebar cards */
+/* Side cards */
 .side-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;}
 .side-label{font-size:0.7rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
 .prog-dots{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
@@ -64,40 +56,48 @@ body{display:flex;}
 .prog-dot-left{display:flex;align-items:center;gap:7px;}
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .share-url{background:var(--surface);border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;font-size:0.76rem;color:var(--accent);word-break:break-all;margin-bottom:8px;}
-.copy-btn-full{width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:0.83rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
+.copy-btn-full{width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:0.83rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;margin-bottom:6px;}
 .copy-btn-full:hover{background:var(--accent-dark);}
-.preview-link{display:block;text-align:center;margin-top:8px;font-size:0.82rem;color:var(--accent);text-decoration:none;padding:7px;border:1.5px solid var(--border);border-radius:8px;font-weight:600;transition:all 0.15s;}
+.preview-link{display:block;text-align:center;font-size:0.82rem;color:var(--accent);text-decoration:none;padding:7px;border:1.5px solid var(--border);border-radius:8px;font-weight:600;transition:all 0.15s;}
 .preview-link:hover{background:var(--accent-light);border-color:var(--accent);}
-/* Join requests panel */
+/* Join panel */
 .join-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;display:none;}
 .join-panel.open{display:block;}
 .jp-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.jp-title{font-size:0.88rem;font-weight:700;}
-.req-row{display:flex;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap;}
+.req-row{display:flex;align-items:flex-start;padding:14px 18px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
 .req-row:last-child{border-bottom:none;}
 .req-info{flex:1;}
 .req-email{font-size:0.85rem;font-weight:600;}
-.req-meta{font-size:0.72rem;color:var(--text3);}
-.approve-btn{background:var(--green-light);border:1px solid #bbf7d0;color:var(--green);padding:5px 12px;border-radius:7px;font-size:0.76rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-.reject-btn{background:var(--red-light);border:1px solid #fecaca;color:var(--red);padding:5px 10px;border-radius:7px;font-size:0.76rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-/* Overlay / Modal */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(2px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
+.req-meta{font-size:0.72rem;color:var(--text3);margin-top:2px;}
+/* Unified overlay/modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
 .overlay.show{display:flex;}
-.modal{background:var(--white);border-radius:14px;padding:24px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.15);animation:slideUp 0.2s ease;max-height:90vh;overflow-y:auto;}
-@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:16px;}
-.modal-actions{display:flex;gap:8px;margin-top:14px;}
-/* Role picker in modal */
-.role-option{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surface);border-radius:9px;margin-bottom:8px;cursor:pointer;border:1.5px solid transparent;transition:all 0.15s;}
-.role-option:hover{background:var(--accent-light);}
-.role-option.selected{border-color:var(--accent);background:var(--accent-light);}
-.role-option-icon{font-size:1.1rem;flex-shrink:0;}
-.role-option-info{flex:1;}
-.role-option-name{font-size:0.87rem;font-weight:700;}
-.role-option-desc{font-size:0.72rem;color:var(--text3);}
-/* Amt edit modal */
-.bulk-amt-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
-.bulk-amt-row:last-child{border-bottom:none;}
+.modal{background:var(--white);border-radius:16px;padding:26px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(0,0,0,0.15);animation:slideUp 0.22s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:6px;}
+.modal-sub{font-size:0.84rem;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.modal-actions{display:flex;gap:8px;margin-top:18px;}
+/* Role option pills in modal */
+.modal-role-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+.mrc{padding:7px 16px;border-radius:100px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text2);transition:all 0.15s;user-select:none;font-family:'Noto Sans TC',sans-serif;}
+.mrc:hover{border-color:var(--accent);}
+.mrc.sel-payer{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+.mrc.sel-observer{border-color:var(--text3);background:var(--surface);color:var(--text);}
+.mrc.sel-counter{border-color:var(--orange);background:var(--orange-light);color:var(--orange);}
+.mrc.sel-admin{border-color:var(--green);background:var(--green-light);color:var(--green);}
+/* Batch amount */
+.amt-member-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.amt-member-row:last-child{border-bottom:none;}
+.amt-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;}
+.amt-check.checked{background:var(--accent);border-color:var(--accent);}
+.amt-check.checked::after{content:'✓';color:#fff;font-size:0.65rem;font-weight:700;}
+/* Status modal options */
+.status-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surface);border-radius:9px;margin-bottom:8px;cursor:pointer;border:1.5px solid transparent;transition:all 0.15s;}
+.status-opt:hover{background:var(--accent-light);}
+.status-opt.selected{border-color:var(--accent);background:var(--accent-light);}
+.status-opt-icon{font-size:1.1rem;}
+/* Danger confirm */
+.danger-box{background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:14px;text-align:center;margin-bottom:16px;}
 @media(max-width:900px){.two-col{grid-template-columns:1fr;}.stats-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;}.stat-val{font-size:1.3rem;}}
 </style>
@@ -131,47 +131,37 @@ body{display:flex;}
 
 <main class="main">
   <div class="breadcrumb"><a href="dashboard.html">總覽</a> › <span id="bcTitle">活動</span></div>
-
-  <!-- Title + invite code -->
-  <div class="title-area">
-    <div class="title-row">
-      <div class="page-title" id="evtTitle">載入中...</div>
-      <div class="invite-pill" id="invitePill" onclick="copyInviteCode()" style="display:none" title="點擊複製邀請碼">
-        <span class="invite-pill-label">邀請碼</span>
-        <span class="invite-pill-code" id="inviteCodeText">——</span>
-        <span style="font-size:0.7rem;color:var(--accent);opacity:0.6">📋</span>
-      </div>
-    </div>
-    <div style="color:var(--text2);font-size:0.86rem;margin-bottom:8px" id="evtDesc"></div>
-    <div class="dl-row">
-      <span class="dl-text">截止：</span>
-      <span class="dl-val" id="dlDisplay">—</span>
-      <button class="dl-edit-btn" onclick="toggleDlEdit()">✏️ 修改</button>
-    </div>
-    <div class="dl-edit-row" id="dlEditRow">
-      <select id="dlYear"></select><select id="dlMonth" onchange="updateDlDays()"></select><select id="dlDay"></select>
-      <button class="dl-save" onclick="saveDl()">儲存</button>
-      <button onclick="toggleDlEdit()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 9px;border-radius:6px;font-size:0.73rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">取消</button>
+  <div class="title-row">
+    <div class="page-title" id="evtTitle">載入中...</div>
+    <div class="invite-pill" id="invitePill" onclick="copyInviteCode()" style="display:none">
+      <span style="font-size:0.7rem;color:var(--accent);font-weight:600">邀請碼</span>
+      <span class="invite-pill-code" id="inviteCodeText">——</span>
+      <span style="font-size:0.7rem;color:var(--accent);opacity:0.6">📋</span>
     </div>
   </div>
-
-  <!-- Action buttons -->
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
-    <button class="btn btn-ghost" onclick="renderPage()">🔄 更新</button>
-    <button class="btn btn-ghost" id="joinReqBtn" onclick="toggleJoinPanel()" style="display:none">👥 加入申請 <span id="joinBadge" class="badge badge-orange" style="display:none;margin-left:3px;font-size:0.65rem"></span></button>
-    <button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>
-    <button class="btn btn-ghost" onclick="openAmtEdit()">💰 繳費金額更改</button>
-    <button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>
-    <button class="btn btn-primary" onclick="openAdd()">+ 新增成員</button>
+  <div style="color:var(--text2);font-size:0.86rem;margin-bottom:8px" id="evtDesc"></div>
+  <div class="dl-row">
+    <span style="font-size:0.84rem;color:var(--text2)">截止：</span>
+    <span style="font-size:0.84rem;font-weight:700" id="dlDisplay">—</span>
+    <button class="dl-edit-btn" id="dlEditBtnMain" onclick="toggleDlEdit()">✏️ 修改</button>
   </div>
+  <div class="dl-edit-row" id="dlEditRow" style="display:none;display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+    <select id="dlYear" class="form-input" style="width:auto" onchange="updateDlDays()"></select>
+    <select id="dlMonth" class="form-input" style="width:auto" onchange="updateDlDays()"></select>
+    <select id="dlDay" class="form-input" style="width:auto"></select>
+    <button class="dl-save" onclick="saveDl()">儲存</button>
+    <button onclick="toggleDlEdit()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 9px;border-radius:6px;font-size:0.73rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">取消</button>
+  </div>
+
+  <!-- Action buttons — role-dependent -->
+  <div id="actionBar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;"></div>
 
   <!-- Join requests panel -->
   <div class="join-panel" id="joinPanel">
-    <div class="jp-header"><div class="jp-title">👥 加入申請審核</div><button onclick="toggleJoinPanel()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:1.1rem;">✕</button></div>
+    <div class="jp-header"><div style="font-size:0.88rem;font-weight:700">👥 加入申請審核</div><button onclick="toggleJoinPanel()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:1.1rem;">✕</button></div>
     <div id="joinReqList"></div>
   </div>
 
-  <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card"><div class="stat-label">實收</div><div class="stat-val" id="sC" style="color:var(--green)">$0</div><div class="stat-sub">已繳合計</div></div>
     <div class="stat-card"><div class="stat-label">應收金額</div><div class="stat-val" id="sE">$0</div><div class="stat-sub">繳費者總應收</div></div>
@@ -179,87 +169,109 @@ body{display:flex;}
     <div class="stat-card"><div class="stat-label">截止倒數</div><div class="stat-val" id="sDays" style="font-size:1.1rem;padding-top:4px">—</div><div class="stat-sub" id="sDl"></div></div>
   </div>
 
-  <!-- Main grid -->
   <div class="two-col">
     <div>
       <div class="section-card">
         <div class="sc-header">
           <div>
             <div class="sc-title">成員繳費狀態</div>
-            <div class="role-legend">
-              <span class="badge badge-blue" style="font-size:0.65rem">繳費者</span>
-              <span class="badge badge-orange" style="font-size:0.65rem">統計者</span>
-              <span class="badge badge-green" style="font-size:0.65rem">管理員</span>
-              <span class="badge badge-gray" style="font-size:0.65rem">觀察者</span>
-            </div>
+            <div class="role-legend" id="roleLegend"></div>
           </div>
-          <div class="filter-row">
-            <button class="ftab active" onclick="setFilter(this,'all')">全部</button>
-            <button class="ftab" onclick="setFilter(this,'paid')">已繳</button>
-            <button class="ftab" onclick="setFilter(this,'pending')">待繳</button>
-            <button class="ftab" onclick="setFilter(this,'overdue')">逾期</button>
-          </div>
+          <div class="filter-row" id="filterRow"></div>
         </div>
         <div id="memberList"></div>
       </div>
     </div>
-
-    <div>
-      <!-- Progress -->
-      <div class="side-card">
-        <div class="side-label">📊 收款進度</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-size:0.84rem;color:var(--text2)">繳費率</span>
-          <span id="progPct" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800">0%</span>
-        </div>
-        <div class="progress-bar" style="height:8px;margin-bottom:8px"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
-        <div class="prog-dots">
-          <div class="prog-dot-row"><div class="prog-dot-left"><div class="dot" style="background:var(--green)"></div>已繳</div><strong id="pPaid">0 人</strong></div>
-          <div class="prog-dot-row"><div class="prog-dot-left"><div class="dot" style="background:var(--orange)"></div>待繳</div><strong id="pPend">0 人</strong></div>
-          <div class="prog-dot-row"><div class="prog-dot-left"><div class="dot" style="background:var(--red)"></div>逾期</div><strong id="pOvd">0 人</strong></div>
-        </div>
-      </div>
-      <!-- Share link -->
-      <div class="side-card">
-        <div class="side-label">🔗 成員繳費連結</div>
-        <div class="share-url" id="shareUrl">—</div>
-        <button class="copy-btn-full" onclick="copyLink()">複製連結</button>
-        <a id="previewLink" href="#" class="preview-link">預覽繳費頁面 →</a>
-      </div>
-    </div>
+    <div id="sideCol"></div>
   </div>
 </main>
 
-<!-- ADD MEMBER MODAL -->
+<!-- ── MODALS ── -->
+
+<!-- Add member -->
 <div class="overlay" id="addOverlay">
   <div class="modal">
-    <div class="modal-title">新增成員</div>
+    <div class="modal-title">➕ 新增成員</div>
+    <div class="modal-sub">輸入成員 Email 並選擇在此活動的角色（可多選）</div>
     <div class="form-group"><label class="form-label">成員 Email</label><input type="email" id="addEmail" class="form-input" placeholder="member@email.com" onkeydown="if(event.key==='Enter')addMember()"></div>
-    <div class="form-group"><label class="form-label">在此活動的角色</label>
-      <div id="roleOptions">
-        <div class="role-option selected" onclick="selectRole('payer',this)"><span class="role-option-icon">💳</span><div class="role-option-info"><div class="role-option-name">繳費者</div><div class="role-option-desc">需要繳款，計入收款統計</div></div></div>
-        <div class="role-option" onclick="selectRole('observer',this)"><span class="role-option-icon">👁</span><div class="role-option-info"><div class="role-option-name">觀察者</div><div class="role-option-desc">只能查看總覽，不需繳款</div></div></div>
-        <div class="role-option" onclick="selectRole('counter',this)"><span class="role-option-icon">📊</span><div class="role-option-info"><div class="role-option-name">統計者</div><div class="role-option-desc">協助管帳，不需繳款</div></div></div>
-        <div class="role-option" onclick="selectRole('admin',this)"><span class="role-option-icon">👑</span><div class="role-option-info"><div class="role-option-name">管理員協同</div><div class="role-option-desc">可協助管理，不需繳款</div></div></div>
+    <div class="form-group">
+      <label class="form-label">角色（可多選）</label>
+      <div class="modal-role-chips" id="addRoleChips">
+        <div class="mrc" data-role="payer" onclick="toggleMRC(this)">💳 繳費者</div>
+        <div class="mrc" data-role="observer" onclick="toggleMRC(this)">👁 觀察者</div>
+        <div class="mrc" data-role="counter" onclick="toggleMRC(this)">📊 統計者</div>
+        <div class="mrc" data-role="admin" onclick="toggleMRC(this)">👑 管理員</div>
       </div>
     </div>
-    <div class="form-group" id="customAmtWrap" style="display:none"><label class="form-label">自訂金額（留空使用活動預設）</label><input type="number" id="addAmt" class="form-input" placeholder="0" min="0"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeAdd()">取消</button>
-      <button class="btn btn-primary" style="flex:2" onclick="addMember()">新增</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeOverlay('addOverlay')">取消</button>
+      <button class="btn btn-primary" style="flex:2" onclick="addMember()">新增成員</button>
     </div>
   </div>
 </div>
 
-<!-- AMOUNT EDIT MODAL -->
+<!-- Approve role picker -->
+<div class="overlay" id="approveOverlay">
+  <div class="modal">
+    <div class="modal-title">✅ 同意加入申請</div>
+    <div class="modal-sub" id="approveSubText">選擇此成員在活動中的角色（可多選）</div>
+    <div class="modal-role-chips" id="approveRoleChips">
+      <div class="mrc" data-role="payer" onclick="toggleMRC(this)">💳 繳費者</div>
+      <div class="mrc" data-role="observer" onclick="toggleMRC(this)">👁 觀察者</div>
+      <div class="mrc" data-role="counter" onclick="toggleMRC(this)">📊 統計者</div>
+      <div class="mrc" data-role="admin" onclick="toggleMRC(this)">👑 管理員</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeOverlay('approveOverlay')">取消</button>
+      <button class="btn btn-primary" style="flex:2" onclick="confirmApprove()">確認同意</button>
+    </div>
+  </div>
+</div>
+
+<!-- Status change modal -->
+<div class="overlay" id="statusOverlay">
+  <div class="modal">
+    <div class="modal-title">⚙️ 調整繳費狀態</div>
+    <div class="modal-sub" id="statusSubText">選擇新的繳費狀態</div>
+    <div class="status-opt" onclick="selectStatus('paid',this)"><span class="status-opt-icon">✅</span><div><div style="font-weight:700">已繳費</div><div style="font-size:0.76rem;color:var(--text3)">標記為已完成繳費</div></div></div>
+    <div class="status-opt" onclick="selectStatus('pending',this)"><span class="status-opt-icon">⏳</span><div><div style="font-weight:700">待繳費</div><div style="font-size:0.76rem;color:var(--text3)">重設為等待繳費</div></div></div>
+    <div class="status-opt" onclick="selectStatus('overdue',this)"><span class="status-opt-icon">⚠️</span><div><div style="font-weight:700">逾期未繳</div><div style="font-size:0.76rem;color:var(--text3)">標記為逾期</div></div></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeOverlay('statusOverlay')">取消</button>
+      <button class="btn btn-primary" style="flex:2" onclick="confirmStatus()">儲存變更</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="overlay" id="deleteOverlay">
+  <div class="modal" style="max-width:380px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:8px">⚠️</div>
+    <div class="modal-title">確認刪除成員？</div>
+    <div class="danger-box"><span id="deleteTargetName" style="font-weight:700"></span><br><span style="font-size:0.8rem;color:var(--red)">此操作無法復原</span></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeOverlay('deleteOverlay')">取消</button>
+      <button class="btn btn-danger" style="flex:1" onclick="confirmDelete()">確認刪除</button>
+    </div>
+  </div>
+</div>
+
+<!-- Amount edit modal -->
 <div class="overlay" id="amtOverlay">
   <div class="modal">
     <div class="modal-title">💰 修改繳費金額</div>
-    <div style="font-size:0.82rem;color:var(--text2);margin-bottom:14px;">為個別繳費者設定金額，留空表示使用活動預設（$<span id="defaultAmt">0</span>）</div>
-    <div id="amtList"></div>
+    <div class="modal-sub">選擇成員並批次設定金額（留空使用預設 $<span id="defaultAmtText">0</span>）</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <div class="amt-check" id="selectAllCheck" onclick="toggleSelectAll()" style="cursor:pointer"></div>
+      <span style="font-size:0.82rem;font-weight:600;cursor:pointer" onclick="toggleSelectAll()">全選</span>
+      <span style="flex:1"></span>
+      <input type="number" id="batchAmt" class="form-input" style="width:130px;padding:7px 10px;font-size:0.85rem" placeholder="批次設定金額" onkeydown="if(event.key==='Enter')applyBatch()">
+      <button class="btn btn-ghost" style="padding:7px 12px;font-size:0.8rem" onclick="applyBatch()">套用</button>
+    </div>
+    <div id="amtList" style="max-height:280px;overflow-y:auto;"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeAmtEdit()">取消</button>
-      <button class="btn btn-primary" style="flex:2" onclick="saveAmtEdit()">儲存</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeOverlay('amtOverlay')">取消</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveAmtEdit()">儲存所有金額</button>
     </div>
   </div>
 </div>
@@ -271,54 +283,93 @@ PC_fillSidebarUser();
 const params=new URLSearchParams(location.search);
 const eventId=params.get('id');
 if(!eventId)location.href='dashboard.html';
-let evt=null,cf='all',addRole='payer',joinPanelOpen=false;
+let evt=null,cf='all',joinPanelOpen=false;
+let pendingApproveIdx=-1,pendingStatusIdx=-1,pendingDeleteIdx=-1,selectedStatus='paid';
+let amtSelections=new Set();
 
-const RC={payer:'#4f6ef7',counter:'#d97706',admin:'#16a34a',observer:'#9ca3af'};
-const RB={payer:'badge-blue',counter:'badge-orange',admin:'badge-green',observer:'badge-gray'};
+const RL={payer:'繳費者',observer:'觀察者',counter:'統計者',admin:'管理員',pending_invite:'待確認'};
+const RB={payer:'badge-blue',observer:'badge-gray',counter:'badge-orange',admin:'badge-green',pending_invite:'badge-orange'};
+const RC={payer:'#4f6ef7',observer:'#9ca3af',counter:'#d97706',admin:'#16a34a'};
+const ROLE_SEL={payer:'sel-payer',observer:'sel-observer',counter:'sel-counter',admin:'sel-admin'};
 
-// ── Sidebar ──
+function getMemberRoles(m){return Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);}
+function isPayer(m){return getMemberRoles(m).includes('payer');}
+function isAdmin(m){return getMemberRoles(m).includes('admin');}
+
+// Determine viewer's role in this event
+function getViewerRole(){
+  if(!evt)return 'admin';
+  if(evt.ownerEmail===user.email)return 'admin';
+  const myMember=(evt.members||[]).find(m=>m.email===user.email);
+  if(!myMember)return 'admin';
+  const roles=getMemberRoles(myMember);
+  if(roles.includes('admin'))return 'admin';
+  if(roles.includes('counter'))return 'counter';
+  if(roles.includes('observer'))return 'observer';
+  if(roles.includes('payer'))return 'payer';
+  return 'observer';
+}
+
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
 function toggleSideMenu(id){document.getElementById(id).classList.toggle('open');document.getElementById(id+'_icon').classList.toggle('open');}
 function renderSidebar(){
   const evts=PC_getAllMyEvents();
-  const created=evts.filter(e=>e._isOwner);
-  const joined=evts.filter(e=>!e._isOwner);
+  const created=evts.filter(e=>e._isOwner),joined=evts.filter(e=>!e._isOwner);
   let html='';
-  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mc')">已建立 <span class="chevron open" id="mc_icon">▼</span></div>`;
-  html+=`<div class="sidebar-menu-list open" id="mc">`;
+  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mc')">已建立 <span class="chevron open" id="mc_icon">▼</span></div><div class="sidebar-menu-list open" id="mc">`;
   if(!created.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無</div>`;
-  html+=created.map(e=>`<a class="nav-event${e.id===eventId?' current':''}" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
-  html+=`</div>`;
-  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mj')">已加入 <span class="chevron open" id="mj_icon">▼</span></div>`;
-  html+=`<div class="sidebar-menu-list open" id="mj">`;
+  html+=created.map(e=>`<a class="nav-event${e.id===eventId?' current':''}" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('')+'</div>';
+  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mj')">已加入 <span class="chevron open" id="mj_icon">▼</span></div><div class="sidebar-menu-list open" id="mj">`;
   if(!joined.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無</div>`;
-  html+=joined.map(e=>`<a class="nav-event" href="member.html"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
-  html+=`</div>`;
+  html+=joined.map(e=>`<a class="nav-event${e.id===eventId?' current':''}" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('')+'</div>';
   const c=document.getElementById('sidebarEvents');if(c)c.innerHTML=html;
   PC_fillSidebarUser();
 }
 
-// ── Page render ──
+function closeOverlay(id){document.getElementById(id).classList.remove('show');}
+// Close on backdrop click
+['addOverlay','approveOverlay','statusOverlay','deleteOverlay','amtOverlay'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeOverlay(id);});
+});
+
 function renderPage(){
-  evt=PC_getEvent(eventId);if(!evt){location.href='dashboard.html';return;}
+  evt=PC_getEvent(eventId);
+  if(!evt){
+    // Try finding across all users (for joined events)
+    const result=PC_findEventById(eventId);
+    if(!result){location.href='dashboard.html';return;}
+    evt=result.event;
+    // Store ownerKey for updates
+    evt._ownerKey=result.ownerKey;
+  }
   document.title=evt.title+' — PayClub';
   document.getElementById('bcTitle').textContent=evt.title;
   document.getElementById('evtTitle').textContent=evt.title;
   document.getElementById('evtDesc').textContent=evt.desc||'';
   document.getElementById('dlDisplay').textContent=evt.deadline;
+  if(evt.inviteCode){document.getElementById('invitePill').style.display='inline-flex';document.getElementById('inviteCodeText').textContent=evt.inviteCode;}
 
-  if(evt.inviteCode){
-    document.getElementById('invitePill').style.display='inline-flex';
-    document.getElementById('inviteCodeText').textContent=evt.inviteCode;
-  }
+  const vRole=getViewerRole();
+  // Hide deadline edit for non-admin
+  if(vRole!=='admin'){document.getElementById('dlEditBtnMain').style.display='none';}
 
-  // Join requests badge
+  // Action bar
   const reqs=PC_getJoinRequests(eventId);
   const pending=reqs.filter(r=>r.status==='pending').length;
-  document.getElementById('joinReqBtn').style.display='inline-flex';
-  const jb=document.getElementById('joinBadge');
-  if(pending>0){jb.style.display='inline-flex';jb.textContent=pending;}else{jb.style.display='none';}
+  let actions='';
+  actions+=`<button class="btn btn-ghost" onclick="renderPage()">🔄 更新</button>`;
+  if(vRole==='admin'){
+    actions+=`<button class="btn btn-ghost" id="joinReqBtn" onclick="toggleJoinPanel()">👥 加入申請${pending>0?` <span class="badge badge-orange" style="font-size:0.65rem;margin-left:2px">${pending}</span>`:''}</button>`;
+    actions+=`<button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>`;
+    actions+=`<button class="btn btn-ghost" onclick="openAmtEdit()">💰 繳費金額更改</button>`;
+    actions+=`<button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>`;
+    actions+=`<button class="btn btn-primary" onclick="openAdd()">+ 新增成員</button>`;
+  } else if(vRole==='counter'){
+    actions+=`<button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>`;
+    actions+=`<button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>`;
+  }
+  document.getElementById('actionBar').innerHTML=actions;
 
   const payers=PC_getPayers(evt);
   const paid=payers.filter(m=>m.status==='paid').length;
@@ -326,7 +377,6 @@ function renderPage(){
   const ovd=payers.filter(m=>m.status==='overdue').length;
   const pct=payers.length?Math.round(paid/payers.length*100):0;
   const c=PC_getCollected(evt),e=PC_getExpected(evt);
-
   document.getElementById('sC').textContent='$'+c.toLocaleString();
   document.getElementById('sE').textContent='$'+e.toLocaleString();
   document.getElementById('sP').textContent='$'+(e-c).toLocaleString();
@@ -337,55 +387,91 @@ function renderPage(){
   de.style.color=days<=3?'var(--red)':'inherit';
   document.getElementById('sDl').textContent=evt.deadline;
 
-  document.getElementById('progPct').textContent=pct+'%';
-  document.getElementById('progFill').style.width=pct+'%';
-  if(pct===100)document.getElementById('progFill').classList.add('green');
-  else document.getElementById('progFill').classList.remove('green');
-  document.getElementById('pPaid').textContent=paid+' 人';
-  document.getElementById('pPend').textContent=pend+' 人';
-  document.getElementById('pOvd').textContent=ovd+' 人';
+  // Role legend + filter
+  if(vRole!=='payer'){
+    document.getElementById('roleLegend').innerHTML='<span class="badge badge-blue" style="font-size:0.65rem">繳費者</span><span class="badge badge-orange" style="font-size:0.65rem">統計者</span><span class="badge badge-green" style="font-size:0.65rem">管理員</span><span class="badge badge-gray" style="font-size:0.65rem">觀察者</span>';
+    document.getElementById('filterRow').innerHTML='<button class="ftab active" onclick="setFilter(this,\'all\')">全部</button><button class="ftab" onclick="setFilter(this,\'paid\')">已繳</button><button class="ftab" onclick="setFilter(this,\'pending\')">待繳</button><button class="ftab" onclick="setFilter(this,\'overdue\')">逾期</button>';
+  }
 
-  const url=location.href.replace(/event\.html.*/,'')+'pay.html?event='+evt.id;
-  document.getElementById('shareUrl').textContent=url;
-  document.getElementById('previewLink').href=url;
+  renderMembers(vRole);
 
-  renderMembers();renderSidebar();
+  // Side col
+  let sideHtml='';
+  // Progress (admin, counter, observer)
+  if(vRole!=='payer'){
+    sideHtml+=`<div class="side-card">
+      <div class="side-label">📊 收款進度</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:0.84rem;color:var(--text2)">繳費率</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800">${pct}%</span>
+      </div>
+      <div class="progress-bar" style="height:8px;margin-bottom:8px"><div class="progress-fill${pct===100?' green':''}" style="width:${pct}%"></div></div>
+      <div class="prog-dots">
+        <div class="prog-dot-row"><div class="prog-dot-left"><div class="dot" style="background:var(--green)"></div>已繳</div><strong>${paid} 人</strong></div>
+        <div class="prog-dot-row"><div class="prog-dot-left"><div class="dot" style="background:var(--orange)"></div>待繳</div><strong>${pend} 人</strong></div>
+        <div class="prog-dot-row"><div class="prog-dot-left"><div class="dot" style="background:var(--red)"></div>逾期</div><strong>${ovd} 人</strong></div>
+      </div>
+    </div>`;
+  }
+  // Share link (admin + counter)
+  const url=location.origin+location.pathname.replace(/event\.html.*/,'')+'pay.html?event='+evt.id;
+  if(vRole==='admin'||vRole==='counter'){
+    sideHtml+=`<div class="side-card">
+      <div class="side-label">🔗 成員繳費連結</div>
+      <div class="share-url" id="shareUrl">${url}</div>
+      <button class="copy-btn-full" onclick="PC_copyText('${url}','🔗 連結已複製')">複製連結</button>
+      <a href="${url}" class="preview-link">預覽繳費頁面 →</a>
+    </div>`;
+  }
+  document.getElementById('sideCol').innerHTML=sideHtml;
+  renderSidebar();
 }
 
-// ── Member list ──
-function renderMembers(){
+function renderMembers(vRole){
   let ms=evt.members||[];
   if(cf==='paid')ms=ms.filter(m=>m.status==='paid');
-  else if(cf==='pending')ms=ms.filter(m=>m.status==='pending');
+  else if(cf==='pending')ms=ms.filter(m=>m.status==='pending'||m.status==='pending_invite');
   else if(cf==='overdue')ms=ms.filter(m=>m.status==='overdue');
   const list=document.getElementById('memberList');
   if(!ms.length){list.innerHTML='<div style="text-align:center;padding:28px;color:var(--text3);font-size:0.85rem;">沒有符合的成員</div>';return;}
 
   list.innerHTML=ms.map(m=>{
     const ri=(evt.members||[]).indexOf(m);
-    const role=Array.isArray(m.role)?m.role[0]:m.role;
-    const isPayer=role==='payer';
-    const amt=isPayer?'$'+PC_getExpectedAmount(evt,m):'—';
-    const bc=!isPayer?'badge-gray':(m.status==='paid'?'badge-green':m.status==='overdue'?'badge-red':'badge-orange');
-    const bt=!isPayer?ROLE_LABELS[role]||role:(m.status==='paid'?'已繳費':m.status==='overdue'?'逾期':'待繳費');
+    const roles=getMemberRoles(m);
+    const primaryRole=roles[0]||'payer';
+    const isPay=roles.includes('payer');
+    const amt=isPay?'$'+PC_getExpectedAmount(evt,m):'—';
+    const isInvite=m.status==='pending_invite';
+    const bc=isInvite?'badge-orange':(isPay?(m.status==='paid'?'badge-green':m.status==='overdue'?'badge-red':'badge-orange'):'badge-gray');
+    const bt=isInvite?'未加入':(isPay?(m.status==='paid'?'已繳費':m.status==='overdue'?'逾期':'待繳費'):RL[primaryRole]||primaryRole);
+    const payMethod=m.payMethod?` <span style="font-size:0.7rem;color:var(--text3)">via ${m.payMethod}</span>`:'';
     const detailId='md_'+ri;
+    const canClick=(vRole==='admin'||vRole==='counter')&&!isInvite;
+
+    let opsHtml='';
+    if(vRole==='admin'&&!isInvite){
+      opsHtml=`<div class="m-ops">
+        <button class="op-btn op-status" onclick="event.stopPropagation();openStatusModal(${ri})">調整狀態</button>
+        <button class="op-btn op-del" onclick="event.stopPropagation();openDeleteModal(${ri})">✕ 刪除</button>
+      </div>`;
+    }
+
     return `<div>
-      <div class="member-row" onclick="toggleMDetail('${detailId}')">
-        <div class="m-av" style="background:${RC[role]||'#9ca3af'}">${(m.email||m.name||'?').slice(0,1).toUpperCase()}</div>
+      <div class="member-row" onclick="${canClick?`toggleMDetail('${detailId}')`:''}" style="${!canClick?'cursor:default':''}">
+        <div class="m-av" style="background:${RC[primaryRole]||'#9ca3af'}">${(m.email||m.name||'?').slice(0,1).toUpperCase()}</div>
         <div class="m-info">
-          <div class="m-name">${m.email||m.name||'—'} <span class="badge ${RB[role]||'badge-gray'}" style="font-size:0.63rem;padding:1px 6px">${ROLE_LABELS[role]||role}</span></div>
-          <div class="m-sub">${m.paidAt||'—'}</div>
+          <div class="m-name-row">${m.email||m.name||'—'} ${roles.map(r=>`<span class="badge ${RB[r]||'badge-gray'}" style="font-size:0.63rem;padding:1px 6px">${RL[r]||r}</span>`).join('')}</div>
+          <div class="m-sub">${m.paidAt||'—'}${payMethod}</div>
         </div>
         <div class="m-amount">${amt}</div>
         <span class="badge ${bc}">${bt}</span>
-        ${isPayer&&m.status!=='paid'?`<button class="mark-btn" onclick="event.stopPropagation();markPaid(${ri})">✓</button>`:''}
-        <button class="del-btn" onclick="event.stopPropagation();delMember(${ri})">✕</button>
+        ${opsHtml}
       </div>
       <div class="m-detail" id="${detailId}">
         <div>📧 Email：<strong>${m.email||'—'}</strong></div>
         <div>💰 金額：<strong>${amt}</strong></div>
         <div>📅 繳費時間：<strong>${m.paidAt||'—'}</strong></div>
-        <div>🏷 狀態：<strong>${bt}</strong></div>
+        <div>💳 繳費方式：<strong>${m.payMethod||'—'}</strong></div>
         <div>🔢 交易編號：<strong style="color:var(--accent)">${m.txId||'—'}</strong></div>
         <div>📝 備註：<strong>${m.remark||'—'}</strong></div>
       </div>
@@ -394,18 +480,15 @@ function renderMembers(){
 }
 
 function toggleMDetail(id){const el=document.getElementById(id);if(el)el.classList.toggle('open');}
-function setFilter(el,f){cf=f;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderMembers();}
-function markPaid(i){const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);e.members[i].status='paid';e.members[i].paidAt=PC_nowStr();e.members[i].txId=e.members[i].txId||PC_genTxId();PC_saveEvents(evts);renderPage();PC_toast('✅ 已標記繳費');}
-function delMember(i){if(!confirm('移除此成員？'))return;const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);e.members.splice(i,1);PC_saveEvents(evts);renderPage();PC_toast('已移除成員');}
+function setFilter(el,f){cf=f;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderMembers(getViewerRole());}
+function sendReminder(){const n=(evt.members||[]).filter(m=>isPayer(m)&&m.status!=='paid').length;PC_toast('📣 已發送催款給 '+n+' 位未繳成員');}
 function copyInviteCode(){if(evt&&evt.inviteCode)PC_copyText(evt.inviteCode,'🔑 邀請碼已複製：'+evt.inviteCode);}
-function copyLink(){PC_copyText(document.getElementById('shareUrl').textContent,'🔗 連結已複製');}
-function sendReminder(){const n=(evt.members||[]).filter(m=>(Array.isArray(m.role)?m.role[0]:m.role)==='payer'&&m.status!=='paid').length;PC_toast('📣 已發送催款給 '+n+' 位未繳成員');}
 
-// ── Deadline editor ──
+// ── Deadline ──
 function toggleDlEdit(){const r=document.getElementById('dlEditRow');const open=r.style.display==='flex';r.style.display=open?'none':'flex';if(!open)initDlSel();}
 function initDlSel(){const[y,m,d]=(evt.deadline||'2026-01-01').split('-').map(Number);const cy=new Date().getFullYear();const yr=document.getElementById('dlYear');yr.innerHTML='';for(let i=cy;i<=cy+5;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'年';yr.appendChild(o);}yr.value=y;const mn=document.getElementById('dlMonth');mn.innerHTML='';for(let i=1;i<=12;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'月';mn.appendChild(o);}mn.value=m;updateDlDays(d);}
-function updateDlDays(sv){const y=parseInt(document.getElementById('dlYear').value)||2026;const m=parseInt(document.getElementById('dlMonth').value)||1;const days=new Date(y,m,0).getDate();const dd=document.getElementById('dlDay');const pv=sv||parseInt(dd.value)||1;dd.innerHTML='';for(let i=1;i<=days;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'日';dd.appendChild(o);}dd.value=Math.min(pv,days);}
-function saveDl(){const y=document.getElementById('dlYear').value,m=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const nd=`${y}-${m}-${d}`;const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);e.deadline=nd;PC_saveEvents(evts);document.getElementById('dlEditRow').style.display='none';renderPage();PC_toast('✅ 截止日期更新為 '+nd);}
+function updateDlDays(sv){const y=parseInt(document.getElementById('dlYear').value)||2026,m=parseInt(document.getElementById('dlMonth').value)||1,days=new Date(y,m,0).getDate();const dd=document.getElementById('dlDay');const pv=sv||parseInt(dd.value)||1;dd.innerHTML='';for(let i=1;i<=days;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'日';dd.appendChild(o);}dd.value=Math.min(pv,days);}
+function saveDl(){const y=document.getElementById('dlYear').value,m=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const nd=`${y}-${m}-${d}`;const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);e.deadline=nd;PC_saveEvents(evts);document.getElementById('dlEditRow').style.display='none';renderPage();PC_toast('✅ 截止日期更新');}
 
 // ── Join requests ──
 function toggleJoinPanel(){joinPanelOpen=!joinPanelOpen;document.getElementById('joinPanel').classList.toggle('open',joinPanelOpen);if(joinPanelOpen)renderJoinReqs();}
@@ -418,66 +501,144 @@ function renderJoinReqs(){
     const isPending=r.status==='pending';
     return `<div class="req-row">
       <div class="req-info"><div class="req-email">${r.name} (${r.email})</div><div class="req-meta">申請時間：${t}</div></div>
-      ${isPending?`<button class="approve-btn" onclick="approveReq(${i})">✓ 同意</button><button class="reject-btn" onclick="rejectReq(${i})">✕ 拒絕</button>`:`<span class="badge ${r.status==='approved'?'badge-green':'badge-red'}">${r.status==='approved'?'已同意':'已拒絕'}</span>`}
+      ${isPending?`<button class="btn btn-green" style="padding:6px 14px;font-size:0.78rem" onclick="openApproveModal(${i})">✓ 同意</button><button class="btn btn-danger" style="padding:6px 12px;font-size:0.78rem" onclick="rejectReq(${i})">✕ 拒絕</button>`:`<span class="badge ${r.status==='approved'?'badge-green':'badge-red'}">${r.status==='approved'?'已同意':'已拒絕'}</span>`}
     </div>`;
   }).join('');
 }
-function approveReq(i){
-  const reqs=PC_getJoinRequests(eventId);const req=reqs[i];
-  const roleChoice=prompt(`為 ${req.name}(${req.email}) 指定在此活動的角色：\n1 = 繳費者\n2 = 觀察者\n3 = 統計者\n\n請輸入 1、2 或 3：`,'1');
-  if(!roleChoice)return;
-  const roleMap={'1':'payer','2':'observer','3':'counter'};
-  const chosenRole=roleMap[roleChoice.trim()]||'payer';
-  req.status='approved';req.approvedRole=chosenRole;
+function openApproveModal(i){
+  pendingApproveIdx=i;
+  const reqs=PC_getJoinRequests(eventId);
+  document.getElementById('approveSubText').textContent=`為 ${reqs[i].name}(${reqs[i].email}) 選擇在此活動的角色（可多選）`;
+  document.querySelectorAll('#approveRoleChips .mrc').forEach(el=>{Object.values(ROLE_SEL).forEach(c=>el.classList.remove(c));});
+  document.getElementById('approveOverlay').classList.add('show');
+}
+function confirmApprove(){
+  const roles=getModalRoles('approveRoleChips');
+  if(!roles.length){PC_toast('請至少選擇一個角色');return;}
+  const reqs=PC_getJoinRequests(eventId);
+  const req=reqs[pendingApproveIdx];
+  req.status='approved';req.approvedRoles=roles;
   PC_saveJoinRequests(eventId,reqs);
   const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
   if(!e.members)e.members=[];
   if(!e.members.find(m=>m.email===req.email)){
-    e.members.push({email:req.email,name:req.name,role:chosenRole,status:chosenRole==='payer'?'pending':'none',paidAt:'',customAmount:null,txId:'',remark:''});
+    e.members.push({email:req.email,name:req.name,roles,role:roles[0],status:roles.includes('payer')?'pending':'none',paidAt:'',customAmount:null,txId:'',remark:'',payMethod:''});
     PC_saveEvents(evts);
   }
-  PC_sendNotify(req.email,'申請已通過 🎉',`你加入「${evt.title}」的申請已通過，角色：${ROLE_LABELS[chosenRole]}。`,'success');
-  renderPage();renderJoinReqs();PC_toast('✅ 已同意 '+req.email+' 以「'+ROLE_LABELS[chosenRole]+'」加入');
+  PC_sendNotify(req.email,'申請已通過 🎉',`你加入「${evt.title}」的申請已通過，角色：${roles.map(r=>RL[r]).join('、')}。`,'success');
+  closeOverlay('approveOverlay');renderPage();renderJoinReqs();PC_toast('✅ 已同意 '+req.email+' 加入');
 }
-function rejectReq(i){const reqs=PC_getJoinRequests(eventId);reqs[i].status='rejected';PC_saveJoinRequests(eventId,reqs);PC_sendNotify(reqs[i].email,'申請未通過',`你申請加入「${evt.title}」的申請已被拒絕。`,'error');renderJoinReqs();renderPage();PC_toast('已拒絕申請');}
+function rejectReq(i){
+  const reqs=PC_getJoinRequests(eventId);reqs[i].status='rejected';PC_saveJoinRequests(eventId,reqs);
+  PC_sendNotify(reqs[i].email,'申請未通過',`你申請加入「${evt.title}」的申請已被拒絕。`,'error');
+  renderJoinReqs();renderPage();PC_toast('已拒絕申請');
+}
 
-// ── Add member modal ──
-function openAdd(){document.getElementById('addEmail').value='';document.getElementById('addAmt').value='';selectRole('payer',document.querySelector('.role-option'));document.getElementById('addOverlay').classList.add('show');}
-function closeAdd(){document.getElementById('addOverlay').classList.remove('show');}
-document.getElementById('addOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAdd();});
-function selectRole(r,el){addRole=r;document.querySelectorAll('.role-option').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');document.getElementById('customAmtWrap').style.display=(r==='payer'&&evt&&evt.amountMode==='custom')?'block':'none';}
+// ── Add member ──
+function openAdd(){document.getElementById('addEmail').value='';document.querySelectorAll('#addRoleChips .mrc').forEach(el=>{Object.values(ROLE_SEL).forEach(c=>el.classList.remove(c));});document.getElementById('addOverlay').classList.add('show');setTimeout(()=>document.getElementById('addEmail').focus(),100);}
 function addMember(){
   const email=document.getElementById('addEmail').value.trim();
+  const roles=getModalRoles('addRoleChips');
   if(!email||!email.includes('@')){PC_toast('請輸入有效 Email');return;}
+  if(!roles.length){PC_toast('請至少選擇一個角色');return;}
   const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
   if(!e.members)e.members=[];
   if(e.members.find(m=>m.email===email)){PC_toast('此 Email 已在名單中');return;}
-  let ca=null;if(e.amountMode==='custom'&&addRole==='payer')ca=parseFloat(document.getElementById('addAmt').value)||0;
-  e.members.push({email,name:email.split('@')[0],role:addRole,status:addRole==='payer'?'pending':'none',paidAt:'',customAmount:ca,txId:'',remark:''});
-  PC_saveEvents(evts);closeAdd();renderPage();PC_toast('✅ 已新增 '+email);
+  e.members.push({email,name:email.split('@')[0],roles,role:roles[0],status:roles.includes('payer')?'pending':'none',paidAt:'',customAmount:null,txId:'',remark:'',payMethod:''});
+  PC_saveEvents(evts);
+  PC_sendNotify(email,'你被加入活動 📋',`管理員將你加入「${evt.title}」，角色：${roles.map(r=>RL[r]).join('、')}。`,'info');
+  closeOverlay('addOverlay');renderPage();PC_toast('✅ 已新增 '+email);
 }
 
-// ── Amount edit modal ──
+// ── Status modal ──
+function openStatusModal(i){
+  pendingStatusIdx=i;
+  const m=evt.members[i];
+  document.getElementById('statusSubText').textContent=`調整「${m.email||m.name}」的繳費狀態`;
+  document.querySelectorAll('.status-opt').forEach(el=>el.classList.remove('selected'));
+  selectedStatus='paid';
+  document.getElementById('statusOverlay').classList.add('show');
+}
+function selectStatus(s,el){selectedStatus=s;document.querySelectorAll('.status-opt').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');}
+function confirmStatus(){
+  const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
+  const m=e.members[pendingStatusIdx];
+  const old=m.status; m.status=selectedStatus;
+  if(selectedStatus==='paid'&&!m.paidAt){m.paidAt=PC_nowStr();m.txId=m.txId||PC_genTxId();}
+  PC_saveEvents(evts);
+  PC_sendNotify(m.email,'繳費狀態已更新 💰',`你在「${evt.title}」的繳費狀態已由「${old}」變更為「${selectedStatus==='paid'?'已繳費':selectedStatus==='overdue'?'逾期未繳':'待繳費'}」。`,'info');
+  closeOverlay('statusOverlay');renderPage();PC_toast('✅ 狀態已更新');
+}
+
+// ── Delete modal ──
+function openDeleteModal(i){
+  pendingDeleteIdx=i;
+  document.getElementById('deleteTargetName').textContent=evt.members[i].email||evt.members[i].name||'此成員';
+  document.getElementById('deleteOverlay').classList.add('show');
+}
+function confirmDelete(){
+  const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
+  const m=e.members[pendingDeleteIdx];
+  PC_sendNotify(m.email,'你已被移出活動',`你已被移出「${evt.title}」的成員名單。`,'warning');
+  e.members.splice(pendingDeleteIdx,1);PC_saveEvents(evts);
+  closeOverlay('deleteOverlay');renderPage();PC_toast('已刪除成員');
+}
+
+// ── Amount edit ──
 function openAmtEdit(){
   const payers=PC_getPayers(evt);
-  document.getElementById('defaultAmt').textContent=evt.amount||0;
-  document.getElementById('amtList').innerHTML=payers.length?payers.map((m,i)=>`
-    <div class="bulk-amt-row">
-      <span style="font-size:0.86rem;font-weight:600">${m.email||m.name||'—'}</span>
-      <input type="number" class="form-input" id="amt_${(evt.members||[]).indexOf(m)}" value="${m.customAmount!=null?m.customAmount:''}" placeholder="${evt.amount||0}" min="0" style="width:110px;padding:7px 10px;font-size:0.85rem">
-    </div>`).join(''):'<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:16px;">目前沒有繳費者</div>';
+  document.getElementById('defaultAmtText').textContent=evt.amount||0;
+  amtSelections=new Set();
+  document.getElementById('selectAllCheck').classList.remove('checked');
+  document.getElementById('amtList').innerHTML=payers.length
+    ?payers.map((m,i)=>{
+        const ri=(evt.members||[]).indexOf(m);
+        return `<div class="amt-member-row">
+          <div class="amt-check" id="amtck_${ri}" onclick="toggleAmtSel(${ri},this)"></div>
+          <span style="flex:1;font-size:0.86rem;font-weight:600">${m.email||m.name||'—'}</span>
+          <input type="number" class="form-input" id="amt_${ri}" value="${m.customAmount!=null?m.customAmount:''}" placeholder="${evt.amount||0}" min="0" style="width:110px;padding:7px 10px;font-size:0.85rem" onkeydown="if(event.key==='Enter')saveAmtEdit()">
+        </div>`;
+      }).join('')
+    :'<div style="color:var(--text3);text-align:center;padding:16px;font-size:0.85rem">目前沒有繳費者</div>';
   document.getElementById('amtOverlay').classList.add('show');
 }
-function closeAmtEdit(){document.getElementById('amtOverlay').classList.remove('show');}
-document.getElementById('amtOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAmtEdit();});
+function toggleAmtSel(ri,el){if(amtSelections.has(ri)){amtSelections.delete(ri);el.classList.remove('checked');}else{amtSelections.add(ri);el.classList.add('checked');}updateSelectAll();}
+function updateSelectAll(){const total=PC_getPayers(evt).length;document.getElementById('selectAllCheck').classList.toggle('checked',amtSelections.size===total&&total>0);}
+function toggleSelectAll(){
+  const payers=PC_getPayers(evt);
+  const allSel=amtSelections.size===payers.length&&payers.length>0;
+  amtSelections=new Set();
+  if(!allSel)payers.forEach(m=>{const ri=(evt.members||[]).indexOf(m);amtSelections.add(ri);});
+  payers.forEach(m=>{const ri=(evt.members||[]).indexOf(m);const el=document.getElementById('amtck_'+ri);if(el)el.classList.toggle('checked',amtSelections.has(ri));});
+  updateSelectAll();
+}
+function applyBatch(){
+  const val=document.getElementById('batchAmt').value;
+  if(!val)return;
+  amtSelections.forEach(ri=>{const inp=document.getElementById('amt_'+ri);if(inp)inp.value=val;});
+  PC_toast('✅ 已批次套用 $'+val);
+}
+function closeAmtEdit(){closeOverlay('amtOverlay');}
 function saveAmtEdit(){
   const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
   (e.members||[]).forEach((m,i)=>{
     const inp=document.getElementById('amt_'+i);
-    if(inp)m.customAmount=inp.value===''?null:parseFloat(inp.value)||0;
+    if(inp){
+      const oldAmt=m.customAmount;
+      m.customAmount=inp.value===''?null:parseFloat(inp.value)||0;
+      if(m.customAmount!==oldAmt&&isPayer(m)){
+        PC_sendNotify(m.email,'繳費金額已更新 💰',`你在「${evt.title}」的應繳金額已更新為 $${m.customAmount!=null?m.customAmount:e.amount}。`,'info');
+      }
+    }
   });
-  PC_saveEvents(evts);closeAmtEdit();renderPage();PC_toast('✅ 金額已更新');
+  PC_saveEvents(evts);closeOverlay('amtOverlay');renderPage();PC_toast('✅ 金額已更新');
 }
+
+// ── Helper: get selected roles from a chip container ──
+function getModalRoles(containerId){
+  return Array.from(document.querySelectorAll('#'+containerId+' .mrc')).filter(el=>Object.values(ROLE_SEL).some(c=>el.classList.contains(c))).map(el=>el.dataset.role);
+}
+function toggleMRC(el){const role=el.dataset.role;const cls=ROLE_SEL[role];el.classList.toggle(cls);}
 
 renderPage();
 </script>

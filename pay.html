@@ -11,7 +11,6 @@ body{min-height:100vh;background:var(--bg);}
 .back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text2);font-size:0.86rem;font-weight:600;cursor:pointer;padding:7px 13px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
 .back-btn:hover{border-color:var(--border2);background:var(--surface);}
 .nav-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);margin-left:auto;display:flex;align-items:center;gap:6px;}
-.login-hint{background:var(--accent-light);border:1px solid #c7d2fe;border-radius:9px;padding:10px 16px;margin:16px 20px 0;font-size:0.83rem;color:var(--accent);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .demo-banner{background:var(--orange-light);border:1px solid #fed7aa;border-radius:9px;padding:10px 16px;margin:16px 20px 0;font-size:0.83rem;color:var(--orange);text-align:center;font-weight:600;}
 .pay-wrap{max-width:860px;margin:24px auto;padding:0 20px;}
 .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
@@ -32,10 +31,8 @@ body{min-height:100vh;background:var(--bg);}
 .info-row-val{font-weight:600;}
 .pay-form-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:26px;box-shadow:var(--shadow);}
 .pay-form-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:18px;}
-/* User identity display */
 .user-identity{display:flex;align-items:center;gap:10px;background:var(--accent-light);border:1px solid #c7d2fe;border-radius:10px;padding:12px 14px;margin-bottom:16px;}
 .user-av{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;flex-shrink:0;}
-.user-id-info{flex:1;}
 .user-id-name{font-size:0.9rem;font-weight:700;color:var(--text);}
 .user-id-email{font-size:0.75rem;color:var(--accent);}
 .pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
@@ -66,7 +63,7 @@ body{min-height:100vh;background:var(--bg);}
 </head>
 <body>
 <nav class="pay-nav">
-  <button class="back-btn" onclick="history.back()">← 上一頁</button>
+  <button class="back-btn" id="backBtn" onclick="goBack()">← 上一頁</button>
   <div class="nav-logo"><div style="width:7px;height:7px;background:var(--accent);border-radius:50%;"></div>PayClub</div>
 </nav>
 
@@ -78,7 +75,7 @@ body{min-height:100vh;background:var(--bg);}
       <div style="font-size:3rem;margin-bottom:14px">🔍</div>
       <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:8px;">找不到此活動</div>
       <div style="color:var(--text2);margin-bottom:20px">活動連結可能已過期或不存在</div>
-      <button class="back-btn" onclick="history.back()">← 返回上一頁</button>
+      <button class="back-btn" onclick="goBack()">← 返回</button>
     </div>
   </div>
   <div class="pay-wrap" id="payWrap" style="display:none">
@@ -96,26 +93,23 @@ body{min-height:100vh;background:var(--bg);}
             <div class="deadline-tag" id="deadlineTag">📅 —</div>
           </div>
           <div class="info-rows">
-            <div class="info-row"><span class="info-row-label">支付方式</span><span class="info-row-val" id="methodsLabel">LINE Pay · 街口 · 信用卡</span></div>
+            <div class="info-row"><span class="info-row-label">支付方式</span><span class="info-row-val" id="methodsLabel">—</span></div>
             <div class="info-row"><span class="info-row-label">資料加密</span><span class="info-row-val" style="color:var(--green)">🔒 256-bit SSL</span></div>
           </div>
         </div>
       </div>
       <div class="pay-form-card">
         <div class="pay-form-title">填寫繳費資訊</div>
-        <!-- User identity (auto-filled if logged in) -->
         <div id="userIdentitySection"></div>
-        <!-- Payment methods -->
         <div class="form-group">
           <label class="form-label">選擇支付方式</label>
           <div class="pay-methods" id="payMethods"></div>
         </div>
-        <!-- Remark -->
         <div class="form-group">
           <label class="form-label">繳費備註（選填）</label>
-          <textarea id="payRemark" class="form-input" rows="2" placeholder="例：代繳，實際繳費人為王大衛"></textarea>
+          <textarea id="payRemark" class="form-input" rows="2" placeholder="例：代繳，實際繳費人為王大衛" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitPayment();}"></textarea>
         </div>
-        <button class="submit-btn" id="submitBtn" onclick="submitPayment()">立即繳費 <span id="payBtnAmt">$—</span></button>
+        <button class="submit-btn" onclick="submitPayment()">立即繳費 <span id="payBtnAmt">$—</span></button>
         <div class="security-note">🔒 使用 256-bit SSL 加密，安全有保障</div>
       </div>
     </div>
@@ -125,7 +119,7 @@ body{min-height:100vh;background:var(--bg);}
 <div class="success-wrap" id="successWrap">
   <div class="success-circle">✓</div>
   <div class="success-title">繳費成功！</div>
-  <div class="success-sub" id="successSub">你的繳費已完成！</div>
+  <div class="success-sub" id="successSub">繳費已完成！</div>
   <div class="receipt-card">
     <div style="font-size:0.72rem;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">繳費收據</div>
     <div class="receipt-row"><span>交易編號</span><span id="rcTxId">—</span></div>
@@ -137,7 +131,7 @@ body{min-height:100vh;background:var(--bg);}
     <div class="receipt-row"><span>備註</span><span id="rcRemark">—</span></div>
     <div class="receipt-row"><span>時間</span><span id="rcTime">—</span></div>
   </div>
-  <button class="back-btn" onclick="history.back()" style="margin:0 auto">← 返回上一頁</button>
+  <button class="btn btn-primary" id="backToEventBtn" style="width:100%;justify-content:center">← 返回活動頁面</button>
 </div>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -148,54 +142,74 @@ body{min-height:100vh;background:var(--bg);}
 
 <script>
 const DEFAULT_METHODS=[{id:'linepay',icon:'💚',name:'LINE Pay'},{id:'jkopay',icon:'🔵',name:'街口支付'},{id:'credit',icon:'💳',name:'信用卡'},{id:'atm',icon:'🏧',name:'ATM 轉帳'}];
-let selectedMethod='LINE Pay', foundEvent=null, ownerKey=null, amt=0, isDemo=false;
+let selectedMethod='LINE Pay',foundEvent=null,ownerKey=null,personalAmt=0,isDemo=false;
 const currentUser=PC_getUser();
 const params=new URLSearchParams(location.search);
 const eventId=params.get('event');
 
+// Back button: go to event page if we know it, else history.back()
+function goBack(){
+  if(eventId)location.href='event.html?id='+eventId;
+  else history.back();
+}
+document.getElementById('backToEventBtn').onclick=()=>{if(eventId)location.href='event.html?id='+eventId;else location.href='dashboard.html';};
+
 if(!eventId){
-  // Demo mode
   isDemo=true;
   document.getElementById('topBanner').innerHTML='<div class="demo-banner">🎮 繳費頁面範例 Demo — 實際使用時會顯示真實活動資訊</div>';
-  foundEvent={id:'demo',title:'🎓 迎新活動費用（範例）',desc:'這是繳費頁面的範例展示。',amount:300,deadline:new Date(Date.now()+14*86400000).toISOString().split('T')[0],status:'active',members:[],paymentMethods:null};
-  amt=300;
+  foundEvent={id:'demo',title:'🎓 迎新活動費用（範例）',desc:'這是繳費頁面的範例展示。',amount:300,deadline:new Date(Date.now()+14*86400000).toISOString().split('T')[0],status:'active',members:[]};
+  personalAmt=300;ownerKey=null;
   document.getElementById('payWrap').style.display='block';
   setupPage();
 } else {
   const result=PC_findEventById(eventId);
-  if(!result){ document.getElementById('notFoundWrap').style.display='block'; }
-  else { foundEvent=result.event; ownerKey=result.ownerKey; amt=Number(foundEvent.amount)||0; document.getElementById('payWrap').style.display='block'; setupPage(); }
+  if(!result){document.getElementById('notFoundWrap').style.display='block';}
+  else{
+    foundEvent=result.event;ownerKey=result.ownerKey;
+    // Get personal amount for this user
+    if(currentUser){
+      const myM=(foundEvent.members||[]).find(m=>m.email===currentUser.email);
+      personalAmt=myM?PC_getExpectedAmount(foundEvent,myM):Number(foundEvent.amount)||0;
+    } else {
+      personalAmt=Number(foundEvent.amount)||0;
+    }
+    document.getElementById('payWrap').style.display='block';
+    setupPage();
+  }
 }
 
 function setupPage(){
   document.getElementById('payTitle').textContent=foundEvent.title;
   document.getElementById('payDesc').textContent=foundEvent.desc||'請完成繳費，謝謝！';
-  document.getElementById('payAmount').textContent='$'+amt.toLocaleString();
-  document.getElementById('payBtnAmt').textContent='$'+amt.toLocaleString();
+  document.getElementById('payAmount').textContent='$'+personalAmt.toLocaleString();
+  document.getElementById('payBtnAmt').textContent='$'+personalAmt.toLocaleString();
   const dl=new Date(foundEvent.deadline),days=Math.ceil((dl-new Date())/86400000);
   const dtag=document.getElementById('deadlineTag');
   dtag.textContent='📅 截止：'+foundEvent.deadline+'（剩 '+Math.max(0,days)+' 天）';
   if(days<=3)dtag.classList.add('urgent');
 
-  // User identity section
+  // User identity
   const idSec=document.getElementById('userIdentitySection');
   if(currentUser){
     idSec.innerHTML=`<div class="user-identity">
       <div class="user-av">${currentUser.name.slice(0,1)}</div>
-      <div class="user-id-info"><div class="user-id-name">${currentUser.name}</div><div class="user-id-email">${currentUser.email}</div></div>
+      <div style="flex:1"><div class="user-id-name">${currentUser.name}</div><div class="user-id-email">${currentUser.email}</div></div>
       <span class="badge badge-green" style="font-size:0.68rem">已登入</span>
     </div>`;
   } else {
-    // Not logged in — show email+name input
     idSec.innerHTML=`
-      <div style="background:var(--orange-light);border-radius:9px;padding:10px 14px;margin-bottom:12px;font-size:0.8rem;color:var(--orange);">⚠️ 未登入繳費將無法自動對應帳號，建議先<a href="login.html?next=${encodeURIComponent(location.href)}" style="color:var(--accent);font-weight:700">登入</a>後再繳費。</div>
-      <div class="form-group"><label class="form-label">你的姓名 *</label><input type="text" id="guestName" class="form-input" placeholder="林小明"></div>
+      <div style="background:var(--orange-light);border-radius:9px;padding:10px 14px;margin-bottom:12px;font-size:0.8rem;color:var(--orange);">⚠️ 未登入繳費將無法自動對應帳號，建議先<a href="login.html?next=${encodeURIComponent(location.href)}" style="color:var(--accent);font-weight:700">登入</a>。</div>
+      <div class="form-group"><label class="form-label">姓名 *</label><input type="text" id="guestName" class="form-input" placeholder="林小明"></div>
       <div class="form-group"><label class="form-label">Email *</label><input type="email" id="guestEmail" class="form-input" placeholder="your@email.com"></div>`;
   }
-  document.getElementById('topBanner').innerHTML+=(!currentUser&&!isDemo)?'<div class="login-hint">💡 <span>已有帳號？<a href="login.html?next='+encodeURIComponent(location.href)+'" style="color:var(--accent);font-weight:700">登入後繳費</a> 可自動對應你的帳號記錄</span></div>':'';
 
-  // Payment methods
-  const methods=foundEvent.paymentMethods&&foundEvent.paymentMethods.length?foundEvent.paymentMethods:DEFAULT_METHODS;
+  // Payment methods — use admin's saved methods if available
+  let methods=DEFAULT_METHODS;
+  if(ownerKey){
+    const ownerEmail=ownerKey.replace('pc_events__','');
+    const saved=localStorage.getItem('pc_pay_methods__'+ownerEmail);
+    if(saved){const parsed=JSON.parse(saved);const active=parsed.filter(m=>m.active);if(active.length)methods=active;}
+  }
   document.getElementById('payMethods').innerHTML=methods.map((m,i)=>`<div class="pay-method${i===0?' selected':''}" onclick="selectMethod(this,'${m.name}')"><div class="pay-method-icon">${m.icon}</div><div class="pay-method-name">${m.name}</div></div>`).join('');
   document.getElementById('methodsLabel').textContent=methods.map(m=>m.name).join(' · ');
   selectedMethod=methods[0]?.name||'LINE Pay';
@@ -206,8 +220,8 @@ function selectMethod(el,m){document.querySelectorAll('.pay-method').forEach(x=>
 function submitPayment(){
   if(isDemo){PC_toast('🎮 Demo 模式，不實際處理付款');return;}
   let payerName,payerEmail;
-  if(currentUser){ payerName=currentUser.name; payerEmail=currentUser.email; }
-  else {
+  if(currentUser){payerName=currentUser.name;payerEmail=currentUser.email;}
+  else{
     payerName=(document.getElementById('guestName')||{}).value?.trim();
     payerEmail=(document.getElementById('guestEmail')||{}).value?.trim();
     if(!payerName||!payerEmail||!payerEmail.includes('@')){PC_toast('請填寫姓名與 Email');return;}
@@ -216,30 +230,30 @@ function submitPayment(){
   document.getElementById('loadingOverlay').classList.add('show');
   setTimeout(()=>{
     document.getElementById('loadingOverlay').classList.remove('show');
-    const txId=PC_genTxId();
-    const now=PC_nowStr();
+    const txId=PC_genTxId(),now=PC_nowStr();
     if(ownerKey){
       const evts=JSON.parse(localStorage.getItem(ownerKey)||'[]');
       const e=evts.find(x=>x.id===eventId);
       if(e){
         if(!e.members)e.members=[];
-        // Find by email first
         let m=e.members.find(x=>x.email===payerEmail);
-        if(m){ m.status='paid'; m.paidAt=now; m.txId=txId; m.remark=remark; m.name=payerName; }
-        else {
-          // Find by name fallback
+        if(m){m.status='paid';m.paidAt=now;m.txId=txId;m.remark=remark;m.payMethod=selectedMethod;}
+        else{
           m=e.members.find(x=>x.name===payerName&&!x.email);
-          if(m){ m.status='paid'; m.paidAt=now; m.txId=txId; m.remark=remark; m.email=payerEmail; }
-          else { e.members.push({name:payerName,email:payerEmail,role:'payer',status:'paid',paidAt:now,txId,remark,customAmount:null}); }
+          if(m){m.status='paid';m.paidAt=now;m.txId=txId;m.remark=remark;m.email=payerEmail;m.payMethod=selectedMethod;}
+          else{e.members.push({name:payerName,email:payerEmail,roles:['payer'],role:'payer',status:'paid',paidAt:now,txId,remark,payMethod:selectedMethod,customAmount:null});}
         }
         localStorage.setItem(ownerKey,JSON.stringify(evts));
+        // Notify event owner
+        const ownerEmail=ownerKey.replace('pc_events__','');
+        PC_sendNotify(ownerEmail,'收到繳費通知 💰',`${payerName}(${payerEmail}) 已繳費「${foundEvent.title}」$${personalAmt.toLocaleString()}，方式：${selectedMethod}，交易編號：${txId}。`,'success');
       }
     }
     document.getElementById('rcTxId').textContent=txId;
     document.getElementById('rcTitle').textContent=foundEvent.title;
     document.getElementById('rcName').textContent=payerName;
     document.getElementById('rcEmail').textContent=payerEmail;
-    document.getElementById('rcAmount').textContent='$'+amt.toLocaleString();
+    document.getElementById('rcAmount').textContent='$'+personalAmt.toLocaleString();
     document.getElementById('rcMethod').textContent=selectedMethod;
     document.getElementById('rcRemark').textContent=remark||'—';
     document.getElementById('rcTime').textContent=new Date().toLocaleString('zh-TW');
