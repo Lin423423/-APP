@@ -118,7 +118,7 @@ body{background:var(--bg);min-height:100vh;}
       <div class="form-group">
         <label class="form-label">截止日期 *</label>
         <div class="date-picker-wrap">
-          <div class="date-display" id="dateDisplay" onclick="toggleCalendar()">
+          <div class="date-display" id="dateDisplay" onclick="toggleCalendar(event)">
             <span class="date-display-text placeholder" id="dateDisplayText">請選擇截止日期</span>
             <span class="calendar-icon">📅</span>
           </div>
@@ -223,14 +223,17 @@ function initCalendar() {
   calYear = def.getFullYear(); calMonth = def.getMonth();
   renderCalendar();
 }
-function toggleCalendar() {
+function toggleCalendar(e) {
+  e.stopPropagation(); 
+
   const popup = document.getElementById('calendarPopup');
   const disp = document.getElementById('dateDisplay');
+
   popup.classList.toggle('show');
   disp.classList.toggle('open');
-  // Close on outside click
+
   if (popup.classList.contains('show')) {
-    setTimeout(() => document.addEventListener('click', closeCal), 0);
+    document.addEventListener('click', closeCal);
   }
 }
 function closeCal(e) {
@@ -370,10 +373,7 @@ function copyInviteCode() { PC_copyText(createdCode,'🔑 邀請碼已複製：'
 function copyLink() { PC_copyText(document.getElementById('generatedLink').textContent,'🔗 連結已複製'); }
 function goToEvent() { location.href='event.html?id='+createdId; }
 
-// ── Init ──
-const user = PC_requireAdmin(); if(!user) throw new Error('r');
-document.getElementById('navAvatar').textContent = (user.name||user.email||'?').slice(0,1).toUpperCase();
-document.getElementById('navName').textContent = user.name||user.email||'使用者';
+
 initCalendar();
 </script>
 </body></html>
