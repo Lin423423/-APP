@@ -129,12 +129,12 @@ function PC_genTxId(){ return 'PC'+Date.now().toString(36).toUpperCase(); }
 // ── Financial helpers (支援陣列身分) ──
 function PC_getPayers(event){ 
   return (event.members||[]).filter(m => {
-    const roles = Array.isArray(m.role) ? m.role : [m.role];
-    return roles.includes('payer') && m.status !== 'exited';
+    const roles = Array.isArray(m.roles) ? m.roles : (Array.isArray(m.role) ? m.role : [m.role]);
+    return roles.includes('payer') && m.status !== 'exited' && m.status !== 'pending_invite';
   }); 
 }
 function PC_getExpectedAmount(event, member){
-  const roles = Array.isArray(member.role) ? member.role : [member.role];
+  const roles = Array.isArray(member.roles) ? member.roles : (Array.isArray(member.role) ? member.role : [member.role]);
   if(!member || !roles.includes('payer')) return 0;
   if(member.customAmount != null) return Number(member.customAmount)||0;
   return Number(event.amount)||0;

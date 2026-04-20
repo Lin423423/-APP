@@ -125,10 +125,11 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:32px 4
 const authArea = document.getElementById('navAuth');
 if(PC_isLoggedIn()){
   const u = PC_getUser();
+  const uName = u.name || u.email || '使用者';
   authArea.innerHTML = `
     <div class="nav-user-chip">
-      <div class="nav-user-av">${u.name.slice(0,1)}</div>
-      ${u.name}
+      <div class="nav-user-av">${uName.slice(0,1).toUpperCase()}</div>
+      ${uName}
     </div>
     <a href="dashboard.html" class="btn btn-primary" style="color:#fff;padding:8px 18px;">進入儀表板</a>`;
 } else {

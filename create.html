@@ -216,26 +216,48 @@ function initDateSelects(){
   const mn=document.getElementById('dlMonth');
   const dd=document.getElementById('dlDay');
   if(!yr||!mn||!dd)return;
-  // Year
+  const def=new Date();def.setDate(def.getDate()+14);
+  const defY=def.getFullYear(),defM=def.getMonth()+1,defD=def.getDate();
+  // Year — use selected attribute to force display
   yr.innerHTML='';
   const cy=new Date().getFullYear();
-  for(let y=cy;y<=cy+5;y++){yr.appendChild(new Option(y+'年',y));}
+  for(let y=cy;y<=cy+5;y++){
+    const o=document.createElement('option');
+    o.value=String(y);o.textContent=y+'年';
+    if(y===defY)o.selected=true;
+    yr.appendChild(o);
+  }
   // Month
   mn.innerHTML='';
-  for(let m=1;m<=12;m++){mn.appendChild(new Option(m+'月',m));}
-  // Default: 14 days from now
-  const def=new Date();def.setDate(def.getDate()+14);
-  yr.value=String(def.getFullYear());
-  mn.value=String(def.getMonth()+1);
-  // Days
-  updateDays();
-  dd.value=String(def.getDate());
+  for(let m=1;m<=12;m++){
+    const o=document.createElement('option');
+    o.value=String(m);o.textContent=m+'月';
+    if(m===defM)o.selected=true;
+    mn.appendChild(o);
+  }
+  // Days — build based on selected year/month
+  const daysInMonth=new Date(defY,defM,0).getDate();
+  dd.innerHTML='';
+  for(let d=1;d<=daysInMonth;d++){
+    const o=document.createElement('option');
+    o.value=String(d);o.textContent=d+'日';
+    if(d===defD)o.selected=true;
+    dd.appendChild(o);
+  }
 }
 function updateDays(){
   const y=parseInt(document.getElementById('dlYear').value)||new Date().getFullYear();
   const m=parseInt(document.getElementById('dlMonth').value)||1;
-  const days=new Date(y,m,0).getDate();const dd=document.getElementById('dlDay');const prev=parseInt(dd.value)||1;
-  dd.innerHTML='';for(let d=1;d<=days;d++){const o=document.createElement('option');o.value=d;o.textContent=d+'日';dd.appendChild(o);}dd.value=Math.min(prev,days);
+  const days=new Date(y,m,0).getDate();
+  const dd=document.getElementById('dlDay');
+  const prev=Math.min(parseInt(dd.value)||1,days);
+  dd.innerHTML='';
+  for(let d=1;d<=days;d++){
+    const o=document.createElement('option');
+    o.value=String(d);o.textContent=d+'日';
+    if(d===prev)o.selected=true;
+    dd.appendChild(o);
+  }
 }
 const ROLE_SEL={payer:'sel-payer',counter:'sel-counter',admin:'sel-admin'};
 const ROLE_LABELS={payer:'繳費者',counter:'統計者',admin:'管理員'};
