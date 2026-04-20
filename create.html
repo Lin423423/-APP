@@ -377,8 +377,7 @@ function goStep3() {
 
 // ── Roles ──
 const ROLE_SEL = {payer:'sel-payer',counter:'sel-counter',admin:'sel-admin'};
-const ROLE_LABELS = {payer:'繳費者',counter:'統計者',admin:'管理員'};
-const ROLE_BADGE = {payer:'badge-blue',counter:'badge-orange',admin:'badge-green'};
+// ROLE_LABELS 和 ROLE_BADGE 已在 pc_auth.js 中定義
 function toggleRoleChip(el) { const cls=ROLE_SEL[el.dataset.role]; if(cls) el.classList.toggle(cls); }
 function getSelectedRoles() { return Array.from(document.querySelectorAll('#roleChipsInput .role-chip')).filter(el=>Object.values(ROLE_SEL).some(c=>el.classList.contains(c))).map(el=>el.dataset.role); }
 
