@@ -108,7 +108,11 @@ body{display:flex;}
       </div>
       <div class="form-group">
         <label class="form-label">截止日期 *</label>
-        <input type="date" id="s1Deadline" class="form-input" required>
+        <div class="date-row">
+          <select id="dlYear" class="form-input" onchange="updateDays()"></select>
+          <select id="dlMonth" class="form-input" onchange="updateDays()"></select>
+          <select id="dlDay" class="form-input"></select>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">活動說明（選填）</label>
@@ -189,18 +193,30 @@ body{display:flex;}
 </main>
 <div class="toast" id="toast"></div>
 <script>
-const user = PC_requireLogin();
-if (!user) throw new Error('r');
 
-// 強制手動填寫左下角資訊，確保顯示
-const displayName = user.name || user.email || '使用者';
-if (document.getElementById('userName')) document.getElementById('userName').textContent = displayName;
-if (document.getElementById('userEmail')) document.getElementById('userEmail').textContent = user.email || '';
-if (document.getElementById('avatarInitial')) document.getElementById('avatarInitial').textContent = displayName.slice(0, 1).toUpperCase();
+window.onload = () => {
+  // 1. 驗證登入
+  if (!PC_isLoggedIn()) {
+    location.href = 'login.html';
+    return;
+  }
+  const user = PC_getUser();
 
-// 原有的渲染邏輯
-renderSidebar();
-initDateSelects();
+  // 2. 定義並執行渲染使用者資訊 (沿用 Dashboard 邏輯)
+  const uName = user.name || user.email || '使用者';
+  const nameEl = document.getElementById('userName');
+  const emailEl = document.getElementById('userEmail');
+  const avatarEl = document.getElementById('avatarInitial');
+  
+  if (nameEl) nameEl.textContent = uName;
+  if (emailEl) emailEl.textContent = user.email || '';
+  if (avatarEl) avatarEl.textContent = uName.slice(0, 1).toUpperCase();
+
+  // 3. 初始化頁面組件
+  renderSidebar();
+  initDateSelects();
+};
+  
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
 function toggleSideMenu(id){document.getElementById(id).classList.toggle('open');document.getElementById(id+'_icon').classList.toggle('open');}
@@ -215,7 +231,6 @@ function renderSidebar(){
   if(!joined.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無</div>`;
   html+=joined.map(e=>`<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('')+'</div>';
   const c=document.getElementById('sidebarEvents');if(c)c.innerHTML=html;
-  PC_fillSidebarUser();
 }
 function initDateSelects(){
   const yr=document.getElementById('dlYear');
@@ -317,7 +332,5 @@ function submitCreate(){
 function copyInviteCode(){PC_copyText(createdCode,'🔑 邀請碼已複製：'+createdCode);}
 function copyLink(){PC_copyText(document.getElementById('generatedLink').textContent,'🔗 連結已複製');}
 function goToEvent(){location.href='event.html?id='+createdId;}
-renderSidebar();
-initDateSelects();
 </script>
 </body></html>
