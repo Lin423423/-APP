@@ -7,9 +7,11 @@
 <link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{background:var(--bg);min-height:100vh;}
-.member-nav{background:var(--white);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow);}
+.member-nav{background:var(--white);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;box-shadow:var(--shadow);}
+.nav-back{display:inline-flex;align-items:center;gap:5px;color:var(--text2);font-size:0.84rem;font-weight:600;text-decoration:none;padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;transition:all 0.15s;background:transparent;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
+.nav-back:hover{border-color:var(--border2);background:var(--surface);color:var(--text);}
 .nav-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.15rem;color:var(--accent);display:flex;align-items:center;gap:7px;}
-.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
 .nav-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;}
 .content{max-width:720px;margin:0 auto;padding:28px 20px;}
 .invite-section{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:22px;}
@@ -19,9 +21,8 @@ body{background:var(--bg);min-height:100vh;}
 .invite-input{flex:1;background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:11px 16px;font-size:0.95rem;font-family:'Noto Sans TC',sans-serif;color:var(--text);outline:none;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;}
 .invite-input:focus{border-color:var(--accent);}
 .invite-input::placeholder{letter-spacing:0;font-weight:400;text-transform:none;}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
 .section-title{font-size:0.9rem;font-weight:700;}
-/* Event cards */
 .event-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all 0.15s;}
 .event-card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(79,110,247,0.08);}
 .event-card.no-click{cursor:default;}
@@ -36,14 +37,11 @@ body{background:var(--bg);min-height:100vh;}
 .sum-box{background:var(--surface);border-radius:8px;padding:10px 12px;text-align:center;}
 .sum-label{font-size:0.68rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;}
 .sum-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;}
-.ec-footer{padding:10px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.enter-btn{font-size:0.82rem;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:4px;}
+.ec-footer{padding:10px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;}
 .leave-btn-sm{background:none;border:none;color:var(--text3);font-size:0.76rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
 .leave-btn-sm:hover{color:var(--red);}
-/* Pending states */
 .pending-box{background:var(--orange-light);border:1px solid #fed7aa;border-radius:9px;padding:12px 14px;font-size:0.84rem;color:var(--orange);}
 .rejected-box{background:var(--red-light);border:1px solid #fecaca;border-radius:9px;padding:12px 14px;font-size:0.84rem;color:var(--red);}
-/* Invite confirm modal */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
 .overlay.show{display:flex;}
 .modal{background:var(--white);border-radius:16px;padding:26px;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,0.15);animation:slideUp 0.22s ease;}
@@ -58,11 +56,11 @@ body{background:var(--bg);min-height:100vh;}
 </head>
 <body>
 <nav class="member-nav">
+  <button class="nav-back" onclick="location.href='dashboard.html'">← 回總覽</button>
   <div class="nav-logo"><div style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;margin-right:2px"></div>PayClub</div>
   <div class="nav-right">
     <div class="nav-avatar" id="navAvatar">M</div>
     <div style="font-size:0.86rem;font-weight:600" id="navName">載入中</div>
-    <a href="dashboard.html" class="btn btn-ghost" style="padding:6px 14px;font-size:0.8rem">← 回總覽</a>
     <button class="logout-btn" onclick="PC_logout()">登出</button>
   </div>
 </nav>
@@ -70,7 +68,7 @@ body{background:var(--bg);min-height:100vh;}
 <div class="content">
   <div class="invite-section">
     <div class="invite-title">🔑 輸入活動邀請碼</div>
-    <div class="invite-sub">向活動管理員索取 8 位邀請碼，輸入後送出申請。管理員審核通過後可進入活動頁面。</div>
+    <div class="invite-sub">向活動管理員索取 8 位邀請碼，輸入後送出申請。管理員審核通過後直接進入活動頁面。</div>
     <div class="invite-row">
       <input type="text" id="inviteInput" class="invite-input" placeholder="例：ABC12345" maxlength="8" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')joinEvent()">
       <button class="btn btn-primary" onclick="joinEvent()">加入活動</button>
@@ -80,7 +78,7 @@ body{background:var(--bg);min-height:100vh;}
 
   <div class="section-header">
     <div class="section-title" id="joinedTitle" style="display:none">我加入的活動</div>
-    <div style="display:flex;gap:8px;" id="joinedActions" style="display:none">
+    <div style="display:flex;gap:8px;">
       <button class="btn btn-ghost" onclick="refreshAll()" id="refreshBtn" style="display:none;font-size:0.8rem;padding:6px 12px">🔄 更新狀態</button>
       <button class="btn btn-danger" onclick="removeAllDeleted()" id="removeDeletedBtn" style="display:none;font-size:0.8rem;padding:6px 12px">🗑 一鍵移除已刪除</button>
     </div>
@@ -92,7 +90,7 @@ body{background:var(--bg);min-height:100vh;}
   </div>
 </div>
 
-<!-- Invite confirm modal (for pre-invited members) -->
+<!-- Invite confirm modal -->
 <div class="overlay" id="inviteConfirmOverlay">
   <div class="modal">
     <div class="modal-title">🎫 活動邀請確認</div>
@@ -113,49 +111,38 @@ document.getElementById('navName').textContent=user.name;
 
 function getMemberJoined(){return JSON.parse(localStorage.getItem('pc_member_joined__'+user.email)||'[]');}
 function saveMemberJoined(e){localStorage.setItem('pc_member_joined__'+user.email,JSON.stringify(e));}
-
 let pendingInviteData=null;
 
-// Check for pending invites from notifications
 function checkPendingInvites(){
-  const notifs=JSON.parse(localStorage.getItem('pc_notif__'+user.email)||'[]');
-  const inviteNotif=notifs.find(n=>n.type==='invite'&&!n.read&&!n.handled);
-  if(inviteNotif){
-    // Try to find the event this invite is for
-    const joined=getMemberJoined();
-    // Look for events where user is listed as pending_invite
-    for(let i=0;i<localStorage.length;i++){
-      const key=localStorage.key(i);
-      if(key&&key.startsWith('pc_events__')){
-        try{
-          const evts=JSON.parse(localStorage.getItem(key)||'[]');
-          evts.forEach(e=>{
-            const myM=(e.members||[]).find(m=>m.email===user.email&&m.status==='pending_invite');
-            if(myM&&!joined.find(j=>j.eventId===e.id)){
-              pendingInviteData={notifId:inviteNotif.id,event:e,ownerKey:key,member:myM};
-              showInviteConfirm(e,myM,inviteNotif);
-            }
-          });
-        }catch(err){}
-      }
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key&&key.startsWith('pc_events__')){
+      try{
+        const evts=JSON.parse(localStorage.getItem(key)||'[]');
+        evts.forEach(e=>{
+          const myM=(e.members||[]).find(m=>m.email===user.email&&m.status==='pending_invite');
+          const joined=getMemberJoined();
+          if(myM&&!joined.find(j=>j.eventId===e.id)){
+            pendingInviteData={event:e,ownerKey:key,member:myM};
+            showInviteConfirm(e,myM);
+          }
+        });
+      }catch(err){}
     }
   }
 }
-
-function showInviteConfirm(e,m,notif){
+function showInviteConfirm(e,m){
   const roles=Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);
-  const RL_MAP={payer:'繳費者',counter:'統計者',admin:'管理員'};
+  const RL={payer:'繳費者',counter:'統計者',admin:'管理員'};
   document.getElementById('inviteConfirmInfo').innerHTML=`
     <div style="font-size:0.9rem;font-weight:700;margin-bottom:6px">${e.title}</div>
     <div style="font-size:0.8rem;color:var(--text2);margin-bottom:6px">截止日期：${e.deadline}</div>
-    <div style="font-size:0.8rem;color:var(--text2)">邀請角色：${roles.map(r=>`<span class="badge badge-blue" style="font-size:0.7rem">${RL_MAP[r]||r}</span>`).join(' ')}</div>`;
+    <div style="font-size:0.8rem;color:var(--text2)">邀請角色：${roles.map(r=>`<span class="badge badge-blue" style="font-size:0.7rem">${RL[r]||r}</span>`).join(' ')}</div>`;
   document.getElementById('inviteConfirmOverlay').classList.add('show');
 }
-
 function acceptInvite(){
   if(!pendingInviteData)return;
   const{event:e,ownerKey,member:m}=pendingInviteData;
-  // Update member status in owner's storage
   const evts=JSON.parse(localStorage.getItem(ownerKey)||'[]');
   const ev=evts.find(x=>x.id===e.id);
   if(ev){
@@ -166,33 +153,21 @@ function acceptInvite(){
     }
     localStorage.setItem(ownerKey,JSON.stringify(evts));
   }
-  // Add to joined list
   const joined=getMemberJoined();
   joined.push({eventId:e.id,eventTitle:e.title,ownerKey,joinedAt:new Date().toISOString()});
   saveMemberJoined(joined);
-  // Mark notif as handled
-  markNotifHandled(pendingInviteData.notifId);
-  // Notify owner
   PC_sendNotify(e.ownerEmail||'','成員已確認加入 ✅',`${user.name}(${user.email}) 已確認加入「${e.title}」。`,'success');
   document.getElementById('inviteConfirmOverlay').classList.remove('show');
   pendingInviteData=null;
   renderJoined();PC_toast('✅ 已加入「'+e.title+'」');
+  // Go directly to event
+  setTimeout(()=>location.href='event.html?id='+e.id, 800);
 }
-
 function rejectInvite(){
-  if(!pendingInviteData)return;
-  markNotifHandled(pendingInviteData.notifId);
   document.getElementById('inviteConfirmOverlay').classList.remove('show');
-  pendingInviteData=null;
-  PC_toast('已拒絕邀請');
+  pendingInviteData=null;PC_toast('已拒絕邀請');
 }
-
-function markNotifHandled(id){
-  const key='pc_notif__'+user.email;
-  const notifs=JSON.parse(localStorage.getItem(key)||'[]');
-  const n=notifs.find(x=>x.id===id);
-  if(n){n.read=true;n.handled=true;localStorage.setItem(key,JSON.stringify(notifs));}
-}
+document.getElementById('inviteConfirmOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
 
 function joinEvent(){
   const code=document.getElementById('inviteInput').value.trim().toUpperCase();
@@ -211,7 +186,8 @@ function joinEvent(){
   joined.push({eventId:result.event.id,eventTitle:result.event.title,ownerKey:result.ownerKey,joinedAt:new Date().toISOString()});
   saveMemberJoined(joined);
   document.getElementById('inviteInput').value='';
-  PC_sendNotify(result.ownerEmail||'','新加入申請 👥',`${user.name}(${user.email}) 申請加入「${result.event.title}」，請前往活動頁面審核。`,'info');
+  const ownerEmail=result.ownerKey.replace('pc_events__','');
+  PC_sendNotify(ownerEmail,'新加入申請 👥',`${user.name}(${user.email}) 申請加入「${result.event.title}」，請前往活動頁面審核。`,'info');
   PC_toast('✅ 申請已送出！等待管理員審核');
   renderJoined();
 }
@@ -219,27 +195,20 @@ function joinEvent(){
 function refreshAll(){renderJoined();PC_toast('✅ 狀態已更新');}
 function removeAllDeleted(){
   const joined=getMemberJoined();
-  const kept=joined.filter(j=>{
-    const result=PC_findEventById(j.eventId);
-    return !!result;
-  });
+  const kept=joined.filter(j=>!!PC_findEventById(j.eventId));
   const removed=joined.length-kept.length;
   if(!removed){PC_toast('沒有已刪除的活動');return;}
-  saveMemberJoined(kept);
-  renderJoined();
-  PC_toast('已移除 '+removed+' 個已刪除的活動記錄');
+  saveMemberJoined(kept);renderJoined();PC_toast('已移除 '+removed+' 個已刪除活動記錄');
 }
 
 function renderJoined(){
   const joined=getMemberJoined();
   const emptyEl=document.getElementById('emptyState');
   const titleEl=document.getElementById('joinedTitle');
-  const refreshBtn=document.getElementById('refreshBtn');
   const container=document.getElementById('joinedEvents');
   if(!joined.length){emptyEl.style.display='block';titleEl.style.display='none';document.getElementById('refreshBtn').style.display='none';document.getElementById('removeDeletedBtn').style.display='none';container.innerHTML='';return;}
   emptyEl.style.display='none';titleEl.style.display='block';
   document.getElementById('refreshBtn').style.display='inline-flex';
-  // Show remove-deleted button if any events are deleted
   const hasDeleted=joined.some(j=>!PC_findEventById(j.eventId));
   document.getElementById('removeDeletedBtn').style.display=hasDeleted?'inline-flex':'none';
 
@@ -248,46 +217,40 @@ function renderJoined(){
     const myReq=reqs.find(r=>r.email===user.email);
     const approved=myReq&&myReq.status==='approved';
     const rejected=myReq&&myReq.status==='rejected';
-
     const result=PC_findEventById(j.eventId);
     const evt=result?result.event:null;
     if(!evt)return`<div class="event-card no-click"><div class="ec-main"><div style="color:var(--text3);display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;">活動「${j.eventTitle}」已被刪除<button onclick="leaveEvent(event,${ji})" style="color:var(--red);background:none;border:none;cursor:pointer;font-family:inherit;font-size:0.8rem">移除</button></div></div></div>`;
 
-    // Check if user is pre-invited (pending_invite)
     const myMember=(evt.members||[]).find(m=>m.email===user.email);
     const isPendingInvite=myMember&&myMember.status==='pending_invite';
-
+    const canEnter=(approved||myMember)&&!isPendingInvite&&!rejected;
     const payers=PC_getPayers(evt);
     const paid=payers.filter(m=>m.status==='paid').length;
     const pct=payers.length?Math.round(paid/payers.length*100):0;
     const dl=new Date(evt.deadline),days=Math.ceil((dl-new Date())/86400000);
     const tagCls=evt.status==='active'?'badge-green':'badge-gray';
+    const RL={payer:'繳費者',counter:'統計者',admin:'管理員'};
 
     let statusBadge='';
     if(isPendingInvite)statusBadge='<span class="badge badge-orange">待確認邀請</span>';
     else if(!myReq&&!myMember)statusBadge='<span class="badge badge-orange">審核中</span>';
     else if(rejected)statusBadge='<span class="badge badge-red">已拒絕</span>';
-    else if(approved||myMember){
-      const roles=myMember?Array.isArray(myMember.roles)?myMember.roles:(myMember.role?[myMember.role]:[]):[];
-      const RL_MAP={payer:'繳費者',counter:'統計者',admin:'管理員'};
-      statusBadge=roles.map(r=>`<span class="badge badge-blue" style="font-size:0.7rem">${RL_MAP[r]||r}</span>`).join('');
+    else if(myMember){
+      const roles=Array.isArray(myMember.roles)?myMember.roles:(myMember.role?[myMember.role]:[]);
+      statusBadge=roles.map(r=>`<span class="badge badge-blue" style="font-size:0.7rem">${RL[r]||r}</span>`).join('');
     }
 
-    const canEnter=(approved||myMember)&&!isPendingInvite&&!rejected;
+    // Direct click to event.html
     const clickHandler=canEnter?`location.href='event.html?id=${evt.id}'`:'';
-    const cardClass=canEnter?'event-card':'event-card no-click';
 
-    return `<div class="${cardClass}" onclick="${clickHandler}">
+    return `<div class="${canEnter?'event-card':'event-card no-click'}" onclick="${clickHandler}">
       <div class="ec-main">
         <div class="ec-header">
           <div class="ec-title">${evt.title}</div>
           <div class="ec-badges">${statusBadge}<span class="badge ${tagCls}">${evt.status==='active'?'進行中':'已結束'}</span></div>
         </div>
-        <div class="ec-meta">
-          <span>📅 截止：${evt.deadline}${days>0?' (剩'+days+'天)':' (已截止)'}</span>
-          <span>👥 ${payers.length} 位繳費成員</span>
-        </div>
-        ${isPendingInvite?`<div class="pending-box">📩 管理員邀請你加入此活動，請前往通知頁面確認。</div>`:
+        <div class="ec-meta"><span>📅 截止：${evt.deadline}${days>0?' (剩'+days+'天)':' (已截止)'}</span><span>👥 ${payers.length} 位繳費成員</span></div>
+        ${isPendingInvite?`<div class="pending-box">📩 管理員邀請你加入，請確認是否同意。<button class="btn btn-primary" style="margin-left:10px;padding:4px 12px;font-size:0.78rem" onclick="event.stopPropagation();checkPendingInvites()">查看邀請</button></div>`:
           rejected?`<div class="rejected-box">❌ 申請已被拒絕，請聯繫活動管理員。</div>`:
           !myMember&&!approved?`<div class="pending-box">⏳ 申請已送出，等待管理員審核通過後可進入活動。</div>`:
           `<div class="ec-summary">
@@ -296,22 +259,13 @@ function renderJoined(){
             <div class="sum-box"><div class="sum-label">截止倒數</div><div class="sum-val" style="${days<=3?'color:var(--red)':''}">${days>0?days+'天':'已到期'}</div></div>
           </div>`}
       </div>
-      <div class="ec-footer">
-        ${canEnter?`<div class="enter-btn">進入活動 →</div>`:`<div></div>`}
-        <button class="leave-btn-sm" onclick="leaveEvent(event,${ji})">退出活動</button>
-      </div>
+      <div class="ec-footer"><button class="leave-btn-sm" onclick="leaveEvent(event,${ji})">退出活動</button></div>
     </div>`;
   }).join('');
 }
 
-function leaveEvent(e,idx){
-  e.stopPropagation();
-  const joined=getMemberJoined();
-  if(!confirm('確定退出「'+joined[idx].eventTitle+'」？'))return;
-  joined.splice(idx,1);saveMemberJoined(joined);renderJoined();PC_toast('已退出活動');
-}
+function leaveEvent(e,idx){e.stopPropagation();const joined=getMemberJoined();if(!confirm('確定退出「'+joined[idx].eventTitle+'」？'))return;joined.splice(idx,1);saveMemberJoined(joined);renderJoined();PC_toast('已退出活動');}
 
-checkPendingInvites();
-renderJoined();
+checkPendingInvites();renderJoined();
 </script>
 </body></html>
