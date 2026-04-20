@@ -194,15 +194,17 @@ body{display:flex;}
 <div class="toast" id="toast"></div>
 <script>
 
+// 1. 將 user 定義在全域，確保所有函式(如 submitCreate)都能讀到
+let user = null;
+
 window.onload = () => {
-  // 1. 驗證登入
   if (!PC_isLoggedIn()) {
     location.href = 'login.html';
     return;
   }
-  const user = PC_getUser();
+  user = PC_getUser();
 
-  // 2. 定義並執行渲染使用者資訊 (沿用 Dashboard 邏輯)
+  // 2. 渲染左下角使用者資訊 (沿用 Dashboard 邏輯)
   const uName = user.name || user.email || '使用者';
   const nameEl = document.getElementById('userName');
   const emailEl = document.getElementById('userEmail');
@@ -214,7 +216,7 @@ window.onload = () => {
 
   // 3. 初始化頁面組件
   renderSidebar();
-  initDateSelects();
+  initDateSelects(); // 初始化日期下拉選單
 };
   
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
@@ -247,6 +249,7 @@ function initDateSelects(){
     o.value=String(y);o.textContent=y+'年';
     if(y===defY)o.selected=true;
     yr.appendChild(o);
+    updateDays();
   }
   // Month
   mn.innerHTML='';
