@@ -360,6 +360,22 @@ function saveExtEvt(ownerKey){
   localStorage.setItem(ownerKey,JSON.stringify(evts.map(e=>e.id===eventId?evt:e)));
 }
 
+function addFounderAsPayer(){
+  const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
+  if(!e.members)e.members=[];
+  const existing=e.members.find(m=>m.email===user.email);
+  if(existing){
+    // Already in list, just add payer role
+    const roles=getRoles(existing);
+    if(!roles.includes('payer'))roles.push('payer');
+    existing.roles=roles;existing.role=roles[0];
+    if(existing.status==='founder'||existing.status==='none')existing.status='pending';
+  } else {
+    // Add as payer member
+    e.members.push({email:user.email,name:user.name||user.email.split('@')[0],roles:['payer'],role:'payer',status:'pending',paidAt:'',customAmount:null,txId:'',remark:'',payMethod:'',txHistory:[]});
+  }
+  PC_saveEvents(evts);renderPage();PC_toast('✅ 已加入繳費者身份');
+}
 function renderPage(){
   // Try own events first, then cross-user search
   let result=null;
@@ -432,14 +448,13 @@ function renderPage(){
       </div>
     </div>`;
   }
-  if(isAdmin()||isCounter()){
-    sideHtml+=`<div class="side-card">
-      <div class="side-label">🔗 成員繳費連結</div>
-      <div class="share-url">${url}</div>
-      <button class="copy-btn-full" onclick="PC_copyText('${url}','🔗 連結已複製')">複製連結</button>
-      <a href="${url}" class="preview-link">預覽繳費頁面 →</a>
-    </div>`;
-  }
+  // Show pay link for ALL roles
+  sideHtml+=`<div class="side-card">
+    <div class="side-label">🔗 成員繳費連結</div>
+    <div class="share-url">${url}</div>
+    <button class="copy-btn-full" onclick="PC_copyText('${url}','🔗 連結已複製')">複製連結</button>
+    <a href="${url}" class="preview-link">預覽繳費頁面 →</a>
+  </div>`;
   document.getElementById('sideCol').innerHTML=sideHtml;
   renderSidebar();
 }
@@ -497,7 +512,12 @@ function renderMembers(){
       </div>`;
     }
     if(isFounderRow&&isFounder()){
-      opsHtml=`<div class="m-ops"><span style="font-size:0.76rem;color:var(--text3)">活動發起人</span></div>`;
+      // Check if founder is already a payer
+      const founderIsPayer=(evt.members||[]).find(m=>m.email===user.email&&getRoles(m).includes('payer'));
+      opsHtml=`<div class="m-ops">
+        <span style="font-size:0.76rem;color:var(--text3)">活動發起人</span>
+        ${!founderIsPayer?`<button class="op-btn op-role" onclick="event.stopPropagation();addFounderAsPayer()">+ 加入繳費者</button>`:''}
+      </div>`;
     }
 
     // Transaction history for paid members
