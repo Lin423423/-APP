@@ -198,16 +198,18 @@ body{display:flex;}
 </main>
 <div class="toast" id="toast"></div>
 <script>
+// 1. 將 user 變數定義在最外層，方便其他函式（如 submitCreate）使用
+let user = null;
 
 window.onload = () => {
-  // 1. 驗證登入並取得使用者資料 (複製自 dashboard.html 邏輯)
+  // 2. 驗證登入
   if (!PC_isLoggedIn()) {
     location.href = 'login.html';
     return;
   }
-  const user = PC_getUser();
+  user = PC_getUser();
 
-  // 2. 顯示左下角使用者資訊 (直接複製並對應 ID)
+  // 3. 渲染使用者資訊 (完全同步 Dashboard 邏輯)
   const uName = user.name || user.email || '使用者';
   const nameEl = document.getElementById('userName');
   const emailEl = document.getElementById('userEmail');
@@ -215,9 +217,12 @@ window.onload = () => {
   
   if (nameEl) nameEl.textContent = uName;
   if (emailEl) emailEl.textContent = user.email || '';
-  if (avatarEl) avatarEl.textContent = uName.slice(0, 1).toUpperCase();
+  if (avatarEl) {
+    // 取得第一個字並轉大寫，背景顏色會沿用 CSS 定義
+    avatarEl.textContent = uName.slice(0, 1).toUpperCase();
+  }
 
-  // 3. 執行側邊欄活動清單與日期初始化
+  // 4. 初始化其他頁面組件
   renderSidebar();
   initDateSelects();
 };
