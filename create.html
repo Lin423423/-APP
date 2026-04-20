@@ -197,10 +197,21 @@ body{display:flex;}
 </main>
 <div class="toast" id="toast"></div>
 <script>
-// ── Init (matches dashboard.html pattern) ──
+// ── Init ──
 const user = PC_requireAdmin(); if(!user) throw new Error('r');
+// Explicitly set user card (don't rely on PC_fillSidebarUser timing)
+(function(){
+  const displayName = user.name || user.email || '使用者';
+  const n=document.getElementById('userName');
+  const a=document.getElementById('avatarInitial');
+  const e=document.getElementById('userEmail');
+  if(n) n.textContent=displayName;
+  if(a) a.textContent=displayName.slice(0,1).toUpperCase();
+  if(e) e.textContent=user.email||'';
+})();
 renderSidebar();
-initDateSelects();
+// Date selects: use setTimeout to ensure browser rendering is complete
+setTimeout(initDateSelects, 0);
 
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
@@ -221,7 +232,14 @@ function renderSidebar(){
   html+=joined.map(e=>`<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
   html+=`</div>`;
   const c=document.getElementById('sidebarEvents');if(c)c.innerHTML=html;
-  if(typeof PC_fillSidebarUser==='function')PC_fillSidebarUser();
+  // Re-apply user info after sidebar rerenders
+  if(user){
+    const displayName=user.name||user.email||'使用者';
+    const n=document.getElementById('userName');const a=document.getElementById('avatarInitial');const e=document.getElementById('userEmail');
+    if(n)n.textContent=displayName;if(a)a.textContent=displayName.slice(0,1).toUpperCase();if(e)e.textContent=user.email||'';
+  }
+  const unread=PC_getUnreadCount();const badge=document.getElementById('notifBadge');
+  if(badge){badge.textContent=unread>0?unread:'';badge.style.display=unread>0?'inline-block':'none';}
 }
 
 // ── Date selects ──
