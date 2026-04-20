@@ -100,7 +100,9 @@ body{background:var(--bg);min-height:100vh;}
 
 <div class="toast" id="toast"></div>
 <script>
-
+// 初始化用戶
+const user = PC_requireLogin();
+if (!user) throw new Error('Require login');
 
 function getMemberJoined(){return JSON.parse(localStorage.getItem('pc_member_joined__'+user.email)||'[]');}
 function saveMemberJoined(e){localStorage.setItem('pc_member_joined__'+user.email,JSON.stringify(e));}

@@ -404,7 +404,6 @@ function renderMemberList() {
 // ── Submit ──
 let createdId = null, createdCode = '';
 function submitCreate() {
-  const user = PC_getUser();
   const title = document.getElementById('s1Title').value.trim();
   const dl = getSelectedDateStr();
   const desc = document.getElementById('s1Desc').value.trim();
@@ -422,6 +421,9 @@ function copyInviteCode() { PC_copyText(createdCode,'🔑 邀請碼已複製：'
 function copyLink() { PC_copyText(document.getElementById('generatedLink').textContent,'🔗 連結已複製'); }
 function goToEvent() { location.href='event.html?id='+createdId; }
 
+// 驗證登入狀態
+const user = PC_requireLogin();
+if (!user) throw new Error('Require login');
 
 initCalendar();
 </script>
