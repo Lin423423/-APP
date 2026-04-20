@@ -80,7 +80,10 @@ body{background:var(--bg);min-height:100vh;}
 
   <div class="section-header">
     <div class="section-title" id="joinedTitle" style="display:none">我加入的活動</div>
-    <button class="btn btn-ghost" onclick="refreshAll()" id="refreshBtn" style="display:none;font-size:0.8rem;padding:6px 12px">🔄 更新狀態</button>
+    <div style="display:flex;gap:8px;" id="joinedActions" style="display:none">
+      <button class="btn btn-ghost" onclick="refreshAll()" id="refreshBtn" style="display:none;font-size:0.8rem;padding:6px 12px">🔄 更新狀態</button>
+      <button class="btn btn-danger" onclick="removeAllDeleted()" id="removeDeletedBtn" style="display:none;font-size:0.8rem;padding:6px 12px">🗑 一鍵移除已刪除</button>
+    </div>
   </div>
   <div id="joinedEvents"></div>
   <div class="empty-state" id="emptyState">
@@ -141,7 +144,7 @@ function checkPendingInvites(){
 
 function showInviteConfirm(e,m,notif){
   const roles=Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);
-  const RL_MAP={payer:'繳費者',observer:'觀察者',counter:'統計者',admin:'管理員'};
+  const RL_MAP={payer:'繳費者',counter:'統計者',admin:'管理員'};
   document.getElementById('inviteConfirmInfo').innerHTML=`
     <div style="font-size:0.9rem;font-weight:700;margin-bottom:6px">${e.title}</div>
     <div style="font-size:0.8rem;color:var(--text2);margin-bottom:6px">截止日期：${e.deadline}</div>
@@ -214,6 +217,18 @@ function joinEvent(){
 }
 
 function refreshAll(){renderJoined();PC_toast('✅ 狀態已更新');}
+function removeAllDeleted(){
+  const joined=getMemberJoined();
+  const kept=joined.filter(j=>{
+    const result=PC_findEventById(j.eventId);
+    return !!result;
+  });
+  const removed=joined.length-kept.length;
+  if(!removed){PC_toast('沒有已刪除的活動');return;}
+  saveMemberJoined(kept);
+  renderJoined();
+  PC_toast('已移除 '+removed+' 個已刪除的活動記錄');
+}
 
 function renderJoined(){
   const joined=getMemberJoined();
@@ -221,8 +236,12 @@ function renderJoined(){
   const titleEl=document.getElementById('joinedTitle');
   const refreshBtn=document.getElementById('refreshBtn');
   const container=document.getElementById('joinedEvents');
-  if(!joined.length){emptyEl.style.display='block';titleEl.style.display='none';refreshBtn.style.display='none';container.innerHTML='';return;}
-  emptyEl.style.display='none';titleEl.style.display='block';refreshBtn.style.display='inline-flex';
+  if(!joined.length){emptyEl.style.display='block';titleEl.style.display='none';document.getElementById('refreshBtn').style.display='none';document.getElementById('removeDeletedBtn').style.display='none';container.innerHTML='';return;}
+  emptyEl.style.display='none';titleEl.style.display='block';
+  document.getElementById('refreshBtn').style.display='inline-flex';
+  // Show remove-deleted button if any events are deleted
+  const hasDeleted=joined.some(j=>!PC_findEventById(j.eventId));
+  document.getElementById('removeDeletedBtn').style.display=hasDeleted?'inline-flex':'none';
 
   container.innerHTML=joined.map((j,ji)=>{
     const reqs=PC_getJoinRequests(j.eventId);
@@ -250,7 +269,7 @@ function renderJoined(){
     else if(rejected)statusBadge='<span class="badge badge-red">已拒絕</span>';
     else if(approved||myMember){
       const roles=myMember?Array.isArray(myMember.roles)?myMember.roles:(myMember.role?[myMember.role]:[]):[];
-      const RL_MAP={payer:'繳費者',observer:'觀察者',counter:'統計者',admin:'管理員'};
+      const RL_MAP={payer:'繳費者',counter:'統計者',admin:'管理員'};
       statusBadge=roles.map(r=>`<span class="badge badge-blue" style="font-size:0.7rem">${RL_MAP[r]||r}</span>`).join('');
     }
 

@@ -16,7 +16,7 @@ body{display:flex;}
 .invite-pill-code{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:800;color:var(--accent);letter-spacing:0.1em;}
 .dl-row{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
 .dl-edit-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:3px 10px;border-radius:6px;font-size:0.73rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-.dl-edit-row{align-items:center;gap:6px;flex-wrap:wrap;display:none;}
+.dl-edit-row{align-items:center;gap:6px;flex-wrap:wrap;}
 .dl-edit-row select{padding:3px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:0.76rem;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--white);}
 .dl-save{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.73rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
@@ -145,7 +145,7 @@ body{display:flex;}
     <span style="font-size:0.84rem;font-weight:700" id="dlDisplay">—</span>
     <button class="dl-edit-btn" id="dlEditBtnMain" onclick="toggleDlEdit()">✏️ 修改</button>
   </div>
-  <div class="dl-edit-row" id="dlEditRow" style="display:none;display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+  <div class="dl-edit-row" id="dlEditRow" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
     <select id="dlYear" class="form-input" style="width:auto" onchange="updateDlDays()"></select>
     <select id="dlMonth" class="form-input" style="width:auto" onchange="updateDlDays()"></select>
     <select id="dlDay" class="form-input" style="width:auto"></select>
@@ -198,7 +198,6 @@ body{display:flex;}
       <label class="form-label">角色（可多選）</label>
       <div class="modal-role-chips" id="addRoleChips">
         <div class="mrc" data-role="payer" onclick="toggleMRC(this)">💳 繳費者</div>
-        <div class="mrc" data-role="observer" onclick="toggleMRC(this)">👁 觀察者</div>
         <div class="mrc" data-role="counter" onclick="toggleMRC(this)">📊 統計者</div>
         <div class="mrc" data-role="admin" onclick="toggleMRC(this)">👑 管理員</div>
       </div>
@@ -217,7 +216,6 @@ body{display:flex;}
     <div class="modal-sub" id="approveSubText">選擇此成員在活動中的角色（可多選）</div>
     <div class="modal-role-chips" id="approveRoleChips">
       <div class="mrc" data-role="payer" onclick="toggleMRC(this)">💳 繳費者</div>
-      <div class="mrc" data-role="observer" onclick="toggleMRC(this)">👁 觀察者</div>
       <div class="mrc" data-role="counter" onclick="toggleMRC(this)">📊 統計者</div>
       <div class="mrc" data-role="admin" onclick="toggleMRC(this)">👑 管理員</div>
     </div>
@@ -287,10 +285,10 @@ let evt=null,cf='all',joinPanelOpen=false;
 let pendingApproveIdx=-1,pendingStatusIdx=-1,pendingDeleteIdx=-1,selectedStatus='paid';
 let amtSelections=new Set();
 
-const RL={payer:'繳費者',observer:'觀察者',counter:'統計者',admin:'管理員',pending_invite:'待確認'};
-const RB={payer:'badge-blue',observer:'badge-gray',counter:'badge-orange',admin:'badge-green',pending_invite:'badge-orange'};
-const RC={payer:'#4f6ef7',observer:'#9ca3af',counter:'#d97706',admin:'#16a34a'};
-const ROLE_SEL={payer:'sel-payer',observer:'sel-observer',counter:'sel-counter',admin:'sel-admin'};
+const RL={payer:'繳費者',counter:'統計者',admin:'管理員',pending_invite:'待確認'};
+const RB={payer:'badge-blue',counter:'badge-orange',admin:'badge-green',pending_invite:'badge-orange'};
+const RC={payer:'#4f6ef7',counter:'#d97706',admin:'#16a34a'};
+const ROLE_SEL={payer:'sel-payer',counter:'sel-counter',admin:'sel-admin'};
 
 function getMemberRoles(m){return Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);}
 function isPayer(m){return getMemberRoles(m).includes('payer');}
@@ -389,7 +387,7 @@ function renderPage(){
 
   // Role legend + filter
   if(vRole!=='payer'){
-    document.getElementById('roleLegend').innerHTML='<span class="badge badge-blue" style="font-size:0.65rem">繳費者</span><span class="badge badge-orange" style="font-size:0.65rem">統計者</span><span class="badge badge-green" style="font-size:0.65rem">管理員</span><span class="badge badge-gray" style="font-size:0.65rem">觀察者</span>';
+    document.getElementById('roleLegend').innerHTML='<span class="badge badge-blue" style="font-size:0.65rem">繳費者</span><span class="badge badge-orange" style="font-size:0.65rem">統計者</span><span class="badge badge-green" style="font-size:0.65rem">管理員</span>';
     document.getElementById('filterRow').innerHTML='<button class="ftab active" onclick="setFilter(this,\'all\')">全部</button><button class="ftab" onclick="setFilter(this,\'paid\')">已繳</button><button class="ftab" onclick="setFilter(this,\'pending\')">待繳</button><button class="ftab" onclick="setFilter(this,\'overdue\')">逾期</button>';
   }
 
@@ -579,7 +577,16 @@ function openDeleteModal(i){
 function confirmDelete(){
   const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
   const m=e.members[pendingDeleteIdx];
-  PC_sendNotify(m.email,'你已被移出活動',`你已被移出「${evt.title}」的成員名單。`,'warning');
+  if(m.email){
+    PC_sendNotify(m.email,'你已被移出活動 ❌',`你已被移出「${evt.title}」的成員名單。如需重新加入，請再次輸入邀請碼申請。`,'warning');
+    // Clear join record so they can re-join
+    const jKey='pc_member_joined__'+m.email;
+    const joined=JSON.parse(localStorage.getItem(jKey)||'[]');
+    localStorage.setItem(jKey,JSON.stringify(joined.filter(j=>j.eventId!==eventId)));
+    // Clear their join request so they can apply again
+    const reqs=PC_getJoinRequests(eventId).filter(r=>r.email!==m.email);
+    PC_saveJoinRequests(eventId,reqs);
+  }
   e.members.splice(pendingDeleteIdx,1);PC_saveEvents(evts);
   closeOverlay('deleteOverlay');renderPage();PC_toast('已刪除成員');
 }

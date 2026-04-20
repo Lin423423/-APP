@@ -20,7 +20,7 @@ body{display:flex;}
 .step-line{flex:1;height:2px;background:var(--border);margin:0 10px;}
 .step-line.done{background:var(--green);}
 /* Form cards */
-.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:16px;box-shadow:var(--shadow);}
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:16px;box-shadow:var(--shadow);max-width:620px;}
 .form-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
 /* Date selects */
 .date-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
@@ -94,7 +94,7 @@ body{display:flex;}
   </div>
 </aside>
 
-<main class="main">
+<main class="main" style="max-width:calc(var(--sidebar-w) + 700px)">
   <div class="topbar">
     <div><div class="page-title">建立收款活動</div><div class="page-sub">填寫資訊，系統自動生成收款連結與邀請碼</div></div>
   </div>
@@ -140,7 +140,7 @@ body{display:flex;}
         </div>
       </div>
     </div>
-    <button class="btn btn-primary" onclick="goStep2()">下一步：設定成員 →</button>
+    <div style="max-width:620px"><button class="btn btn-primary" onclick="goStep2()">下一步：設定成員 →</button></div>
   </div>
 
   <!-- STEP 2 -->
@@ -154,8 +154,7 @@ body{display:flex;}
           <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin:10px 0 6px;">選擇在此活動的角色（可多選）</div>
           <div class="role-chips" id="roleChipsInput">
             <div class="role-chip" data-role="payer" onclick="toggleRoleChip(this)">💳 繳費者</div>
-            <div class="role-chip" data-role="observer" onclick="toggleRoleChip(this)">👁 觀察者</div>
-            <div class="role-chip" data-role="counter" onclick="toggleRoleChip(this)">📊 統計者</div>
+<div class="role-chip" data-role="counter" onclick="toggleRoleChip(this)">📊 統計者</div>
             <div class="role-chip" data-role="admin" onclick="toggleRoleChip(this)">👑 管理員</div>
           </div>
         </div>
@@ -165,7 +164,7 @@ body{display:flex;}
         <div style="text-align:center;padding:16px;color:var(--text3);font-size:0.84rem;">尚未預先邀請成員</div>
       </div>
     </div>
-    <div style="display:flex;gap:10px;">
+    <div style="display:flex;gap:10px;max-width:620px">
       <button class="btn btn-ghost" onclick="goStep(1)">← 上一步</button>
       <button class="btn btn-primary" style="flex:1" onclick="goStep3()">下一步：確認建立 →</button>
     </div>
@@ -182,7 +181,7 @@ body{display:flex;}
         <tbody id="previewMembers"></tbody>
       </table>
     </div>
-    <div style="display:flex;gap:10px;">
+    <div style="display:flex;gap:10px;max-width:620px">
       <button class="btn btn-ghost" onclick="goStep(2)">← 上一步</button>
       <button class="btn btn-primary" style="flex:1" onclick="submitCreate()">🚀 建立活動</button>
     </div>
@@ -250,7 +249,7 @@ function updateDays(){
 }
 
 // Role chips multi-select
-const ROLE_SEL_CLS={payer:'sel-payer',observer:'sel-observer',counter:'sel-counter',admin:'sel-admin'};
+const ROLE_SEL_CLS={payer:'sel-payer',counter:'sel-counter',admin:'sel-admin'};
 function toggleRoleChip(el){
   const role=el.dataset.role;
   el.classList.toggle(ROLE_SEL_CLS[role]);
@@ -260,9 +259,9 @@ function getSelectedRoles(){
 }
 
 let members=[];
-const ROLE_LABELS_MAP={payer:'繳費者',observer:'觀察者',counter:'統計者',admin:'管理員'};
-const ROLE_BADGE_MAP={payer:'badge-blue',observer:'badge-gray',counter:'badge-orange',admin:'badge-green'};
-const ROLE_COLOR_MAP={payer:'#4f6ef7',observer:'#9ca3af',counter:'#d97706',admin:'#16a34a'};
+const ROLE_LABELS_MAP={payer:'繳費者',counter:'統計者',admin:'管理員'};
+const ROLE_BADGE_MAP={payer:'badge-blue',counter:'badge-orange',admin:'badge-green'};
+const ROLE_COLOR_MAP={payer:'#4f6ef7',counter:'#d97706',admin:'#16a34a'};
 
 function addMember(){
   const email=document.getElementById('addEmail').value.trim();

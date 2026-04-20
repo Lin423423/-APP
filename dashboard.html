@@ -166,6 +166,32 @@ body{display:flex;}
   </div>
 </div>
 
+
+<!-- Delete confirm modal -->
+<div class="overlay" id="delEvtOverlay">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:8px">🗑</div>
+    <div class="modal-title" id="delEvtTitle">確認刪除活動？</div>
+    <div style="background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.84rem;color:var(--red);" id="delEvtDesc">此操作無法復原，活動相關資料將全部清除。</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="document.getElementById('delEvtOverlay').classList.remove('show')">取消</button>
+      <button class="btn btn-danger" style="flex:2" onclick="confirmDelEvt()">確認刪除</button>
+    </div>
+  </div>
+</div>
+<!-- Add method modal -->
+<div class="overlay" id="addMethodOverlay">
+  <div class="modal">
+    <div class="modal-title">➕ 新增自訂繳費方式</div>
+    <div class="form-group"><label class="form-label">圖示（Emoji）</label><input type="text" id="newMethodIcon" class="form-input" placeholder="例：🏦" maxlength="2"></div>
+    <div class="form-group"><label class="form-label">名稱</label><input type="text" id="newMethodName" class="form-input" placeholder="例：玉山銀行轉帳" onkeydown="if(event.key==='Enter')addCustomMethod()"></div>
+    <div style="font-size:0.78rem;color:var(--text3);background:var(--surface);border-radius:8px;padding:10px 12px;">⚙️ 自訂繳費方式的實際收款功能需串接後端後啟用，目前僅供 UI 展示。</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="document.getElementById('addMethodOverlay').classList.remove('show')">取消</button>
+      <button class="btn btn-primary" style="flex:2" onclick="addCustomMethod()">新增</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script>
 const user = PC_requireAdmin(); if(!user) throw new Error('r');
@@ -209,7 +235,7 @@ function renderPayMethods(){
 }
 function openAddMethod(){ document.getElementById('addMethodOverlay').classList.add('show'); }
 function closeAddMethod(){ document.getElementById('addMethodOverlay').classList.remove('show'); }
-document.getElementById('addMethodOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddMethod();});
+document.getElementById('addMethodOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('addMethodOverlay').classList.remove('show');});
 function addCustomMethod(){
   const icon = document.getElementById('newMethodIcon').value.trim()||'💰';
   const name = document.getElementById('newMethodName').value.trim();
@@ -217,7 +243,7 @@ function addCustomMethod(){
   const methods = getPayMethods();
   methods.push({id:'custom_'+Date.now(), icon, name, active:true});
   localStorage.setItem('pc_pay_methods__'+user.email, JSON.stringify(methods));
-  closeAddMethod();
+  document.getElementById('addMethodOverlay').classList.remove('show');
   document.getElementById('newMethodIcon').value='';
   document.getElementById('newMethodName').value='';
   renderPayMethods();
@@ -283,24 +309,43 @@ function toggleSel(){selMode=!selMode;selIds.clear();document.getElementById('se
 function toggleCard(id,e){e.stopPropagation();if(selIds.has(id))selIds.delete(id);else selIds.add(id);const bar=document.getElementById('bulkBar');bar.style.display=selIds.size>0?'flex':'none';document.getElementById('bulkCount').textContent='已選 '+selIds.size+' 個';renderEvents();}
 
 // 🌟 修正：支援同時刪除主辦活動與移除加入紀錄
+let _pendingDelIds=null;
 function deleteBulk(){
   if(!selIds.size)return;
-  if(!confirm('確定刪除或移除所選的 '+selIds.size+' 個活動紀錄？'))return;
+  _pendingDelIds=new Set(selIds);
   const n=selIds.size;
-  
-  // 1. 刪除自己主辦的活動
-  const evts=PC_getEvents().filter(e=>!selIds.has(e.id));
-  PC_saveEvents(evts);
-  
-  // 2. 移除自己加入的活動紀錄
-  let joined = JSON.parse(localStorage.getItem('pc_member_joined__'+user.email)||'[]');
-  joined = joined.filter(j => !selIds.has(j.eventId));
-  localStorage.setItem('pc_member_joined__'+user.email, JSON.stringify(joined));
-
-  selIds.clear();
+  document.getElementById('delEvtTitle').textContent='確認刪除 '+n+' 個活動？';
+  document.getElementById('delEvtDesc').textContent='此操作無法復原，活動相關資料將全部清除，並通知所有相關成員。';
+  document.getElementById('delEvtOverlay').classList.add('show');
+}
+function confirmDelEvt(){
+  document.getElementById('delEvtOverlay').classList.remove('show');
+  if(!_pendingDelIds)return;
+  const evtsToDelete=PC_getEvents().filter(e=>_pendingDelIds.has(e.id));
+  // Notify members and clear their join records
+  evtsToDelete.forEach(evt=>{
+    (evt.members||[]).forEach(m=>{
+      if(m.email){
+        PC_sendNotify(m.email,'活動已被刪除 ❌',`你加入的活動「${evt.title}」已被管理員刪除。`,'warning');
+        // Remove from member's joined list
+        const jKey='pc_member_joined__'+m.email;
+        const joined=JSON.parse(localStorage.getItem(jKey)||'[]');
+        const updated=joined.filter(j=>j.eventId!==evt.id);
+        localStorage.setItem(jKey,JSON.stringify(updated));
+      }
+    });
+    // Clear join requests
+    localStorage.removeItem('pc_join_req__'+evt.id);
+  });
+  const remaining=PC_getEvents().filter(e=>!_pendingDelIds.has(e.id));
+  PC_saveEvents(remaining);
+  const n=_pendingDelIds.size;
+  _pendingDelIds=null;selIds.clear();
+  selMode=false;
+  document.getElementById('selBtn').textContent='☑ 選取';
+  document.getElementById('selBtn').className='btn btn-ghost';
   document.getElementById('bulkBar').style.display='none';
-  renderAll();
-  PC_toast('✅ 已處理 '+n+' 個活動');
+  renderAll();PC_toast('已刪除 '+n+' 個活動');
 }
 function clearSel(){selIds.clear();document.getElementById('bulkBar').style.display='none';renderEvents();}
 
@@ -357,5 +402,7 @@ function renderEvents(){
 function renderAll(){ renderStats(); renderEvents(); renderSidebar(); }
 renderPayMethods();
 renderAll();
+document.getElementById('delEvtOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+document.getElementById('addMethodOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
 </script>
 </body></html>
