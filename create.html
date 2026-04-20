@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{display:flex;}
-/* 1. 關鍵修改：將表格寬度與上方進度條 (620px) 設為一致 */
+/* 1. 寬度同步修改：確保卡片與進度條寬度一致為 620px */
 .steps-outer{max-width:620px;margin-bottom:28px;}
 .steps{display:flex;align-items:center;width:100%;}
 .step-item{display:flex;align-items:center;gap:8px;flex-shrink:0;}
@@ -19,12 +19,11 @@ body{display:flex;}
 .step-item.done .step-label{color:var(--green);}
 .step-line{flex:1;height:2px;background:var(--border);margin:0 10px;}
 .step-line.done{background:var(--green);}
-/* 確保卡片與按鈕列寬度均為 620px */
-.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:16px;box-shadow:var(--shadow);max-width:620px;}
-.btn-row{max-width:620px;display:flex;gap:10px;}
 
-/* 恢復原始格式 */
+/* 表單卡片寬度設為 620px 以對齊上方 */
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:16px;box-shadow:var(--shadow);max-width:620px;}
 .form-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.btn-row{max-width:620px;display:flex;gap:10px;}
 .date-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
 .chip{padding:6px 14px;border-radius:100px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text2);transition:all 0.15s;user-select:none;font-family:'Noto Sans TC',sans-serif;}
@@ -77,20 +76,22 @@ body{display:flex;}
     <div class="nav-section">我的活動</div>
     <div id="sidebarEvents"></div>
     <a class="nav-item" href="index.html"><span class="icon">🌐</span>首頁</a>
-    <a class="nav-item" href="notifications.html" style="position:relative"><span class="icon">🔔</span>通知<span class="badge-notify" id="notifBadge" style="display:none">0</span></a>
+    <a class="nav-item" href="notifications.html" style="position:relative">
+      <span class="icon">🔔</span>通知
+      <span class="badge-notify" id="notifBadge" style="display:none">0</span>
+    </a>
   </nav>
   <div class="sidebar-bottom">
     <div class="user-card">
       <div class="avatar" id="avatarInitial">?</div>
       <div class="user-info">
         <div class="user-name" id="userName">載入中</div>
-        <div class="user-role" id="userEmail" style="font-size:0.6rem; opacity:0.8">...</div>
+        <div class="user-role" id="userEmail" style="font-size:0.6rem; opacity:0.8">email...</div>
       </div>
       <button class="logout-btn" onclick="PC_logout()">登出</button>
     </div>
   </div>
 </aside>
-
 <main class="main">
   <div class="topbar" style="margin-bottom:16px;">
     <div><div class="page-title">建立收款活動</div><div class="page-sub">填寫資訊，系統自動生成收款連結與邀請碼</div></div>
@@ -198,41 +199,48 @@ body{display:flex;}
     </div>
   </div>
 </main>
-
+<div class="toast" id="toast"></div>
 <script>
-// 初始化同步 Dashboard 側邊欄邏輯，不更動原始變數 Scope
-const user = PC_requireLogin();
-if (user) {
-  // 渲染使用者資訊 (頭像同步 Dashboard)
-  const uName = user.name || user.email || '使用者';
-  if(document.getElementById('userName')) document.getElementById('userName').textContent = uName;
-  if(document.getElementById('userEmail')) document.getElementById('userEmail').textContent = user.email || '';
-  if(document.getElementById('avatarInitial')) document.getElementById('avatarInitial').textContent = uName.slice(0, 1).toUpperCase();
+// 使用全域變數處理登入資訊
+const user = PC_requireLogin(); 
 
-  renderSidebar();
-  initDateSelects();
+window.onload = () => {
+  if (user) {
+    // 交叉比對 Dashboard：強制執行側邊欄初始化
+    renderSidebar();
+    initDateSelects();
+    // 顯式調用使用者資訊填充
+    if(typeof PC_fillSidebarUser === 'function') PC_fillSidebarUser();
+  }
 }
-
+  
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
-function toggleSideMenu(id){document.getElementById(id).classList.toggle('open');document.getElementById(id+'_icon').classList.toggle('open');}
+function toggleSideMenu(id){
+  // 修正：必須對應 shared.css 的 open class
+  document.getElementById(id).classList.toggle('open');
+  const icon = document.getElementById(id+'_icon');
+  if(icon) icon.classList.toggle('open');
+}
 
 function renderSidebar(){
-  const evts = PC_getAllMyEvents();
+  const evts = PC_getAllMyEvents(); //
   const created = evts.filter(e => e._isOwner);
   const joined = evts.filter(e => !e._isOwner);
   let html = '';
-  // 同步 Dashboard 下拉選單格式
-  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('menu_created')">已建立活動 <span class="chevron open" id="menu_created_icon">▼</span></div>`;
-  html += `<div class="sidebar-menu-list open" id="menu_created">`;
+  // 列表 ID 必須對應 JavaScript 切換邏輯
+  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('mc')">已建立活動 <span class="chevron open" id="mc_icon">▼</span></div>`;
+  html += `<div class="sidebar-menu-list open" id="mc">`;
   if(!created.length) html += `<div style="padding:6px 12px;font-size:0.75rem;color:var(--text3)">無資料</div>`;
   html += created.map(e => `<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
   html += `</div>`;
-  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('menu_joined')">已加入活動 <span class="chevron open" id="menu_joined_icon">▼</span></div>`;
-  html += `<div class="sidebar-menu-list open" id="menu_joined">`;
+
+  html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('mj')">已加入活動 <span class="chevron open" id="mj_icon">▼</span></div>`;
+  html += `<div class="sidebar-menu-list open" id="mj">`;
   if(!joined.length) html += `<div style="padding:6px 12px;font-size:0.75rem;color:var(--text3)">無資料</div>`;
   html += joined.map(e => `<a class="nav-event" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('');
   html += `</div>`;
+
   const c = document.getElementById('sidebarEvents');
   if(c) c.innerHTML = html;
 }
@@ -242,8 +250,7 @@ function initDateSelects(){
   if(!yr||!mn||!dd)return;
   const def=new Date(); def.setDate(def.getDate()+14);
   const defY=def.getFullYear(), defM=def.getMonth()+1, defD=def.getDate();
-  yr.innerHTML='';
-  const cy=new Date().getFullYear();
+  yr.innerHTML=''; const cy=new Date().getFullYear();
   for(let y=cy; y<=cy+5; y++){
     const o=document.createElement('option'); o.value=String(y); o.textContent=y+'年';
     if(y===defY)o.selected=true; yr.appendChild(o);
@@ -316,9 +323,10 @@ function submitCreate(){
   const memberList=members.map(m=>({email:m.email, name:m.name, roles:m.roles, role:m.roles[0], status:'pending_invite', paidAt:'', customAmount:null, txId:'', remark:'', payMethod:'', txHistory:[]}));
   const newEvt={id:createdId, title, ownerEmail:user.email, amountMode:'per_person', amount:0, deadline:dl, desc, status:'active', inviteCode:code, members:memberList};
   const evts=PC_getEvents(); evts.unshift(newEvt); PC_saveEvents(evts);
-  memberList.forEach(m=>{PC_sendNotify(m.email,'活動邀請確認 🎫',`「${title}」管理員邀請你加入。`,'invite');});
+  memberList.forEach(m=>{PC_sendNotify(m.email,'活動邀請確認 🎫',`「${title}」的管理員邀請你加入。`,'invite');});
   document.getElementById('inviteCodeDisp').textContent=code;
-  document.getElementById('generatedLink').textContent=location.href.replace('create.html','pay.html')+'?event='+createdId;
+  const link=location.href.replace('create.html','pay.html')+'?event='+createdId;
+  document.getElementById('generatedLink').textContent=link;
   [1,2,3].forEach(i=>document.getElementById('s'+i).style.display='none');
   document.getElementById('sSuccess').style.display='block'; renderSidebar();
 }
