@@ -102,6 +102,33 @@ body{display:flex;}
 .danger-box{background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:0.84rem;color:var(--red);text-align:center;}
 /* Founder badge */
 .badge-founder{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #fde68a;}
+/* Calendar picker */
+.date-picker-wrap{position:relative;}
+.date-display{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;background:var(--white);transition:border-color 0.15s;user-select:none;}
+.date-display:hover{border-color:var(--accent);}
+.date-display.open{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+.date-display-text{font-size:0.92rem;font-weight:600;color:var(--text);}
+.date-display-text.placeholder{color:var(--text3);font-weight:400;}
+.calendar-icon{color:var(--text3);font-size:1rem;}
+.calendar-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:10000;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:16px;min-width:280px;display:none;}
+.calendar-popup.show{display:block;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-title-wrap{display:flex;align-items:center;gap:6px;}
+.cal-year-select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);cursor:pointer;outline:none;transition:all 0.15s;}
+.cal-year-select:hover{border-color:var(--accent);background:var(--accent-light);}
+.cal-year-select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-light);}
+.cal-title,.cal-nav{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);}
+.cal-nav{background:none;border:none;cursor:pointer;color:var(--text2);font-size:1.1rem;padding:4px 8px;border-radius:6px;transition:all 0.15s;}
+.cal-nav:hover{background:var(--surface);color:var(--text);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day-label{text-align:center;font-size:0.7rem;font-weight:700;color:var(--text3);padding:4px 0;}
+.cal-day{text-align:center;padding:7px 4px;border-radius:8px;font-size:0.84rem;cursor:pointer;transition:all 0.15s;color:var(--text);}
+.cal-day:hover:not(.disabled):not(.empty){background:var(--accent-light);color:var(--accent);}
+.cal-day.selected{background:var(--accent);color:#fff;font-weight:700;}
+.cal-day.today{font-weight:700;color:var(--accent);}
+.cal-day.disabled{color:var(--text3);cursor:default;opacity:0.4;}
+.cal-day.empty{cursor:default;}
+#dlCalMonthText{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);}
 @media(max-width:900px){.two-col{grid-template-columns:1fr;}.stats-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;}.stat-val{font-size:1.3rem;}}
 </style>
@@ -162,12 +189,28 @@ body{display:flex;}
     <span style="font-size:0.84rem;font-weight:700" id="dlDisplay">—</span>
     <button class="dl-edit-btn" id="dlEditBtnMain" onclick="toggleDlEdit()" style="display:none">✏️ 修改</button>
   </div>
-  <div id="dlEditRow" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
-    <select id="dlYear" class="form-input" style="width:auto" onchange="updateDlDays()"></select>
-    <select id="dlMonth" class="form-input" style="width:auto" onchange="updateDlDays()"></select>
-    <select id="dlDay" class="form-input" style="width:auto"></select>
-    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.73rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;" onclick="saveDl()">儲存</button>
-    <button onclick="toggleDlEdit()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 9px;border-radius:6px;font-size:0.73rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">取消</button>
+  <div id="dlEditRow" style="display:none;margin-bottom:14px;">
+    <div class="date-picker-wrap" style="margin-bottom:8px;">
+      <div class="date-display" id="dlDateDisplay">
+        <span class="date-display-text" id="dlDateDisplayText">請選擇截止日期</span>
+        <span class="calendar-icon">📅</span>
+      </div>
+      <div class="calendar-popup" id="dlCalendarPopup">
+        <div class="cal-header">
+          <button class="cal-nav" id="dlPrevMonth">‹</button>
+          <div class="cal-title-wrap">
+            <select class="cal-year-select" id="dlCalYearSelect"></select>
+            <span id="dlCalMonthText"></span>
+          </div>
+          <button class="cal-nav" id="dlNextMonth">›</button>
+        </div>
+        <div class="cal-grid" id="dlCalGrid"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="padding:6px 14px;font-size:0.82rem" onclick="saveDl()">儲存</button>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem" onclick="toggleDlEdit()">取消</button>
+    </div>
   </div>
 
   <div id="actionBar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;"></div>
@@ -175,6 +218,11 @@ body{display:flex;}
   <div class="join-panel" id="joinPanel">
     <div class="jp-header"><div style="font-size:0.88rem;font-weight:700">👥 加入申請審核</div><button onclick="toggleJoinPanel()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:1.1rem;">✕</button></div>
     <div id="joinReqList"></div>
+  </div>
+
+  <div class="join-panel" id="blockPanel" style="display:none;">
+    <div class="jp-header"><div style="font-size:0.88rem;font-weight:700">🚫 封鎖名單</div><button onclick="toggleBlockPanel()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:1.1rem;">✕</button></div>
+    <div id="blockList"></div>
   </div>
 
   <div class="stats-grid">
@@ -428,9 +476,13 @@ function renderPage(){
   // Action bar
   const reqs=PC_getJoinRequests(eventId);
   const pending=reqs.filter(r=>r.status==='pending').length;
+  const blocked=JSON.parse(localStorage.getItem('pc_blocked__'+eventId)||'[]');
+  const blockedCount=blocked.length;
+  
   let actions='<button class="btn btn-ghost" onclick="renderPage()">🔄 更新</button>';
   if(isAdmin()){
     actions+=`<button class="btn btn-ghost" onclick="toggleJoinPanel()">👥 加入申請${pending>0?` <span class="badge badge-orange" style="font-size:0.65rem;margin-left:2px">${pending}</span>`:''}</button>`;
+    actions+=`<button class="btn btn-ghost" onclick="toggleBlockPanel()">🚫 封鎖名單${blockedCount>0?` <span class="badge badge-red" style="font-size:0.65rem;margin-left:2px">${blockedCount}</span>`:''}</button>`;
     actions+=`<button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>`;
     actions+=`<button class="btn btn-ghost" onclick="openAmtEdit()">💰 繳費金額更改</button>`;
     actions+=`<button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>`;
@@ -648,22 +700,238 @@ function saveDesc(){
 }
 
 // ── Deadline ──
-function toggleDlEdit(){const r=document.getElementById('dlEditRow');const open=r.style.display==='flex';r.style.display=open?'none':'flex';if(!open)initDlSel();}
-function initDlSel(){const[y,m,d]=(evt.deadline||'2026-01-01').split('-').map(Number);const cy=new Date().getFullYear();const yr=document.getElementById('dlYear');yr.innerHTML='';for(let i=cy;i<=cy+5;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'年';yr.appendChild(o);}yr.value=y;const mn=document.getElementById('dlMonth');mn.innerHTML='';for(let i=1;i<=12;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'月';mn.appendChild(o);}mn.value=m;updateDlDays(d);}
-function updateDlDays(sv){const y=parseInt(document.getElementById('dlYear').value)||2026,m=parseInt(document.getElementById('dlMonth').value)||1,days=new Date(y,m,0).getDate();const dd=document.getElementById('dlDay');const pv=sv||parseInt(dd.value)||1;dd.innerHTML='';for(let i=1;i<=days;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'日';dd.appendChild(o);}dd.value=Math.min(pv,days);}
-function saveDl(){const y=document.getElementById('dlYear').value,m=document.getElementById('dlMonth').value.padStart(2,'0'),d=document.getElementById('dlDay').value.padStart(2,'0');const nd=`${y}-${m}-${d}`;const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);if(e){e.deadline=nd;PC_saveEvents(evts);}document.getElementById('dlEditRow').style.display='none';renderPage();PC_toast('✅ 截止日期更新');}
+// ── Deadline Calendar ──
+let dlSelectedDate = null;
+let dlCalYear = new Date().getFullYear();
+let dlCalMonth = new Date().getMonth();
+
+function toggleDlEdit(){
+  const r=document.getElementById('dlEditRow');
+  const open=r.style.display!=='none';
+  r.style.display=open?'none':'block';
+  if(!open){
+    initDlCalendar();
+  }
+}
+
+function initDlCalendar(){
+  // 從現有截止日期初始化
+  const [y,m,d]=(evt.deadline||'').split('-').map(Number);
+  if(y && m && d){
+    dlSelectedDate = new Date(y, m-1, d);
+    dlCalYear = y;
+    dlCalMonth = m-1;
+  } else {
+    const def = new Date();
+    def.setDate(def.getDate() + 14);
+    dlCalYear = def.getFullYear();
+    dlCalMonth = def.getMonth();
+  }
+  
+  renderDlCalendar();
+  initDlCalendarEvents();
+  populateDlYearSelect();
+}
+
+function initDlCalendarEvents(){
+  const dateDisplay = document.getElementById('dlDateDisplay');
+  const calendarPopup = document.getElementById('dlCalendarPopup');
+  const calGrid = document.getElementById('dlCalGrid');
+  const prevBtn = document.getElementById('dlPrevMonth');
+  const nextBtn = document.getElementById('dlNextMonth');
+  const yearSelect = document.getElementById('dlCalYearSelect');
+  
+  // 移除舊的事件監聽器（如果有）
+  const newDateDisplay = dateDisplay.cloneNode(true);
+  dateDisplay.parentNode.replaceChild(newDateDisplay, dateDisplay);
+  
+  // 點擊觸發按鈕
+  document.getElementById('dlDateDisplay').addEventListener('click', function(e){
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDlCalendar();
+  });
+  
+  // 點擊日期（事件委派）
+  calGrid.addEventListener('click', function(e){
+    const dayEl = e.target.closest('.cal-day');
+    if(dayEl && !dayEl.classList.contains('disabled') && !dayEl.classList.contains('empty')){
+      const y = parseInt(dayEl.dataset.year);
+      const m = parseInt(dayEl.dataset.month);
+      const d = parseInt(dayEl.dataset.day);
+      if(!isNaN(y) && !isNaN(m) && !isNaN(d)){
+        selectDlDate(y, m, d);
+      }
+    }
+  });
+  
+  // 月份導航
+  if(prevBtn){
+    prevBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      dlCalNav(-1);
+    });
+  }
+  
+  if(nextBtn){
+    nextBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      dlCalNav(1);
+    });
+  }
+  
+  // 年份選擇
+  if(yearSelect){
+    yearSelect.addEventListener('change', function(e){
+      e.stopPropagation();
+      dlCalYear = parseInt(this.value);
+      renderDlCalendar();
+    });
+  }
+  
+  // 全域點擊監聽（關閉日曆）
+  document.addEventListener('click', function(e){
+    if(calendarPopup.classList.contains('show')){
+      if(!calendarPopup.contains(e.target) && !document.getElementById('dlDateDisplay').contains(e.target)){
+        calendarPopup.classList.remove('show');
+        document.getElementById('dlDateDisplay').classList.remove('open');
+      }
+    }
+  });
+}
+
+function populateDlYearSelect(){
+  const yearSelect = document.getElementById('dlCalYearSelect');
+  if(!yearSelect) return;
+  
+  const currentYear = new Date().getFullYear();
+  const startYear = currentYear;
+  const endYear = currentYear + 10;
+  
+  let html = '';
+  for(let y = startYear; y <= endYear; y++){
+    html += `<option value="${y}" ${y === dlCalYear ? 'selected' : ''}>${y}</option>`;
+  }
+  yearSelect.innerHTML = html;
+}
+
+function toggleDlCalendar(){
+  const popup = document.getElementById('dlCalendarPopup');
+  const disp = document.getElementById('dlDateDisplay');
+  popup.classList.toggle('show');
+  disp.classList.toggle('open');
+}
+
+function dlCalNav(dir){
+  dlCalMonth += dir;
+  if(dlCalMonth > 11){ dlCalMonth = 0; dlCalYear++; }
+  if(dlCalMonth < 0){ dlCalMonth = 11; dlCalYear--; }
+  renderDlCalendar();
+  populateDlYearSelect();
+}
+
+function renderDlCalendar(){
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const monthText = document.getElementById('dlCalMonthText');
+  if(monthText){
+    monthText.textContent = months[dlCalMonth];
+  }
+  
+  const yearSelect = document.getElementById('dlCalYearSelect');
+  if(yearSelect){
+    yearSelect.value = dlCalYear;
+  }
+  
+  const grid = document.getElementById('dlCalGrid');
+  const days = ['日','一','二','三','四','五','六'];
+  let html = days.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+  
+  const firstDay = new Date(dlCalYear, dlCalMonth, 1).getDay();
+  const daysInMonth = new Date(dlCalYear, dlCalMonth + 1, 0).getDate();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  for(let i = 0; i < firstDay; i++){
+    html += `<div class="cal-day empty"></div>`;
+  }
+  
+  for(let d = 1; d <= daysInMonth; d++){
+    const date = new Date(dlCalYear, dlCalMonth, d);
+    const isPast = date < today;
+    const isToday = date.toDateString() === today.toDateString();
+    const isSelected = dlSelectedDate && date.toDateString() === dlSelectedDate.toDateString();
+    
+    let cls = 'cal-day';
+    if(isPast) cls += ' disabled';
+    if(isToday) cls += ' today';
+    if(isSelected) cls += ' selected';
+    
+    html += `<div class="${cls}" data-year="${dlCalYear}" data-month="${dlCalMonth}" data-day="${d}">${d}</div>`;
+  }
+  
+  grid.innerHTML = html;
+}
+
+function selectDlDate(y, m, d){
+  dlSelectedDate = new Date(y, m, d);
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const txt = document.getElementById('dlDateDisplayText');
+  txt.textContent = y + '年 ' + months[m] + ' ' + d + '日';
+  txt.classList.remove('placeholder');
+  renderDlCalendar();
+  
+  // 關閉彈窗
+  document.getElementById('dlCalendarPopup').classList.remove('show');
+  document.getElementById('dlDateDisplay').classList.remove('open');
+}
+
+function saveDl(){
+  if(!dlSelectedDate){
+    PC_toast('請選擇截止日期');
+    return;
+  }
+  
+  const y = dlSelectedDate.getFullYear();
+  const m = String(dlSelectedDate.getMonth() + 1).padStart(2, '0');
+  const d = String(dlSelectedDate.getDate()).padStart(2, '0');
+  const nd = `${y}-${m}-${d}`;
+  
+  const evts = PC_getEvents();
+  const e = evts.find(x => x.id === eventId);
+  if(e){
+    e.deadline = nd;
+    PC_saveEvents(evts);
+  }
+  
+  document.getElementById('dlEditRow').style.display = 'none';
+  renderPage();
+  PC_toast('✅ 截止日期更新');
+}
+
+// 舊函數保留以防萬一，但不再使用
+function updateDlDays(sv){}
+function initDlSel(){}
 
 // ── Join requests ──
 function toggleJoinPanel(){joinPanelOpen=!joinPanelOpen;document.getElementById('joinPanel').classList.toggle('open',joinPanelOpen);if(joinPanelOpen)renderJoinReqs();}
+
 function renderJoinReqs(){
-  const reqs=PC_getJoinRequests(eventId);const list=document.getElementById('joinReqList');
+  const reqs=PC_getJoinRequests(eventId).filter(r=>r.status==='pending');
+  const list=document.getElementById('joinReqList');
   if(!reqs.length){list.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:0.85rem;">目前沒有加入申請</div>';return;}
+  
   list.innerHTML=reqs.map((r,i)=>{
+    const allReqs=PC_getJoinRequests(eventId);
+    const actualIndex=allReqs.findIndex(req=>req.email===r.email&&req.requestedAt===r.requestedAt);
     const t=new Date(r.requestedAt).toLocaleString('zh-TW',{dateStyle:'short',timeStyle:'short'});
-    const isPending=r.status==='pending';
+    
     return `<div class="req-row">
       <div class="req-info"><div class="req-email">${r.name} (${r.email})</div><div class="req-meta">申請時間：${t}</div></div>
-      ${isPending?`<button class="btn btn-green" style="padding:6px 14px;font-size:0.78rem" onclick="openApproveModal(${i})">✓ 同意</button><button class="btn btn-danger" style="padding:6px 12px;font-size:0.78rem" onclick="rejectReq(${i})">✕ 拒絕</button>`:`<span class="badge ${r.status==='approved'?'badge-green':'badge-red'}">${r.status==='approved'?'已同意':'已拒絕'}</span>`}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn btn-green" style="padding:6px 14px;font-size:0.78rem" onclick="openApproveModal(${actualIndex})">✓ 同意</button>
+        <button class="btn btn-danger" style="padding:6px 12px;font-size:0.78rem" onclick="rejectReq(${actualIndex})">✗ 拒絕</button>
+        <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.78rem;border-color:var(--red);color:var(--red)" onclick="blockUser(${actualIndex})">🚫 封鎖</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -678,7 +946,83 @@ function confirmApprove(){
   PC_sendNotify(req.email,'申請已通過 🎉',`你加入「${evt.title}」的申請已通過，角色：${roles.map(r=>RL[r]).join('、')}。`,'success');
   closeOverlay('approveOverlay');renderPage();renderJoinReqs();PC_toast('✅ 已同意 '+req.email+' 加入');
 }
-function rejectReq(i){const reqs=PC_getJoinRequests(eventId);reqs[i].status='rejected';PC_saveJoinRequests(eventId,reqs);PC_sendNotify(reqs[i].email,'申請未通過',`你申請加入「${evt.title}」的申請已被拒絕。`,'error');renderJoinReqs();renderPage();PC_toast('已拒絕申請');}
+function rejectReq(i){
+  const reqs=PC_getJoinRequests(eventId);
+  const rejected=reqs[i];
+  reqs.splice(i,1); // 直接移除，允許再次申請
+  PC_saveJoinRequests(eventId,reqs);
+  PC_sendNotify(rejected.email,'申請未通過','你申請加入「'+evt.title+'」的申請已被拒絕，可以重新申請。','info');
+  renderJoinReqs();
+  renderPage();
+  PC_toast('已拒絕申請');
+}
+
+// ── Block list ──
+function toggleBlockPanel(){
+  const panel=document.getElementById('blockPanel');
+  const isOpen=panel.style.display!=='none';
+  panel.style.display=isOpen?'none':'block';
+  if(!isOpen)renderBlockList();
+}
+
+function blockUser(reqIndex){
+  const reqs=PC_getJoinRequests(eventId);
+  const user=reqs[reqIndex];
+  
+  // 從申請列表移除
+  reqs.splice(reqIndex,1);
+  PC_saveJoinRequests(eventId,reqs);
+  
+  // 添加到封鎖名單
+  const blockKey='pc_blocked__'+eventId;
+  const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
+  if(!blocked.find(b=>b.email===user.email)){
+    blocked.push({
+      email:user.email,
+      name:user.name,
+      blockedAt:new Date().toISOString()
+    });
+    localStorage.setItem(blockKey,JSON.stringify(blocked));
+  }
+  
+  PC_sendNotify(user.email,'無法加入活動','你已被「'+evt.title+'」的管理員封鎖，無法加入此活動。','error');
+  renderJoinReqs();
+  renderPage();
+  PC_toast('🚫 已封鎖用戶');
+}
+
+function unblockUser(email){
+  const blockKey='pc_blocked__'+eventId;
+  const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
+  const updated=blocked.filter(b=>b.email!==email);
+  localStorage.setItem(blockKey,JSON.stringify(updated));
+  
+  renderBlockList();
+  renderPage();
+  PC_toast('✅ 已解除封鎖');
+}
+
+function renderBlockList(){
+  const blockKey='pc_blocked__'+eventId;
+  const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
+  const list=document.getElementById('blockList');
+  
+  if(!blocked.length){
+    list.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:0.85rem;">目前沒有封鎖的用戶</div>';
+    return;
+  }
+  
+  list.innerHTML=blocked.map(b=>{
+    const t=new Date(b.blockedAt).toLocaleString('zh-TW',{dateStyle:'short',timeStyle:'short'});
+    return `<div class="req-row">
+      <div class="req-info">
+        <div class="req-email">${b.name||b.email} (${b.email})</div>
+        <div class="req-meta">封鎖時間：${t}</div>
+      </div>
+      <button class="btn btn-ghost" style="padding:6px 14px;font-size:0.78rem" onclick="unblockUser('${b.email}')">解除封鎖</button>
+    </div>`;
+  }).join('');
+}
 
 // ── Add member ──
 function openAdd(){document.getElementById('addEmail').value='';document.querySelectorAll('#addRoleChips .mrc').forEach(el=>{Object.values(ROLE_SEL).forEach(c=>el.classList.remove(c));});document.getElementById('addOverlay').classList.add('show');setTimeout(()=>document.getElementById('addEmail').focus(),100);}

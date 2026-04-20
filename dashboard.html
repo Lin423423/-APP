@@ -179,6 +179,21 @@ body{display:flex;}
     </div>
   </div>
 </div>
+
+<!-- Delete payment method modal -->
+<div class="overlay" id="deleteMethodOverlay">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:8px">🗑</div>
+    <div class="modal-title">確認刪除繳費方式？</div>
+    <div class="modal-sub" id="deleteMethodName" style="font-weight:600;color:var(--accent)"></div>
+    <div style="background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.84rem;color:var(--red);">此操作無法復原。</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeDeleteMethod()">取消</button>
+      <button class="btn btn-danger" style="flex:2" onclick="executeDeleteMethod()">確認刪除</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script>
 const user = PC_requireAdmin(); if(!user) throw new Error('r');
@@ -214,16 +229,52 @@ function savePayMethods(){
 function renderPayMethods(){
   const methods = getPayMethods();
   document.getElementById('methodsGrid').innerHTML = methods.map((m,i)=>`
-    <div class="method-chip${m.active?' active':''}" onclick="this.classList.toggle('active')">
-      <div class="method-icon">${m.icon}</div>
-      <div class="method-name">${m.name}</div>
-      <div class="method-toggle"></div>
+    <div class="method-chip${m.active?' active':''}" style="position:relative;padding-right:38px;">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;" onclick="event.stopPropagation();toggleMethodActive(${i})">
+        <div class="method-icon">${m.icon}</div>
+        <div class="method-name">${m.name}</div>
+        <div class="method-toggle"></div>
+      </div>
+      <button onclick="event.stopPropagation();confirmDeleteMethod(${i})" style="position:absolute;right:8px;background:none;border:none;cursor:pointer;color:var(--text3);font-size:0.9rem;padding:4px;transition:color 0.15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">🗑</button>
     </div>`).join('') + `<button class="add-method-btn" onclick="openAddMethod()">＋ 新增方式</button>`;
+}
+
+function toggleMethodActive(index){
+  const methods = getPayMethods();
+  methods[index].active = !methods[index].active;
+  localStorage.setItem('pc_pay_methods__'+user.email, JSON.stringify(methods));
+  renderPayMethods();
+}
+
+let deleteMethodIndex = -1;
+
+function confirmDeleteMethod(index){
+  const methods = getPayMethods();
+  deleteMethodIndex = index;
+  document.getElementById('deleteMethodName').textContent = methods[index].name;
+  document.getElementById('deleteMethodOverlay').classList.add('show');
+}
+
+function closeDeleteMethod(){
+  document.getElementById('deleteMethodOverlay').classList.remove('show');
+  deleteMethodIndex = -1;
+}
+
+function executeDeleteMethod(){
+  if(deleteMethodIndex < 0) return;
+  const methods = getPayMethods();
+  const deleted = methods[deleteMethodIndex];
+  methods.splice(deleteMethodIndex, 1);
+  localStorage.setItem('pc_pay_methods__'+user.email, JSON.stringify(methods));
+  closeDeleteMethod();
+  renderPayMethods();
+  PC_toast('🗑 已刪除「'+deleted.name+'」');
 }
 function openAddMethod(){ document.getElementById('addMethodOverlay').classList.add('show'); }
 function closeAddMethod(){ document.getElementById('addMethodOverlay').classList.remove('show'); }
 document.getElementById('delEvtOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
 document.getElementById('addMethodOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddMethod();});
+document.getElementById('deleteMethodOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeDeleteMethod();});
 function addCustomMethod(){
   const icon = document.getElementById('newMethodIcon').value.trim()||'💰';
   const name = document.getElementById('newMethodName').value.trim();
@@ -256,8 +307,7 @@ function toggleSideMenu(id) {
 function renderSidebar(){
   const evts = PC_getAllMyEvents();
   const created = evts.filter(e => e._isOwner);
-  // 過濾掉 pending_invite 狀態的活動（尚未接受邀請）
-  const joined = evts.filter(e => !e._isOwner && (!e._myMember || e._myMember.status !== 'pending_invite'));
+  const joined = evts.filter(e => !e._isOwner);
   
   const curId = (typeof eventId !== 'undefined') ? eventId : null;
   let html = '';
@@ -325,9 +375,6 @@ function copyInvite(code,e){e.stopPropagation();PC_copyText(code,'🔑 邀請碼
 // ── Events (支援分類過濾) ──
 function renderEvents(){
   let evts = PC_getAllMyEvents(); 
-  
-  // 過濾掉 pending_invite 狀態的活動（已加入類別中）
-  evts = evts.filter(e => e._isOwner || (!e._myMember || e._myMember.status !== 'pending_invite'));
   
   // 🌟 核心修改：根據選擇的分類進行過濾
   if(currentDashFilter === 'created') evts = evts.filter(e => e._isOwner);

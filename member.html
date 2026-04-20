@@ -98,6 +98,20 @@ body{background:var(--bg);min-height:100vh;}
   </div>
 </div>
 
+<!-- 退出活動確認彈窗 -->
+<div class="overlay" id="leaveOverlay">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:3rem;margin-bottom:12px">⚠️</div>
+    <div class="modal-title">確定退出活動？</div>
+    <div class="modal-sub" id="leaveEventTitle" style="font-weight:600;color:var(--accent)"></div>
+    <div style="background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:12px;font-size:0.82rem;color:var(--red);margin-bottom:18px;">退出後將無法查看活動資訊，如需重新加入需再次申請。</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeLeaveModal()">取消</button>
+      <button class="btn btn-danger" style="flex:2" onclick="confirmLeave()">確認退出</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script>
 // 初始化用戶
@@ -171,11 +185,22 @@ function joinEvent(){
   const result=PC_findEventByCode(code);
   if(!result){errEl.textContent='找不到此邀請碼，請確認後重試';errEl.style.display='block';return;}
   errEl.style.display='none';
+  
+  // 檢查是否被封鎖
+  const blockKey='pc_blocked__'+result.event.id;
+  const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
+  if(blocked.find(b=>b.email===user.email)){
+    PC_toast('❌ 你已被此活動封鎖，無法加入');
+    return;
+  }
+  
   const joined=getMemberJoined();
   if(joined.find(j=>j.eventId===result.event.id)){PC_toast('你已加入此活動');return;}
+  
   const reqs=PC_getJoinRequests(result.event.id);
-  const alreadyReq=reqs.find(r=>r.email===user.email);
-  if(alreadyReq){PC_toast(alreadyReq.status==='pending'?'申請已送出，等待審核':alreadyReq.status==='rejected'?'申請已被拒絕':'已加入此活動');return;}
+  const alreadyReq=reqs.find(r=>r.email===user.email&&r.status==='pending');
+  if(alreadyReq){PC_toast('申請已送出，等待審核');return;}
+  
   reqs.push({email:user.email,name:user.name,requestedAt:new Date().toISOString(),status:'pending'});
   PC_saveJoinRequests(result.event.id,reqs);
   joined.push({eventId:result.event.id,eventTitle:result.event.title,ownerKey:result.ownerKey,joinedAt:new Date().toISOString()});
@@ -259,7 +284,48 @@ function renderJoined(){
   }).join('');
 }
 
-function leaveEvent(e,idx){e.stopPropagation();const joined=getMemberJoined();if(!confirm('確定退出「'+joined[idx].eventTitle+'」？'))return;joined.splice(idx,1);saveMemberJoined(joined);renderJoined();PC_toast('已退出活動');}
+let leaveEventIndex = -1;
+
+function leaveEvent(e, idx) {
+  e.stopPropagation();
+  const joined = getMemberJoined();
+  leaveEventIndex = idx;
+  document.getElementById('leaveEventTitle').textContent = joined[idx].eventTitle;
+  document.getElementById('leaveOverlay').classList.add('show');
+}
+
+function closeLeaveModal() {
+  document.getElementById('leaveOverlay').classList.remove('show');
+  leaveEventIndex = -1;
+}
+
+function confirmLeave() {
+  if (leaveEventIndex < 0) return;
+  
+  const joined = getMemberJoined();
+  const eventData = joined[leaveEventIndex];
+  
+  // 從已加入列表移除
+  joined.splice(leaveEventIndex, 1);
+  saveMemberJoined(joined);
+  
+  // 清除該活動的申請記錄
+  if (eventData && eventData.eventId) {
+    const reqKey = 'pc_join_req__' + eventData.eventId;
+    const requests = JSON.parse(localStorage.getItem(reqKey) || '[]');
+    const updatedRequests = requests.filter(r => r.email !== user.email);
+    localStorage.setItem(reqKey, JSON.stringify(updatedRequests));
+  }
+  
+  closeLeaveModal();
+  renderJoined();
+  PC_toast('✅ 已退出活動');
+}
+
+// 點擊彈窗外部關閉
+document.getElementById('leaveOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeLeaveModal();
+});
 
 checkPendingInvites();renderJoined();
 </script>
