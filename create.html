@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
 <style>
 body{display:flex;}
-/* 1. 寬度同步修改：確保卡片與進度條寬度一致為 620px */
+/* 確保卡片寬度與進度條一致為 620px */
 .steps-outer{max-width:620px;margin-bottom:28px;}
 .steps{display:flex;align-items:center;width:100%;}
 .step-item{display:flex;align-items:center;gap:8px;flex-shrink:0;}
@@ -19,8 +19,6 @@ body{display:flex;}
 .step-item.done .step-label{color:var(--green);}
 .step-line{flex:1;height:2px;background:var(--border);margin:0 10px;}
 .step-line.done{background:var(--green);}
-
-/* 表單卡片寬度設為 620px 以對齊上方 */
 .form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:16px;box-shadow:var(--shadow);max-width:620px;}
 .form-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
 .btn-row{max-width:620px;display:flex;gap:10px;}
@@ -202,33 +200,55 @@ body{display:flex;}
 <div class="toast" id="toast"></div>
 <script>
 // 使用全域變數處理登入資訊
-const user = PC_requireLogin(); 
+let user = null;
+
+function syncUserDisplay() {
+  user = PC_getUser();
+  if (!user) return;
+  
+  // 交叉比對 Dashboard：強制執行使用者資訊填充
+  const uName = user.name || user.email || '使用者';
+  const nameEl = document.getElementById('userName');
+  const emailEl = document.getElementById('userEmail');
+  const avatarEl = document.getElementById('avatarInitial');
+  
+  if (nameEl) nameEl.textContent = uName;
+  if (emailEl) emailEl.textContent = user.email || '';
+  if (avatarEl) avatarEl.textContent = uName.slice(0, 1).toUpperCase();
+
+  // 更新通知標籤
+  const unread = PC_getUnreadCount();
+  const badge = document.getElementById('notifBadge');
+  if (badge) {
+    badge.textContent = unread > 0 ? unread : '';
+    badge.style.display = unread > 0 ? 'inline-block' : 'none';
+  }
+}
 
 window.onload = () => {
-  if (user) {
-    // 交叉比對 Dashboard：強制執行側邊欄初始化
-    renderSidebar();
-    initDateSelects();
-    // 顯式調用使用者資訊填充
-    if(typeof PC_fillSidebarUser === 'function') PC_fillSidebarUser();
+  if (!PC_isLoggedIn()) {
+    location.href = 'login.html';
+    return;
   }
+  syncUserDisplay();
+  renderSidebar();
+  initDateSelects();
 }
   
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
 function toggleSideMenu(id){
-  // 修正：必須對應 shared.css 的 open class
   document.getElementById(id).classList.toggle('open');
   const icon = document.getElementById(id+'_icon');
   if(icon) icon.classList.toggle('open');
 }
 
 function renderSidebar(){
-  const evts = PC_getAllMyEvents(); //
+  const evts = PC_getAllMyEvents();
   const created = evts.filter(e => e._isOwner);
   const joined = evts.filter(e => !e._isOwner);
   let html = '';
-  // 列表 ID 必須對應 JavaScript 切換邏輯
+  // 列表 ID 必須與 Dashboard 一致以對應 CSS
   html += `<div class="sidebar-menu-header" onclick="toggleSideMenu('mc')">已建立活動 <span class="chevron open" id="mc_icon">▼</span></div>`;
   html += `<div class="sidebar-menu-list open" id="mc">`;
   if(!created.length) html += `<div style="padding:6px 12px;font-size:0.75rem;color:var(--text3)">無資料</div>`;
