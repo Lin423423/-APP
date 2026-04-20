@@ -256,7 +256,8 @@ function toggleSideMenu(id) {
 function renderSidebar(){
   const evts = PC_getAllMyEvents();
   const created = evts.filter(e => e._isOwner);
-  const joined = evts.filter(e => !e._isOwner);
+  // 過濾掉 pending_invite 狀態的活動（尚未接受邀請）
+  const joined = evts.filter(e => !e._isOwner && (!e._myMember || e._myMember.status !== 'pending_invite'));
   
   const curId = (typeof eventId !== 'undefined') ? eventId : null;
   let html = '';
@@ -324,6 +325,9 @@ function copyInvite(code,e){e.stopPropagation();PC_copyText(code,'🔑 邀請碼
 // ── Events (支援分類過濾) ──
 function renderEvents(){
   let evts = PC_getAllMyEvents(); 
+  
+  // 過濾掉 pending_invite 狀態的活動（已加入類別中）
+  evts = evts.filter(e => e._isOwner || (!e._myMember || e._myMember.status !== 'pending_invite'));
   
   // 🌟 核心修改：根據選擇的分類進行過濾
   if(currentDashFilter === 'created') evts = evts.filter(e => e._isOwner);

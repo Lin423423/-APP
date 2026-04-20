@@ -198,7 +198,7 @@ function toggleSideMenu(id) {
 function renderSidebar(){
   const evts = PC_getAllMyEvents();
   const created = evts.filter(e => e._isOwner);
-  const joined = evts.filter(e => !e._isOwner);
+  const joined = evts.filter(e => !e._isOwner && (!e._myMember || e._myMember.status !== 'pending_invite'));
 
   const curId = (typeof eventId !== 'undefined') ? eventId : null;
   let html = '';

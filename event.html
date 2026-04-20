@@ -334,7 +334,10 @@ function openSidebar(){document.getElementById('sidebar').classList.add('open');
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
 function toggleSideMenu(id){document.getElementById(id).classList.toggle('open');document.getElementById(id+'_icon').classList.toggle('open');}
 function renderSidebar(){
-  const evts=PC_getAllMyEvents();const created=evts.filter(e=>e._isOwner),joined=evts.filter(e=>!e._isOwner);
+  const evts=PC_getAllMyEvents();
+  const created=evts.filter(e=>e._isOwner);
+  // 過濾掉 pending_invite 狀態的活動
+  const joined=evts.filter(e=>!e._isOwner && (!e._myMember || e._myMember.status !== 'pending_invite'));
   let html='';
   html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mc')">已建立 <span class="chevron open" id="mc_icon">▼</span></div><div class="sidebar-menu-list open" id="mc">`;
   if(!created.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無</div>`;
