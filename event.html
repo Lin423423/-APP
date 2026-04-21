@@ -46,6 +46,10 @@ body{display:flex;}
 .op-status{background:var(--accent-light);border-color:#c7d2fe;color:var(--accent);}
 .op-role{background:var(--orange-light);border-color:#fed7aa;color:var(--orange);}
 .op-del{background:var(--red-light);border-color:#fecaca;color:var(--red);}
+.member-settings-menu{position:absolute;right:0;top:100%;margin-top:4px;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow-md);z-index:10;min-width:140px;}
+.menu-item{padding:10px 16px;cursor:pointer;font-size:0.85rem;font-weight:500;transition:all 0.15s;border-bottom:1px solid var(--border);}
+.menu-item:last-child{border-bottom:none;}
+.menu-item:hover{background:var(--surface);}
 .m-detail{display:none;background:var(--surface);padding:12px 20px;border-bottom:1px solid var(--border);font-size:0.8rem;}
 .m-detail.open{display:block;}
 .m-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
@@ -129,6 +133,9 @@ body{display:flex;}
 .cal-day.disabled{color:var(--text3);cursor:default;opacity:0.4;}
 .cal-day.empty{cursor:default;}
 #dlCalMonthText{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);}
+.action-menu{position:absolute;right:0;top:100%;margin-top:4px;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);z-index:10;min-width:180px;}
+.action-menu-item{padding:12px 18px;cursor:pointer;font-size:0.88rem;font-weight:500;transition:all 0.15s;}
+.action-menu-item:hover{background:var(--surface);}
 @media(max-width:900px){.two-col{grid-template-columns:1fr;}.stats-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;}.stat-val{font-size:1.3rem;}}
 </style>
@@ -145,7 +152,6 @@ body{display:flex;}
     <a class="nav-item" href="dashboard.html"><span class="icon">🏠</span>總覽</a>
     <a class="nav-item" href="create.html"><span class="icon">➕</span>建立活動</a>
     <a class="nav-item" href="member.html"><span class="icon">🤝</span>加入活動</a>
-    <a class="nav-item" href="payment-methods.html"><span class="icon">💳</span>繳費方式管理</a>
     <a class="nav-item" href="report.html"><span class="icon">📊</span>財務報表</a>
     <div class="nav-section">我的活動</div>
     <div id="sidebarEvents"></div>
@@ -155,7 +161,7 @@ body{display:flex;}
   <div class="sidebar-bottom">
     <div class="user-card">
       <div class="avatar" id="avatarInitial">?</div>
-      <div class="user-info"><div class="user-name" id="userName">載入中</div><div class="user-email" id="userEmail">...</div></div>
+      <div class="user-info"><div class="user-name" id="userName">載入中</div><div class="user-role" id="userEmail" style="font-size:0.6rem;opacity:0.8">...</div></div>
       <button class="logout-btn" onclick="PC_logout()">登出</button>
     </div>
   </div>
@@ -242,10 +248,16 @@ body{display:flex;}
             <div class="role-legend"><span class="badge badge-blue" style="font-size:0.65rem">繳費者</span><span class="badge badge-orange" style="font-size:0.65rem">統計者</span><span class="badge badge-green" style="font-size:0.65rem">管理員</span><span class="badge" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-size:0.65rem">發起人</span></div>
           </div>
           <div class="filter-row">
-            <button class="ftab active" onclick="setFilter(this,'all')">全部</button>
-            <button class="ftab" onclick="setFilter(this,'paid')">已繳</button>
-            <button class="ftab" onclick="setFilter(this,'pending')">待繳</button>
-            <button class="ftab" onclick="setFilter(this,'overdue')">逾期</button>
+            <button class="ftab active" id="filter_all" onclick="setFilter(this,'all')">全部</button>
+            <button class="ftab" id="filter_paid" onclick="setFilter(this,'paid')">已繳</button>
+            <button class="ftab" id="filter_pending" onclick="setFilter(this,'pending')">待繳</button>
+            <button class="ftab" id="filter_overdue" onclick="setFilter(this,'overdue')">逾期</button>
+          </div>
+          <div class="filter-row" style="margin-top:8px;">
+            <button class="ftab active" id="role_all" onclick="switchRoleFilter('all')">全部身分</button>
+            <button class="ftab" id="role_payer" onclick="switchRoleFilter('payer')">繳費者</button>
+            <button class="ftab" id="role_counter" onclick="switchRoleFilter('counter')">統計者</button>
+            <button class="ftab" id="role_admin" onclick="switchRoleFilter('admin')">管理員</button>
           </div>
         </div>
         <div id="memberList"></div>
@@ -541,12 +553,16 @@ function renderPage(){
   if(isAdmin()){
     actions+=`<button class="btn btn-ghost" onclick="toggleJoinPanel()">👥 加入申請${pending>0?` <span class="badge badge-orange" style="font-size:0.65rem;margin-left:2px">${pending}</span>`:''}</button>`;
     actions+=`<button class="btn btn-ghost" onclick="toggleBlockPanel()">🚫 封鎖名單${blockedCount>0?` <span class="badge badge-red" style="font-size:0.65rem;margin-left:2px">${blockedCount}</span>`:''}</button>`;
-    if(isFounder()){
-      actions+=`<button class="btn btn-ghost" onclick="openPaymentMethodsModal()">💳 繳費方式</button>`;
-    }
     actions+=`<button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>`;
-    actions+=`<button class="btn btn-ghost" onclick="openAmtEdit()">💰 繳費金額更改</button>`;
-    actions+=`<button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>`;
+    actions+=`<div style="position:relative;display:inline-block;">
+      <button class="btn btn-ghost" onclick="toggleActionMenu()" id="actionMenuBtn">⚙️ 設定</button>
+      <div class="action-menu" id="actionMenu" style="display:none;">
+        ${isFounder()?`<div class="action-menu-item" onclick="closeActionMenu();openPaymentMethodsModal()">💳 繳費方式</div>`:''}
+        <div class="action-menu-item" onclick="closeActionMenu();openAmtEdit()">💰 繳費金額更改</div>
+        <div class="action-menu-item" onclick="closeActionMenu();location.href='report.html'">📄 報表</div>
+        <div class="action-menu-item" onclick="closeActionMenu();confirmDelete()" style="color:var(--red);border-top:1px solid var(--border);">🗑 刪除活動</div>
+      </div>
+    </div>`;
     actions+=`<button class="btn btn-primary" onclick="openAdd()">+ 新增成員</button>`;
   } else if(isCounter()){
     actions+=`<button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>`;
@@ -618,6 +634,25 @@ function renderMembers(){
   else if(cf==='pending')ms=ms.filter(m=>m.status==='pending'||m.status==='pending_invite');
   else if(cf==='overdue')ms=ms.filter(m=>m.status==='overdue');
 
+  // 身分篩選
+  if(roleFilter!=='all'){
+    ms=ms.filter(m=>{
+      if(m._isFounder) return true; // 發起人總是顯示
+      const roles=getRoles(m);
+      return roles.includes(roleFilter);
+    });
+  }
+
+  // 成員排序：發起人 → 繳費者 → 統計者 → 管理員
+  ms.sort((a,b)=>{
+    if(a._isFounder) return -1;
+    if(b._isFounder) return 1;
+    const roleOrder={payer:0,counter:1,admin:2,observer:3};
+    const aRole=getRoles(a)[0]||'payer';
+    const bRole=getRoles(b)[0]||'payer';
+    return roleOrder[aRole]-roleOrder[bRole];
+  });
+
   const list=document.getElementById('memberList');
   if(!ms.length){list.innerHTML='<div style="text-align:center;padding:28px;color:var(--text3);font-size:0.85rem;">沒有符合的成員</div>';return;}
 
@@ -673,10 +708,13 @@ function renderMembers(){
     // Ops buttons
     let opsHtml='';
     if(isAdmin()&&!isFounderRow&&ri>=0){
-      opsHtml=`<div class="m-ops">
-        ${isPay&&!isInvite?`<button class="op-btn op-status" onclick="event.stopPropagation();openStatusModal(${ri})">調整狀態</button>`:''}
-        <button class="op-btn op-role" onclick="event.stopPropagation();openRoleModal(${ri})">調整身份</button>
-        <button class="op-btn op-del" onclick="event.stopPropagation();openDeleteModal(${ri})">✕ 刪除</button>
+      opsHtml=`<div class="m-ops" style="position:relative;">
+        <button class="op-btn" style="padding:4px 12px;background:var(--surface);border-color:var(--border);color:var(--text2);" onclick="event.stopPropagation();toggleMemberMenu(${ri})">⚙️</button>
+        <div class="member-settings-menu" id="menu_${ri}" style="display:none;">
+          ${isPay&&!isInvite?`<div class="menu-item" onclick="event.stopPropagation();closeMemberMenu(${ri});openStatusModal(${ri})">調整狀態</div>`:''}
+          <div class="menu-item" onclick="event.stopPropagation();closeMemberMenu(${ri});openRoleModal(${ri})">調整身份</div>
+          <div class="menu-item" style="color:var(--red);" onclick="event.stopPropagation();closeMemberMenu(${ri});openDeleteModal(${ri})">✕ 刪除成員</div>
+        </div>
       </div>`;
     }
     if(isFounderRow&&isFounder()){
@@ -733,7 +771,10 @@ function renderMembers(){
 }
 
 function toggleMDetail(id){const el=document.getElementById(id);if(el)el.classList.toggle('open');}
-function setFilter(el,f){cf=f;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderMembers();}
+let cf='all'; // 繳費狀態篩選
+let roleFilter='all'; // 身分篩選
+function setFilter(el,f){cf=f;document.querySelectorAll('.ftab[id^="filter_"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderMembers();}
+function switchRoleFilter(f){roleFilter=f;document.querySelectorAll('.ftab[id^="role_"]').forEach(b=>b.classList.remove('active'));document.getElementById('role_'+f).classList.add('active');renderMembers();}
 
 function sendReminder(){
   const unpaid=(evt.members||[]).filter(m=>isPayer(m)&&m.status!=='paid');
@@ -1248,7 +1289,7 @@ function confirmDelete(){
 function openAmtEdit(){
   const payers=PC_getPayers(evt);document.getElementById('defaultAmtText').textContent=evt.amount||0;amtSelections=new Set();document.getElementById('selectAllCheck').classList.remove('checked');
   document.getElementById('amtList').innerHTML=payers.length
-    ?payers.map(m=>{const ri=(evt.members||[]).indexOf(m);return `<div class="amt-member-row"><div class="amt-check" id="amtck_${ri}" onclick="toggleAmtSel(${ri},this)"></div><span style="flex:1;font-size:0.86rem;font-weight:600">${m.email||m.name||'—'}</span><span style="font-size:0.78rem;color:var(--text3);margin-right:8px">現：$${PC_getExpectedAmount(evt,m)}</span><input type="number" class="form-input" id="amt_${ri}" value="${m.customAmount!=null?m.customAmount:''}" placeholder="${evt.amount||0}" min="0" style="width:110px;padding:7px 10px;font-size:0.85rem" onkeydown="if(event.key==='Enter')saveAmtEdit()"></div>`;}).join('')
+    ?payers.map(m=>{const ri=(evt.members||[]).indexOf(m);return `<div class="amt-member-row"><div class="amt-check" id="amtck_${ri}" onclick="toggleAmtSel(${ri},this)"></div><span style="flex:1;font-size:0.86rem;font-weight:600">${m.email||m.name||'—'}</span><span style="font-size:0.78rem;color:var(--text3);margin-right:8px">現：$${PC_getExpectedAmount(evt,m)}</span><input type="number" class="form-input" id="amt_${ri}" value="" placeholder="${evt.amount||0}" min="0" style="width:110px;padding:7px 10px;font-size:0.85rem" onkeydown="if(event.key==='Enter')saveAmtEdit()"></div>`;}).join('')
     :'<div style="color:var(--text3);text-align:center;padding:16px;font-size:0.85rem">目前沒有繳費者</div>';
   document.getElementById('amtOverlay').classList.add('show');
 }
@@ -1263,11 +1304,16 @@ function saveAmtEdit(){
     if(inp){
       const oldAmt=m.customAmount;
       const newAmt=inp.value===''?null:parseFloat(inp.value)||0;
-      if(newAmt!==oldAmt){
-        m.customAmount=newAmt;
+      if(newAmt!==null && newAmt!==oldAmt){
+        // 累加邏輯：如果已有金額則累加，否則設定新金額
+        if(m.customAmount===null || m.customAmount===undefined){
+          m.customAmount=newAmt; // 第一次設定
+        } else {
+          m.customAmount+=newAmt; // 累加
+        }
         // Reset paid status if amount changed — keep tx history but set pending
         if(m.status==='paid'){m.status='pending';/* keep paidAt and history */}
-        if(m.email)PC_sendNotify(m.email,'繳費金額已更新 💰',`你在「${evt.title}」的應繳金額已更新為 $${newAmt!=null?newAmt:e.amount}。請重新完成繳費。`,'info');
+        if(m.email)PC_sendNotify(m.email,'繳費金額已更新 💰',`你在「${evt.title}」的應繳金額已更新為 $${m.customAmount!=null?m.customAmount:e.amount}。請重新完成繳費。`,'info');
       }
     }
   });
@@ -1277,6 +1323,37 @@ function saveAmtEdit(){
 // ── Helpers ──
 function getChipRoles(containerId){return Array.from(document.querySelectorAll('#'+containerId+' .mrc')).filter(el=>Object.values(ROLE_SEL).some(c=>el.classList.contains(c))).map(el=>el.dataset.role);}
 function toggleMRC(el){const role=el.dataset.role;const cls=ROLE_SEL[role];if(cls)el.classList.toggle(cls);}
+
+// ── 成員設定選單 ──
+function toggleMemberMenu(index){
+  const menu=document.getElementById('menu_'+index);
+  const isOpen=menu.style.display==='block';
+  document.querySelectorAll('.member-settings-menu').forEach(m=>m.style.display='none');
+  menu.style.display=isOpen?'none':'block';
+}
+function closeMemberMenu(index){
+  document.getElementById('menu_'+index).style.display='none';
+}
+
+// ── Action 設定選單 ──
+function toggleActionMenu(){
+  const menu=document.getElementById('actionMenu');
+  menu.style.display=menu.style.display==='block'?'none':'block';
+}
+function closeActionMenu(){
+  document.getElementById('actionMenu').style.display='none';
+}
+
+// ── 點擊外部關閉選單 ──
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.m-ops')){
+    document.querySelectorAll('.member-settings-menu').forEach(m=>m.style.display='none');
+  }
+  if(!e.target.closest('#actionMenuBtn')&&!e.target.closest('#actionMenu')){
+    const menu=document.getElementById('actionMenu');
+    if(menu)menu.style.display='none';
+  }
+});
 
 renderPage();
 </script>
