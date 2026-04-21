@@ -139,7 +139,13 @@ function PC_getExpectedAmount(event, member){
   if(member.customAmount != null) return Number(member.customAmount)||0;
   return Number(event.amount)||0;
 }
-function PC_getCollected(event){ return PC_getPayers(event).filter(m=>m.status==='paid').reduce((s,m)=>s+PC_getExpectedAmount(event,m),0); }
+function PC_getCollected(event){ 
+  // 計算實際已收金額：累加所有繳費記錄
+  return PC_getPayers(event).reduce((s,m)=>{
+    const paidTotal = (m.txHistory || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+    return s + paidTotal;
+  }, 0);
+}
 function PC_getExpected(event){ return PC_getPayers(event).reduce((s,m)=>s+PC_getExpectedAmount(event,m),0); }
 function PC_copyText(text, msg){
   navigator.clipboard.writeText(text).then(()=>PC_toast(msg||'✅ 已複製')).catch(()=>{
