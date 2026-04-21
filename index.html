@@ -1,143 +1,43 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayClub — 校園團體金流管理</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayClub — 校園金流管理平台</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css">
-<script src="pc_auth.js"></script>
 <style>
-body{min-height:100vh;}
-nav{background:var(--white);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
-.nav-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.3rem;color:var(--accent);display:flex;align-items:center;gap:8px;}
-.nav-logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
-.nav-links{display:flex;gap:16px;align-items:center;}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.15s;}
-.nav-links a:hover{color:var(--text);}
-/* 右上角登入/狀態區塊 */
-.nav-auth{display:flex;align-items:center;gap:10px;}
-.nav-user-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px 6px 8px;font-size:0.85rem;font-weight:600;color:var(--text);}
-.nav-user-av{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;}
-
-.hero{max-width:1100px;margin:0 auto;padding:80px 48px 60px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
-.hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);border:1px solid #c7d2fe;border-radius:100px;padding:5px 14px;font-size:0.78rem;color:var(--accent);font-weight:600;letter-spacing:0.05em;margin-bottom:22px;}
-.hero h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2.2rem,4vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-0.04em;margin-bottom:18px;color:var(--text);}
-.hero h1 span{color:var(--accent);}
-.hero p{color:var(--text2);font-size:1.05rem;line-height:1.8;margin-bottom:32px;}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
-.hero-right{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:28px;box-shadow:var(--shadow-md);}
-.mock-topbar{background:var(--surface);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:16px;}
-.mock-dot{width:8px;height:8px;border-radius:50%;}
-.mock-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.mock-stat{background:var(--surface);border-radius:9px;padding:12px;}
-.mock-stat-label{font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:4px;}
-.mock-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;font-weight:800;}
-.mock-table-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:8px 12px;font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;}
-.mock-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:9px 12px;font-size:0.82rem;border-top:1px solid var(--border);align-items:center;}
-.mock-badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:700;}
-.stats-strip{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:36px 48px;display:flex;justify-content:center;gap:72px;flex-wrap:wrap;}
-.strip-stat{text-align:center;}
-.strip-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:2rem;font-weight:800;color:var(--accent);}
-.strip-label{font-size:0.82rem;color:var(--text2);margin-top:4px;}
-.features{max-width:1100px;margin:0 auto;padding:80px 48px;}
-.features-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:2rem;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-0.03em;}
-.features-sub{text-align:center;color:var(--text2);margin-bottom:48px;}
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-.feat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);transition:all 0.2s;}
-.feat-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(79,110,247,0.1);}
-.feat-card-icon{font-size:1.8rem;margin-bottom:14px;}
-.feat-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px;}
-.feat-card-desc{font-size:0.86rem;color:var(--text2);line-height:1.7;}
-footer{background:var(--white);border-top:1px solid var(--border);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.footer-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);}
-.footer-links{display:flex;gap:24px;}
-.footer-links a{color:var(--text3);text-decoration:none;font-size:0.82rem;transition:color 0.15s;}
-.footer-links a:hover{color:var(--text);}
-.footer-copy{font-size:0.78rem;color:var(--text3);}
-@media(max-width:768px){nav{padding:14px 20px;}.hero{grid-template-columns:1fr;padding:40px 20px;gap:32px;}.hero-right{display:none;}.stats-strip{gap:32px;padding:28px 20px;}.features{padding:48px 20px;}.feat-grid{grid-template-columns:1fr;}.footer-logo,.footer-links,.footer-copy{text-align:center;width:100%;justify-content:center;}}
+:root{--bg:#0f1117;--accent:#4f6ef7;--text:#f0f0ff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:var(--text);font-family:'Noto Sans TC','Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.container{text-align:center;max-width:600px;padding:40px 20px;}
+.logo{font-size:4rem;margin-bottom:20px;}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:3rem;font-weight:800;margin-bottom:16px;}
+p{font-size:1.2rem;color:rgba(255,255,255,0.8);margin-bottom:40px;}
+.btn{display:inline-block;padding:16px 48px;background:#fff;color:#667eea;border-radius:12px;font-size:1.1rem;font-weight:700;text-decoration:none;transition:all 0.3s;box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.3);}
+.redirect-text{margin-top:24px;font-size:0.9rem;color:rgba(255,255,255,0.6);}
 </style>
-</head>
-<body>
-<nav>
-  <div class="nav-logo"><div class="nav-logo-dot"></div>PayClub</div>
-  <div class="nav-links">
-    <a href="#features">功能</a>
-    <a href="dashboard.html">儀表板</a>
-  </div>
-  <div class="nav-auth" id="navAuth">
-    <!-- filled by JS -->
-  </div>
-</nav>
-
-<section class="hero">
-  <div class="hero-left">
-    <div class="hero-tag">🎓 專為校園社團設計</div>
-    <h1>社團收款<br><span>不再靠 LINE 催</span></h1>
-    <p>一鍵生成收款連結，自動追蹤誰繳了誰沒繳，讓系統幫你催款——幹部終於可以專心在重要的事上。</p>
-    <div class="hero-btns">
-      <a href="dashboard.html" class="btn btn-primary" id="heroCta" style="padding:13px 28px;font-size:1rem;">進入儀表板 →</a>
-      <a href="dashboard.html" class="btn btn-secondary" style="padding:13px 28px;font-size:1rem;">查看 Demo →</a>
-    </div>
-  </div>
-  <div class="hero-right">
-    <div class="mock-topbar"><div class="mock-dot" style="background:#ff5f57"></div><div class="mock-dot" style="background:#ffc130"></div><div class="mock-dot" style="background:#27c93f"></div><span style="font-size:0.75rem;color:var(--text3);margin-left:6px">PayClub — 迎新活動費用</span></div>
-    <div class="mock-stats">
-      <div class="mock-stat"><div class="mock-stat-label">已收款</div><div class="mock-stat-val" style="color:var(--green)">$8,400</div></div>
-      <div class="mock-stat"><div class="mock-stat-label">繳費率</div><div class="mock-stat-val" style="color:var(--accent)">70%</div></div>
-    </div>
-    <div style="background:var(--surface);border-radius:10px;overflow:hidden;">
-      <div class="mock-table-header"><span>姓名</span><span>金額</span><span>時間</span><span>狀態</span></div>
-      <div class="mock-row"><span style="font-weight:600">林小明</span><span>$200</span><span style="color:var(--text3)">10/05</span><span><span class="mock-badge" style="background:var(--green-light);color:var(--green)">已繳</span></span></div>
-      <div class="mock-row"><span style="font-weight:600">陳美玲</span><span>$200</span><span style="color:var(--text3)">10/06</span><span><span class="mock-badge" style="background:var(--green-light);color:var(--green)">已繳</span></span></div>
-      <div class="mock-row"><span style="font-weight:600">王大衛</span><span>$200</span><span style="color:var(--text3)">—</span><span><span class="mock-badge" style="background:var(--orange-light);color:var(--orange)">待繳</span></span></div>
-      <div class="mock-row"><span style="font-weight:600">張雅婷</span><span>$200</span><span style="color:var(--text3)">—</span><span><span class="mock-badge" style="background:var(--red-light);color:var(--red)">逾期</span></span></div>
-    </div>
-  </div>
-</section>
-
-<div class="stats-strip">
-  <div class="strip-stat"><div class="strip-num">120萬</div><div class="strip-label">台灣在學大學生</div></div>
-  <div class="strip-stat"><div class="strip-num">10萬+</div><div class="strip-label">社團 / 班級數量</div></div>
-  <div class="strip-stat"><div class="strip-num">3~5hr</div><div class="strip-label">每次活動節省時間</div></div>
-  <div class="strip-stat"><div class="strip-num">$0</div><div class="strip-label">基本方案免費</div></div>
-</div>
-
-<section class="features" id="features">
-  <div class="features-title">一個平台，解決所有金流問題</div>
-  <div class="features-sub">從收款到報表，PayClub 幫你全部搞定</div>
-  <div class="feat-grid">
-    <div class="feat-card"><div class="feat-card-icon">🔗</div><div class="feat-card-title">一鍵收款連結</div><div class="feat-card-desc">設定金額與截止日，自動生成專屬連結，分享到任何平台即可。</div></div>
-    <div class="feat-card"><div class="feat-card-icon">📊</div><div class="feat-card-title">即時狀態追蹤</div><div class="feat-card-desc">儀表板即時顯示已繳 / 未繳名單，不用再手動比對。</div></div>
-    <div class="feat-card"><div class="feat-card-icon">🔔</div><div class="feat-card-title">自動催款提醒</div><div class="feat-card-desc">截止前自動推播提醒未繳者，讓系統幫你說難開口的話。</div></div>
-    <div class="feat-card"><div class="feat-card-icon">👥</div><div class="feat-card-title">成員角色分類</div><div class="feat-card-desc">繳費者、統計者、觀察者各司其職，不是每個人都要繳款。</div></div>
-    <div class="feat-card"><div class="feat-card-icon">📄</div><div class="feat-card-title">財務報表匯出</div><div class="feat-card-desc">收支明細一鍵生成 PDF，核銷與交接輕鬆搞定。</div></div>
-    <div class="feat-card"><div class="feat-card-icon">💳</div><div class="feat-card-title">多元支付方式</div><div class="feat-card-desc">支援 LINE Pay、街口、信用卡、ATM，成員自選方式。</div></div>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-logo">PayClub</div>
-  <div class="footer-links"><a href="#">關於我們</a><a href="#">隱私政策</a><a href="login.html">登入</a></div>
-  <div class="footer-copy">© 2025 PayClub · 跨校跨產業金融科技競賽</div>
-</footer>
-
 <script>
-const authArea = document.getElementById('navAuth');
-if(PC_isLoggedIn()){
-  const u = PC_getUser();
-  const uName = u.name || u.email || '使用者';
-  authArea.innerHTML = `
-    <div class="nav-user-chip">
-      <div class="nav-user-av">${uName.slice(0,1).toUpperCase()}</div>
-      ${uName}
-    </div>
-    <a href="dashboard.html" class="btn btn-primary" style="color:#fff;padding:8px 18px;">進入儀表板</a>`;
+// 檢查是否已登入
+const user = sessionStorage.getItem('pc_current_user');
+if(user){
+  // 已登入，跳轉到儀表板
+  location.href = 'dashboard.html';
 } else {
-  authArea.innerHTML = `
-    <a href="login.html" style="color:var(--text2);text-decoration:none;font-size:0.9rem;font-weight:500;">登入</a>
-    <a href="login.html?mode=register" class="btn btn-primary" style="color:#fff;padding:8px 18px;">免費開始</a>`;
-  document.getElementById('heroCta').textContent = '免費開始使用';
-  document.getElementById('heroCta').href = 'login.html?mode=register';
+  // 未登入，3秒後跳轉到登入頁
+  setTimeout(() => {
+    location.href = 'login.html';
+  }, 3000);
 }
 </script>
-</body></html>
+</head>
+<body>
+<div class="container">
+  <div class="logo">💰</div>
+  <h1>PayClub</h1>
+  <p>校園社團金流管理平台</p>
+  <a href="login.html" class="btn">立即開始</a>
+  <div class="redirect-text">正在跳轉到登入頁面...</div>
+</div>
+</body>
+</html>

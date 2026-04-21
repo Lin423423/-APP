@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>繳費方式管理 — PayClub</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css"><script src="pc_auth.js"></script>
+<style>
+body{display:flex;}
+.content{flex:1;padding:24px 28px;max-width:1200px;margin:0 auto;width:100%;}
+.page-header{margin-bottom:24px;}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:6px;}
+.page-desc{color:var(--text2);font-size:0.9rem;}
+.methods-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px;}
+.method-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px;transition:all 0.15s;position:relative;}
+.method-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(79,110,247,0.1);}
+.method-card.active{border-color:var(--accent);background:var(--accent-light);}
+.method-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.method-icon-name{display:flex;align-items:center;gap:10px;}
+.method-card-icon{font-size:1.8rem;}
+.method-card-name{font-size:1rem;font-weight:700;}
+.method-toggle{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;}
+.method-card.active .method-toggle{background:var(--accent);border-color:var(--accent);}
+.method-card.active .method-toggle::after{content:'✓';color:#fff;font-size:0.7rem;font-weight:700;}
+.method-note{font-size:0.78rem;color:var(--text3);margin-bottom:8px;}
+.method-actions{display:flex;gap:6px;}
+.method-del-btn{flex:1;padding:7px 12px;background:none;border:1.5px solid var(--red);color:var(--red);border-radius:7px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all 0.15s;}
+.method-del-btn:hover{background:var(--red-light);}
+.add-method-card{background:var(--surface);border:1.5px dashed var(--border2);border-radius:12px;padding:32px 18px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:all 0.15s;}
+.add-method-card:hover{border-color:var(--accent);background:var(--accent-light);}
+.add-method-icon{font-size:2rem;}
+.add-method-text{font-size:0.88rem;font-weight:600;color:var(--text2);}
+.info-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:0.85rem;color:var(--text2);line-height:1.6;}
+@media(max-width:768px){.methods-grid{grid-template-columns:1fr;}.content{padding:18px 16px;}}
+</style>
+</head>
+<body>
+<div id="sidebar" class="sidebar"></div>
+<div class="mobile-overlay" id="mobileOverlay" onclick="PC_closeSidebar()"></div>
+
+<div class="content">
+  <div class="page-header">
+    <div class="page-title">💳 繳費方式管理</div>
+    <div class="page-desc">管理你的繳費方式，在建立活動時可以選擇要啟用哪些方式</div>
+  </div>
+
+  <div class="methods-grid" id="methodsGrid"></div>
+
+  <div class="info-box">
+    ✅ 勾選啟用的繳費方式後，在建立活動時可以為每個活動單獨選擇要使用的方式。<br>
+    💡 成員在繳費頁面只會看到該活動啟用的繳費方式。
+  </div>
+</div>
+
+<!-- 新增繳費方式彈窗 -->
+<div class="overlay" id="addMethodOverlay">
+  <div class="modal">
+    <div class="modal-title">新增自訂繳費方式</div>
+    <div class="form-group">
+      <label class="form-label">圖示（Emoji）</label>
+      <input type="text" id="newMethodIcon" class="form-input" placeholder="例：🏦" maxlength="2">
+    </div>
+    <div class="form-group">
+      <label class="form-label">名稱</label>
+      <input type="text" id="newMethodName" class="form-input" placeholder="例：玉山銀行轉帳">
+    </div>
+    <div style="font-size:0.78rem;color:var(--text3);background:var(--surface);border-radius:8px;padding:10px 12px;">
+      ⚙️ 自訂繳費方式的實際收款功能需串接後端後啟用，目前僅供 UI 展示。
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeAddMethod()">取消</button>
+      <button class="btn btn-primary" style="flex:2" onclick="addCustomMethod()">新增</button>
+    </div>
+  </div>
+</div>
+
+<!-- 刪除繳費方式彈窗 -->
+<div class="overlay" id="deleteMethodOverlay">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:8px">🗑</div>
+    <div class="modal-title">確認刪除繳費方式？</div>
+    <div class="modal-sub" id="deleteMethodName" style="font-weight:600;color:var(--accent)"></div>
+    <div style="background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.84rem;color:var(--red);">
+      此操作無法復原。
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeDeleteMethod()">取消</button>
+      <button class="btn btn-danger" style="flex:2" onclick="executeDeleteMethod()">確認刪除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const user = PC_requireAdmin();
+if(!user) throw new Error('r');
+PC_fillSidebar('payment-methods');
+PC_fillSidebarUser();
+
+const DEFAULT_METHODS = [
+  {id:'linepay', icon:'💚', name:'LINE Pay', active:true, isDefault:true},
+  {id:'jkopay', icon:'🔵', name:'街口支付', active:true, isDefault:true},
+  {id:'credit', icon:'💳', name:'信用卡', active:false, isDefault:true},
+  {id:'atm', icon:'🏧', name:'ATM 轉帳', active:false, isDefault:true}
+];
+
+function getPayMethods(){
+  const saved = localStorage.getItem('pc_pay_methods__'+user.email);
+  if(!saved){
+    localStorage.setItem('pc_pay_methods__'+user.email, JSON.stringify(DEFAULT_METHODS));
+    return DEFAULT_METHODS;
+  }
+  return JSON.parse(saved);
+}
+
+function savePayMethods(methods){
+  localStorage.setItem('pc_pay_methods__'+user.email, JSON.stringify(methods));
+}
+
+function renderMethods(){
+  const methods = getPayMethods();
+  const grid = document.getElementById('methodsGrid');
+  
+  grid.innerHTML = methods.map((m,i)=>`
+    <div class="method-card${m.active?' active':''}" id="method_${i}">
+      <div class="method-header">
+        <div class="method-icon-name">
+          <div class="method-card-icon">${m.icon}</div>
+          <div class="method-card-name">${m.name}</div>
+        </div>
+        <div class="method-toggle" onclick="toggleMethod(${i})"></div>
+      </div>
+      <div class="method-note">${m.isDefault?'系統預設方式':'自訂方式'}</div>
+      ${!m.isDefault?`<div class="method-actions">
+        <button class="method-del-btn" onclick="confirmDeleteMethod(${i})">🗑 刪除</button>
+      </div>`:''}
+    </div>
+  `).join('') + `
+    <div class="add-method-card" onclick="openAddMethod()">
+      <div class="add-method-icon">＋</div>
+      <div class="add-method-text">新增自訂方式</div>
+    </div>
+  `;
+}
+
+function toggleMethod(index){
+  const methods = getPayMethods();
+  methods[index].active = !methods[index].active;
+  savePayMethods(methods);
+  renderMethods();
+}
+
+let deleteMethodIndex = -1;
+
+function confirmDeleteMethod(index){
+  const methods = getPayMethods();
+  deleteMethodIndex = index;
+  document.getElementById('deleteMethodName').textContent = methods[index].name;
+  document.getElementById('deleteMethodOverlay').classList.add('show');
+}
+
+function closeDeleteMethod(){
+  document.getElementById('deleteMethodOverlay').classList.remove('show');
+  deleteMethodIndex = -1;
+}
+
+function executeDeleteMethod(){
+  if(deleteMethodIndex < 0) return;
+  const methods = getPayMethods();
+  const deleted = methods[deleteMethodIndex];
+  methods.splice(deleteMethodIndex, 1);
+  savePayMethods(methods);
+  closeDeleteMethod();
+  renderMethods();
+  PC_toast('🗑 已刪除「'+deleted.name+'」');
+}
+
+function openAddMethod(){
+  document.getElementById('addMethodOverlay').classList.add('show');
+}
+
+function closeAddMethod(){
+  document.getElementById('addMethodOverlay').classList.remove('show');
+  document.getElementById('newMethodIcon').value = '';
+  document.getElementById('newMethodName').value = '';
+}
+
+function addCustomMethod(){
+  const icon = document.getElementById('newMethodIcon').value.trim() || '💰';
+  const name = document.getElementById('newMethodName').value.trim();
+  
+  if(!name){
+    PC_toast('請輸入繳費方式名稱');
+    return;
+  }
+  
+  const methods = getPayMethods();
+  methods.push({
+    id: 'custom_'+Date.now(),
+    icon: icon,
+    name: name,
+    active: true,
+    isDefault: false
+  });
+  
+  savePayMethods(methods);
+  closeAddMethod();
+  renderMethods();
+  PC_toast('✅ 已新增「'+name+'」');
+}
+
+// 點擊彈窗外部關閉
+document.getElementById('addMethodOverlay').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeAddMethod();
+});
+
+document.getElementById('deleteMethodOverlay').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeDeleteMethod();
+});
+
+renderMethods();
+</script>
+</body>
+</html>

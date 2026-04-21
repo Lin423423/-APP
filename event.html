@@ -103,14 +103,14 @@ body{display:flex;}
 /* Founder badge */
 .badge-founder{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #fde68a;}
 /* Calendar picker */
-.date-picker-wrap{position:relative;}
+.date-picker-wrap{position:relative;max-width:300px;}
 .date-display{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;background:var(--white);transition:border-color 0.15s;user-select:none;}
 .date-display:hover{border-color:var(--accent);}
 .date-display.open{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
 .date-display-text{font-size:0.92rem;font-weight:600;color:var(--text);}
 .date-display-text.placeholder{color:var(--text3);font-weight:400;}
 .calendar-icon{color:var(--text3);font-size:1rem;}
-.calendar-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:10000;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:16px;min-width:280px;display:none;}
+.calendar-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:10000;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:16px;width:300px;display:none;}
 .calendar-popup.show{display:block;}
 .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .cal-title-wrap{display:flex;align-items:center;gap:6px;}
@@ -356,6 +356,35 @@ body{display:flex;}
   </div>
 </div>
 
+<!-- 成員被移除彈窗 -->
+<div class="overlay" id="removedOverlay" style="display:none;">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:3rem;margin-bottom:12px">🚫</div>
+    <div class="modal-title">你已被移出此活動</div>
+    <div class="modal-sub" id="removedEventTitle" style="font-weight:600;color:var(--accent)"></div>
+    <div style="background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:12px;font-size:0.82rem;color:var(--red);margin-bottom:18px;">你已被管理員從此活動移除。</div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="confirmRemoved()">返回總覽</button>
+    </div>
+  </div>
+</div>
+
+<!-- 繳費方式設定彈窗 -->
+<div class="overlay" id="paymentMethodsOverlay">
+  <div class="modal">
+    <div class="modal-title">💳 設定此活動的繳費方式</div>
+    <div class="modal-sub">從你的繳費方式中選擇（可多選）</div>
+    <div id="paymentMethodsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+    <div style="font-size:0.78rem;color:var(--text3);background:var(--surface);border-radius:8px;padding:10px 12px;margin-bottom:16px;">
+      💡 成員在繳費頁面只會看到此活動啟用的繳費方式。
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeOverlay('paymentMethodsOverlay')">取消</button>
+      <button class="btn btn-primary" style="flex:2" onclick="savePaymentMethods()">儲存設定</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script>
 const user=PC_requireLogin();if(!user)throw new Error('r');
@@ -380,6 +409,24 @@ function isPayer(m){return getRoles(m).includes('payer');}
 function isFounder(){return evt&&evt.ownerEmail===user.email;}
 function isAdmin(){if(isFounder())return true;const me=(evt.members||[]).find(m=>m.email===user.email);return me&&getRoles(me).includes('admin');}
 function isCounter(){const me=(evt.members||[]).find(m=>m.email===user.email);return me&&getRoles(me).includes('counter');}
+
+function showRemovedFromEventModal(){
+  document.getElementById('removedEventTitle').textContent = evt.title;
+  document.getElementById('removedOverlay').style.display = 'flex';
+  
+  // 清除該活動的已加入記錄
+  const memberJoinedKey = 'pc_member_joined__' + user.email;
+  const memberJoined = JSON.parse(localStorage.getItem(memberJoinedKey) || '[]');
+  const updated = memberJoined.filter(j => j.eventId !== eventId);
+  localStorage.setItem(memberJoinedKey, JSON.stringify(updated));
+  
+  // 發送通知
+  PC_sendNotify(user.email, '已被移出活動', '你已被管理員從「' + evt.title + '」移除。', 'error');
+}
+
+function confirmRemoved(){
+  location.href = 'dashboard.html';
+}
 
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mobileOverlay').classList.add('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
@@ -459,6 +506,16 @@ function renderPage(){
   if(evt){evt._ownerKey='pc_events__'+user.email;evt._isOwn=true;}
   else{result=PC_findEventById(eventId);if(result){evt=result.event;evt._ownerKey=result.ownerKey;evt._isOwn=false;}else{location.href='dashboard.html';return;}}
 
+  // 檢查自己是否還在成員列表中（非發起人）
+  const myMember = (evt.members || []).find(m => m.email === user.email);
+  const isFounderUser = evt.ownerEmail === user.email;
+  
+  if (!myMember && !isFounderUser) {
+    // 已被移除，顯示提示並清理記錄
+    showRemovedFromEventModal();
+    return;
+  }
+
   document.title=evt.title+' — PayClub';
   document.getElementById('bcTitle').textContent=evt.title;
   document.getElementById('evtTitle').textContent=evt.title;
@@ -483,6 +540,9 @@ function renderPage(){
   if(isAdmin()){
     actions+=`<button class="btn btn-ghost" onclick="toggleJoinPanel()">👥 加入申請${pending>0?` <span class="badge badge-orange" style="font-size:0.65rem;margin-left:2px">${pending}</span>`:''}</button>`;
     actions+=`<button class="btn btn-ghost" onclick="toggleBlockPanel()">🚫 封鎖名單${blockedCount>0?` <span class="badge badge-red" style="font-size:0.65rem;margin-left:2px">${blockedCount}</span>`:''}</button>`;
+    if(isFounder()){
+      actions+=`<button class="btn btn-ghost" onclick="openPaymentMethodsModal()">💳 繳費方式</button>`;
+    }
     actions+=`<button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>`;
     actions+=`<button class="btn btn-ghost" onclick="openAmtEdit()">💰 繳費金額更改</button>`;
     actions+=`<button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>`;
@@ -640,6 +700,9 @@ function renderMembers(){
     // Transaction history for paid members
     const txHistory=m.txHistory||[];
     const hasTx=txHistory.length>0||(m.txId&&m.status==='paid');
+    
+    // 判斷是否為已繳清成員（沒有待繳金額）
+    const isPaidOff = m.status === 'paid' && amt === '—';
 
     return `<div>
       <div class="member-row" onclick="${canClick?`toggleMDetail('${detailId}')`:''}" style="${!canClick?'cursor:default':''}">
@@ -656,12 +719,8 @@ function renderMembers(){
         <div class="m-detail-grid">
           <div>📧 Email：<strong>${m.email||'—'}</strong></div>
           <div>💰 應繳金額：<strong>${amt}</strong></div>
-          <div>📅 繳費時間：<strong>${m.paidAt||'—'}</strong></div>
-          <div>💳 繳費方式：<strong>${m.payMethod||'—'}</strong></div>
-          <div>🔢 交易編號：<strong style="color:var(--accent)">${m.txId||'—'}</strong></div>
-          <div>📝 備註：<strong>${m.remark||'—'}</strong></div>
         </div>
-        ${hasTx||m.txId?`<div style="font-size:0.76rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px">繳費記錄</div>
+        ${hasTx||m.txId?`<div style="font-size:0.76rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-top:12px;margin-bottom:6px">繳費記錄</div>
         <div class="tx-list">
           ${txHistory.map(tx=>`<div class="tx-item"><span class="tx-badge">$${tx.amount}</span><span style="color:var(--text3)">${tx.time}</span><span>${tx.method||'—'}</span><span style="color:var(--text3);font-size:0.72rem">#${tx.txId}</span>${tx.remark?`<span style="color:var(--text2)">${tx.remark}</span>`:''}</div>`).join('')}
           ${m.txId&&!txHistory.find(t=>t.txId===m.txId)?`<div class="tx-item"><span class="tx-badge">$${PC_getExpectedAmount(evt,m)}</span><span style="color:var(--text3)">${m.paidAt||'—'}</span><span>${m.payMethod||'—'}</span><span style="color:var(--text3);font-size:0.72rem">#${m.txId}</span>${m.remark?`<span style="color:var(--text2)">${m.remark}</span>`:''}</div>`:''}
@@ -899,8 +958,23 @@ function saveDl(){
   const evts = PC_getEvents();
   const e = evts.find(x => x.id === eventId);
   if(e){
+    const oldDeadline = e.deadline;
     e.deadline = nd;
     PC_saveEvents(evts);
+    
+    // 發送通知給所有成員
+    if(oldDeadline !== nd){
+      (e.members || []).forEach(m => {
+        if(m.email){
+          PC_sendNotify(
+            m.email,
+            '截止日期已更新 📅',
+            `「${e.title}」的繳費截止日期已更新為 ${nd}，請留意時間！`,
+            'info'
+          );
+        }
+      });
+    }
   }
   
   document.getElementById('dlEditRow').style.display = 'none';
@@ -985,6 +1059,12 @@ function blockUser(reqIndex){
     localStorage.setItem(blockKey,JSON.stringify(blocked));
   }
   
+  // 從該用戶的已加入記錄中移除此活動
+  const memberJoinedKey='pc_member_joined__'+user.email;
+  const memberJoined=JSON.parse(localStorage.getItem(memberJoinedKey)||'[]');
+  const updated=memberJoined.filter(j=>j.eventId!==eventId);
+  localStorage.setItem(memberJoinedKey,JSON.stringify(updated));
+  
   PC_sendNotify(user.email,'無法加入活動','你已被「'+evt.title+'」的管理員封鎖，無法加入此活動。','error');
   renderJoinReqs();
   renderPage();
@@ -994,8 +1074,14 @@ function blockUser(reqIndex){
 function unblockUser(email){
   const blockKey='pc_blocked__'+eventId;
   const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
+  const unblockedUser=blocked.find(b=>b.email===email);
   const updated=blocked.filter(b=>b.email!==email);
   localStorage.setItem(blockKey,JSON.stringify(updated));
+  
+  // 發送通知
+  if(unblockedUser){
+    PC_sendNotify(email,'解除封鎖通知','「'+evt.title+'」已解除對你的封鎖，你現在可以重新申請加入。','success');
+  }
   
   renderBlockList();
   renderPage();
@@ -1022,6 +1108,69 @@ function renderBlockList(){
       <button class="btn btn-ghost" style="padding:6px 14px;font-size:0.78rem" onclick="unblockUser('${b.email}')">解除封鎖</button>
     </div>`;
   }).join('');
+}
+
+// ── Payment Methods Setting ──
+function openPaymentMethodsModal(){
+  const DEFAULT_METHODS = [
+    {id:'linepay', icon:'💚', name:'LINE Pay'},
+    {id:'jkopay', icon:'🔵', name:'街口支付'},
+    {id:'credit', icon:'💳', name:'信用卡'},
+    {id:'atm', icon:'🏧', name:'ATM 轉帳'}
+  ];
+  
+  // 獲取發起人的繳費方式
+  let allMethods = DEFAULT_METHODS;
+  const saved = localStorage.getItem('pc_pay_methods__'+user.email);
+  if(saved){
+    const parsed = JSON.parse(saved);
+    if(parsed.length) allMethods = parsed;
+  }
+  
+  // 獲取活動當前設定
+  const currentMethods = evt.paymentMethods || [];
+  
+  // 渲染選項
+  const list = document.getElementById('paymentMethodsList');
+  list.innerHTML = allMethods.map(m => {
+    const checked = currentMethods.includes(m.id) || currentMethods.length === 0;
+    return `
+      <label style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border-radius:8px;cursor:pointer;border:1.5px solid ${checked?'var(--accent)':'var(--border)'};transition:all 0.15s;">
+        <input type="checkbox" id="pm_${m.id}" value="${m.id}" ${checked?'checked':''} style="width:18px;height:18px;cursor:pointer;">
+        <span style="font-size:1.3rem;">${m.icon}</span>
+        <span style="font-weight:600;flex:1;">${m.name}</span>
+      </label>
+    `;
+  }).join('');
+  
+  // 監聽變化更新樣式
+  list.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', function(){
+      const label = this.closest('label');
+      label.style.borderColor = this.checked ? 'var(--accent)' : 'var(--border)';
+    });
+  });
+  
+  document.getElementById('paymentMethodsOverlay').classList.add('show');
+}
+
+function savePaymentMethods(){
+  const selected = Array.from(document.querySelectorAll('#paymentMethodsList input[type="checkbox"]:checked')).map(cb => cb.value);
+  
+  if(selected.length === 0){
+    PC_toast('請至少選擇一種繳費方式');
+    return;
+  }
+  
+  const evts = PC_getEvents();
+  const e = evts.find(x => x.id === eventId);
+  if(e){
+    e.paymentMethods = selected;
+    PC_saveEvents(evts);
+  }
+  
+  closeOverlay('paymentMethodsOverlay');
+  PC_toast('✅ 繳費方式設定已更新');
 }
 
 // ── Add member ──

@@ -35,12 +35,12 @@ body{min-height:100vh;background:var(--bg);}
 .user-av{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;flex-shrink:0;}
 .user-id-name{font-size:0.9rem;font-weight:700;color:var(--text);}
 .user-id-email{font-size:0.75rem;color:var(--accent);}
-.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
-.pay-method{padding:13px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:all 0.15s;}
+.pay-methods{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+.pay-method{padding:14px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.15s;}
 .pay-method:hover{border-color:var(--accent);background:var(--accent-light);}
 .pay-method.selected{border-color:var(--accent);background:var(--accent-light);}
-.pay-method-icon{font-size:1.4rem;margin-bottom:5px;}
-.pay-method-name{font-size:0.78rem;font-weight:600;}
+.pay-method-icon{font-size:1.4rem;}
+.pay-method-name{font-size:0.88rem;font-weight:600;flex:1;}
 .submit-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.98rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;transition:all 0.15s;}
 .submit-btn:hover{background:var(--accent-dark);}
 .security-note{text-align:center;font-size:0.75rem;color:var(--text3);margin-top:9px;}
@@ -203,14 +203,30 @@ function setupPage(){
       <div class="form-group"><label class="form-label">Email *</label><input type="email" id="guestEmail" class="form-input" placeholder="your@email.com"></div>`;
   }
 
-  // Payment methods — use admin's saved methods if available
+  // Payment methods — 根據活動設定的方式過濾
   let methods=DEFAULT_METHODS;
   if(ownerKey){
     const ownerEmail=ownerKey.replace('pc_events__','');
     const saved=localStorage.getItem('pc_pay_methods__'+ownerEmail);
-    if(saved){const parsed=JSON.parse(saved);const active=parsed.filter(m=>m.active);if(active.length)methods=active;}
+    if(saved){
+      const parsed=JSON.parse(saved);
+      const active=parsed.filter(m=>m.active);
+      if(active.length)methods=active;
+    }
   }
-  document.getElementById('payMethods').innerHTML=methods.map((m,i)=>`<div class="pay-method${i===0?' selected':''}" onclick="selectMethod(this,'${m.name}')"><div class="pay-method-icon">${m.icon}</div><div class="pay-method-name">${m.name}</div></div>`).join('');
+  
+  // 如果活動有設定繳費方式，只顯示活動啟用的方式
+  if(foundEvent.paymentMethods && foundEvent.paymentMethods.length > 0){
+    methods = methods.filter(m => foundEvent.paymentMethods.includes(m.id));
+  }
+  
+  // 渲染為一行一個
+  document.getElementById('payMethods').innerHTML=methods.map((m,i)=>`
+    <div class="pay-method${i===0?' selected':''}" onclick="selectMethod(this,'${m.name}')">
+      <div class="pay-method-icon">${m.icon}</div>
+      <div class="pay-method-name">${m.name}</div>
+    </div>
+  `).join('');
   document.getElementById('methodsLabel').textContent=methods.map(m=>m.name).join(' · ');
   selectedMethod=methods[0]?.name||'LINE Pay';
 }

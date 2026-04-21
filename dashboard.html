@@ -119,6 +119,12 @@ body{display:flex;}
     <div class="stat-card"><div class="stat-label">進行中活動</div><div class="stat-val" id="sActive">0</div><div class="stat-sub">個活動</div></div>
   </div>
 
+  <!-- 活動邀請確認 -->
+  <div id="inviteSection" style="display:none;background:var(--orange-light);border:1px solid #fed7aa;border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;">
+    <div style="font-size:0.9rem;font-weight:700;margin-bottom:12px;color:var(--orange);">📬 活動邀請</div>
+    <div id="inviteContent"></div>
+  </div>
+
   <!-- Payment Methods Management -->
   <div class="pay-methods-panel">
     <div class="panel-header">
@@ -419,7 +425,107 @@ function renderEvents(){
     </div>`;
   }).join('');
 }
-function renderAll(){ renderStats(); renderEvents(); renderSidebar(); }
+
+// ── Pending Invites ──
+let pendingInviteData = null;
+
+function checkPendingInvites(){
+  // 檢查是否有待確認的邀請
+  for(let i=0; i<localStorage.length; i++){
+    const key = localStorage.key(i);
+    if(key && key.startsWith('pc_events__')){
+      try{
+        const events = JSON.parse(localStorage.getItem(key) || '[]');
+        for(const evt of events){
+          const myMember = (evt.members || []).find(m => m.email === user.email);
+          if(myMember && myMember.status === 'pending_invite'){
+            pendingInviteData = {event: evt, ownerKey: key, member: myMember};
+            showInvite();
+            return;
+          }
+        }
+      }catch(e){}
+    }
+  }
+  document.getElementById('inviteSection').style.display = 'none';
+}
+
+function showInvite(){
+  if(!pendingInviteData) return;
+  const evt = pendingInviteData.event;
+  const section = document.getElementById('inviteSection');
+  section.style.display = 'block';
+  
+  document.getElementById('inviteContent').innerHTML = `
+    <div style="background:var(--white);border-radius:10px;padding:14px 16px;">
+      <div style="font-weight:700;margin-bottom:6px;">${evt.title}</div>
+      <div style="font-size:0.84rem;color:var(--text2);margin-bottom:12px;">${evt.desc || '邀請你加入此活動'}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="flex:1" onclick="rejectInvite()">拒絕邀請</button>
+        <button class="btn btn-primary" style="flex:2" onclick="acceptInvite()">✓ 同意加入</button>
+      </div>
+    </div>
+  `;
+}
+
+function acceptInvite(){
+  if(!pendingInviteData) return;
+  const {event, ownerKey, member} = pendingInviteData;
+  
+  // 更新成員狀態
+  member.status = getRoles(member).includes('payer') ? 'pending' : 'none';
+  const ownerEmail = ownerKey.replace('pc_events__','');
+  const events = JSON.parse(localStorage.getItem(ownerKey) || '[]');
+  const evt = events.find(e => e.id === event.id);
+  if(evt){
+    const m = (evt.members || []).find(m => m.email === user.email);
+    if(m) m.status = member.status;
+    localStorage.setItem(ownerKey, JSON.stringify(events));
+  }
+  
+  // 添加到已加入列表
+  const joined = JSON.parse(localStorage.getItem('pc_member_joined__'+user.email) || '[]');
+  if(!joined.find(j => j.eventId === event.id)){
+    joined.push({
+      eventId: event.id,
+      eventTitle: event.title,
+      ownerKey: ownerKey,
+      joinedAt: new Date().toISOString()
+    });
+    localStorage.setItem('pc_member_joined__'+user.email, JSON.stringify(joined));
+  }
+  
+  PC_sendNotify(ownerEmail, '邀請已接受', user.name+' 已接受加入「'+event.title+'」。', 'success');
+  PC_toast('✅ 已加入活動');
+  pendingInviteData = null;
+  renderAll();
+}
+
+function rejectInvite(){
+  if(!pendingInviteData) return;
+  const {event, ownerKey, member} = pendingInviteData;
+  
+  // 從成員列表移除
+  const ownerEmail = ownerKey.replace('pc_events__','');
+  const events = JSON.parse(localStorage.getItem(ownerKey) || '[]');
+  const evt = events.find(e => e.id === event.id);
+  if(evt){
+    evt.members = (evt.members || []).filter(m => m.email !== user.email);
+    localStorage.setItem(ownerKey, JSON.stringify(events));
+  }
+  
+  PC_sendNotify(ownerEmail, '邀請已拒絕', user.name+' 拒絕了加入「'+event.title+'」的邀請。', 'info');
+  PC_toast('已拒絕邀請');
+  pendingInviteData = null;
+  renderAll();
+}
+
+function getRoles(m){
+  if(!m) return [];
+  return Array.isArray(m.roles) ? m.roles : (m.role ? [m.role] : []);
+}
+
+function renderAll(){ checkPendingInvites(); renderStats(); renderEvents(); renderSidebar(); }
 renderPayMethods();
 renderAll();
 </script>
