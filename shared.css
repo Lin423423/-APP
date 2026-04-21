@@ -146,24 +146,29 @@ textarea.form-input{resize:vertical;}
 
 /* ── 修正郵件過長時的顯示 ── */
 .user-email {
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
-}
-
-.sidebar-user .user-email,
-.user-card .user-email {
-  max-width: 120px;
+  max-width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: block;
+  font-size: 0.68rem;
+  color: var(--text3);
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.sidebar-user .user-email,
+.user-card .user-email {
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  font-size: 0.68rem;
 }
 
 .user-info .user-email {
-  max-width: 140px;
+  max-width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
