@@ -210,6 +210,9 @@ function getPayMethods(){
   const raw = localStorage.getItem('pc_pay_methods__'+user.email);
   return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_METHODS));
 }
+
+/*
+// 已移除繳費方式管理區塊 - 以下函數不再使用
 function savePayMethods(){
   const methods = getPayMethods();
   const chips = document.querySelectorAll('.method-chip');
@@ -220,6 +223,8 @@ function savePayMethods(){
   localStorage.setItem('pc_pay_methods__' + user.email, JSON.stringify(updated));
   PC_toast('✅ 繳費方式已儲存');
 }
+
+// 已移除繳費方式管理區塊 - 以下函數不再使用
 function renderPayMethods(){
   const methods = getPayMethods();
   document.getElementById('methodsGrid').innerHTML = methods.map((m,i)=>`
@@ -282,6 +287,7 @@ function addCustomMethod(){
   renderPayMethods();
   PC_toast('✅ 已新增「'+name+'」');
 }
+*/
 
 // ── Sidebar (升級版下拉選單) ──
 let currentDashFilter = 'all';
@@ -514,7 +520,7 @@ function getRoles(m){
 }
 
 function renderAll(){ checkPendingInvites(); renderStats(); renderEvents(); renderSidebar(); }
-renderPayMethods();
+// renderPayMethods(); // 已移除繳費方式管理區塊
 renderAll();
 </script>
 </body></html>

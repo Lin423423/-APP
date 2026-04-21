@@ -551,11 +551,12 @@ function renderPage(){
   
   let actions='';
   if(isAdmin()){
-    actions+=`<button class="btn btn-ghost" onclick="sendReminder()">📣 催款</button>`;
-    actions+=`<button class="btn btn-primary" onclick="openAdd()">+ 新增成員</button>`;
     actions+=`<div style="position:relative;display:inline-block;">
-      <button class="btn btn-ghost" onclick="toggleActionMenu()" id="actionMenuBtn">⚙️ 設定</button>
+      <button class="btn btn-primary" onclick="toggleActionMenu()" id="actionMenuBtn">⚙️ 設定</button>
       <div class="action-menu" id="actionMenu" style="display:none;">
+        <div class="action-menu-item" onclick="closeActionMenu();sendReminder()">📣 催款</div>
+        <div class="action-menu-item" onclick="closeActionMenu();openAdd()">+ 新增成員</div>
+        <div style="height:1px;background:var(--border);margin:4px 0;"></div>
         <div class="action-menu-item" onclick="closeActionMenu();toggleJoinPanel()">👥 加入申請${pending>0?` <span class="badge badge-orange" style="font-size:0.65rem;margin-left:4px">${pending}</span>`:''}</div>
         <div class="action-menu-item" onclick="closeActionMenu();toggleBlockPanel()">🚫 封鎖名單${blockedCount>0?` <span class="badge badge-red" style="font-size:0.65rem;margin-left:4px">${blockedCount}</span>`:''}</div>
         <div style="height:1px;background:var(--border);margin:4px 0;"></div>
