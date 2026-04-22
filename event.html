@@ -1277,9 +1277,10 @@ function confirmStatus(){
   const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);const m=e.members[pendingStatusIdx];
   const oldStatus=m.status;m.status=selectedStatus;
   if(selectedStatus==='paid'){
-    const txId=m.txId||PC_genTxId();const now=PC_nowStr();
+    const txId=PC_genTxId();  // 每次都生成新的 txId
+    const now=PC_nowStr();
     if(!m.paidAt)m.paidAt=now;
-    m.txId=txId;
+    if(!m.txId)m.txId=txId;  // 只在第一次設置 m.txId（用於顯示）
     if(!m.txHistory)m.txHistory=[];
     
     // 計算剩餘待繳金額（總應繳 - 已繳總額）
@@ -1287,21 +1288,8 @@ function confirmStatus(){
     const paidTotal = (m.txHistory || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
     const remainingAmt = expectedAmt - paidTotal;
     
-    // 調試日誌
-    console.log('========== confirmStatus 調試 ==========');
-    console.log('成員:', m.email);
-    console.log('expectedAmt:', expectedAmt);
-    console.log('paidTotal:', paidTotal);
-    console.log('remainingAmt:', remainingAmt);
-    console.log('txId:', txId);
-    console.log('txHistory.find 結果:', m.txHistory.find(t=>t.txId===txId));
-    console.log('條件1 (remainingAmt > 0):', remainingAmt > 0);
-    console.log('條件2 (!find):', !m.txHistory.find(t=>t.txId===txId));
-    console.log('兩個條件都通過:', remainingAmt > 0 && !m.txHistory.find(t=>t.txId===txId));
-    
     // 只在有剩餘金額時才添加新的繳費記錄
-    if(remainingAmt > 0 && !m.txHistory.find(t=>t.txId===txId)){
-      console.log('✅ 準備添加繳費記錄...');
+    if(remainingAmt > 0){
       m.txHistory.push({
         txId,
         amount: remainingAmt,  // 使用剩餘待繳金額，而非總應繳金額
@@ -1309,11 +1297,7 @@ function confirmStatus(){
         method: m.payMethod || '手動標記',
         remark: m.remark || ''
       });
-      console.log('✅ 已添加！新的 txHistory:', m.txHistory);
-    } else {
-      console.log('❌ 條件不通過，沒有添加記錄！');
     }
-    console.log('========================================');
   }
   PC_saveEvents(evts);
   PC_sendNotify(m.email,'繳費狀態已更新 ⚙️',`你在「${e.title}」的狀態已由「${oldStatus}」更新為「${selectedStatus==='paid'?'已繳費':selectedStatus==='overdue'?'逾期未繳':'待繳費'}」。`,'info');
