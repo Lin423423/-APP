@@ -186,21 +186,30 @@ function joinEvent(){
   if(!result){errEl.textContent='找不到此邀請碼，請確認後重試';errEl.style.display='block';return;}
   errEl.style.display='none';
   
-  // 檢查是否被封鎖
+  // 檢查是否被封鎖（封鎖才擋住，無法加入）
   const blockKey='pc_blocked__'+result.event.id;
   const blockedList=JSON.parse(localStorage.getItem(blockKey)||'[]');
   if(blockedList.find(b=>b.email===user.email)){
-    errEl.textContent='❌ 你已被此活動的發起人封鎖，無法加入';
+    errEl.textContent='🚫 你已被此活動的發起人封鎖，如需解除請聯繫管理員';
     errEl.style.display='block';
     return;
   }
-  
-  // 檢查是否已被拒絕
+
+  // 被拒絕可以重新申請（清除舊的 rejected 紀錄後重新送出）
   const allReqs=PC_getJoinRequests(result.event.id);
   const myPrevReq=allReqs.find(r=>r.email===user.email);
   if(myPrevReq&&myPrevReq.status==='rejected'){
-    errEl.textContent='❌ 你的申請已被此活動拒絕，如有疑問請聯繫管理員';
-    errEl.style.display='block';
+    // 清除舊的拒絕紀錄，讓他可以重新申請
+    myPrevReq.status='pending';
+    myPrevReq.requestedAt=new Date().toISOString();
+    PC_saveJoinRequests(result.event.id, allReqs);
+    // 清除舊的拒絕通知 flag，以防下次被拒絕時不再發通知
+    localStorage.removeItem('pc_reject_notif__'+result.event.id+'__'+user.email);
+    const ownerEmail=result.ownerKey.replace('pc_events__','');
+    PC_sendNotify(ownerEmail,'重新申請加入 👥',`${user.name}(${user.email}) 重新申請加入「${result.event.title}」，請前往活動頁面審核。`,'info');
+    document.getElementById('inviteInput').value='';
+    PC_toast('✅ 已重新送出申請，等待管理員審核');
+    renderJoined();
     return;
   }
   
@@ -244,27 +253,26 @@ function renderJoined(){
     const blocked=JSON.parse(localStorage.getItem('pc_blocked__'+j.eventId)||'[]');
     const isBlocked=blocked.find(b=>b.email===user.email);
     if(isBlocked){
-      // 發通知（只發一次，用 localStorage flag 避免重複）
       const flagKey='pc_block_notif__'+j.eventId+'__'+user.email;
       if(!localStorage.getItem(flagKey)){
-        PC_sendNotify(user.email,'你已被封鎖 🚫',`你已被「${evt.title}」的活動發起人封鎖，已自動退出活動。`,'warning');
+        PC_sendNotify(user.email,'你已被封鎖 🚫',`你已被「${evt.title}」的活動發起人封鎖，已自動退出活動。如需解除封鎖，請聯繫活動管理員。`,'warning');
         localStorage.setItem(flagKey,'1');
       }
       changed=true;
-      return false; // 自動移除
+      return false;
     }
 
-    // 檢查拒絕
+    // 檢查拒絕（自動退出，但可重新申請）
     const reqs=PC_getJoinRequests(j.eventId);
     const myReq=reqs.find(r=>r.email===user.email);
     if(myReq&&myReq.status==='rejected'){
       const flagKey='pc_reject_notif__'+j.eventId+'__'+user.email;
       if(!localStorage.getItem(flagKey)){
-        PC_sendNotify(user.email,'申請已被拒絕 ❌',`你加入「${evt.title}」的申請已被拒絕，已自動退出活動。如有疑問請聯繫活動管理員。`,'warning');
+        PC_sendNotify(user.email,'申請已被拒絕 ❌',`你加入「${evt.title}」的申請已被拒絕，已自動退出活動。你可以重新輸入邀請碼再次申請。`,'warning');
         localStorage.setItem(flagKey,'1');
       }
       changed=true;
-      return false; // 自動移除
+      return false;
     }
 
     return true;
