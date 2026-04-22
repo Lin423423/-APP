@@ -187,7 +187,7 @@ body{display:flex;}
   <!-- Editable description -->
   <div class="desc-row">
     <div class="desc-box" id="descBox" onclick="toggleDescEdit()">
-      <span id="evtDescText">點擊新增說明</span>
+      <span id="evtDescText">無說明</span>
     </div>
   </div>
   <div id="descEditArea" style="display:none;margin-bottom:12px;">
@@ -197,11 +197,11 @@ body{display:flex;}
       <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem" onclick="toggleDescEdit()">取消</button>
     </div>
   </div>
-  
+
   <div class="dl-row" style="display:flex;align-items:center;gap:8px;">
     <span style="font-size:0.84rem;color:var(--text2)">截止：</span>
     <button class="dl-date-btn" id="dlDisplay" onclick="toggleDlEdit()">—</button>
-    <div style="margin-left:auto;" id="settingsButtonContainer"></div>
+    <div id="settingsButtonContainer"></div>
   </div>
   <div id="dlEditRow" style="display:none;margin-bottom:14px;">
     <div class="date-picker-wrap" style="margin-bottom:8px;">
@@ -359,7 +359,7 @@ body{display:flex;}
 <div class="overlay" id="amtOverlay">
   <div class="modal">
     <div class="modal-title">💰 修改繳費金額</div>
-    <div class="modal-sub">選擇成員批次設定，留空使用活動預設（$<span id="defaultAmtText">0</span>）<br><small style="color:var(--orange)">⚠️ 修改金額後，新金額為總應繳金額，若成員已繳費，原繳費記錄保留。</small></div>
+    <div class="modal-sub">選擇成員批次設定，留空使用活動預設（$<span id="defaultAmtText">0</span>）<br><small style="color:var(--orange)">⚠️ 修改金額後，若成員已繳費，原繳費記錄保留，新金額為下次應繳金額。</small></div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
       <div class="amt-check" id="selectAllCheck" onclick="toggleSelectAll()"></div>
       <span style="font-size:0.82rem;font-weight:600;cursor:pointer" onclick="toggleSelectAll()">全選</span>
@@ -569,14 +569,14 @@ function renderPage(){
         <div class="action-menu-item" onclick="closeActionMenu();sendReminder()">📣 催款</div>
         <div class="action-menu-item" onclick="closeActionMenu();openAdd()">+ 新增成員</div>
         <div style="height:1px;background:var(--border);margin:4px 0;"></div>
-        <div class="action-menu-item" onclick="closeActionMenu();toggleJoinPanel()">👥 加入申請${pending>0?` <span class="badge badge-orange" style="font-size:0.65rem;margin-left:4px">${pending}</span>`:''}</div>
-        <div class="action-menu-item" onclick="closeActionMenu();toggleBlockPanel()">🚫 封鎖名單${blockedCount>0?` <span class="badge badge-red" style="font-size:0.65rem;margin-left:4px">${blockedCount}</span>`:''}</div>
+        <div class="action-menu-item" onclick="closeActionMenu();openJoinRequestModal()">👥 加入申請${pending>0?` <span class="badge badge-orange" style="font-size:0.65rem;margin-left:4px">${pending}</span>`:''}</div>
+        <div class="action-menu-item" onclick="closeActionMenu();openBlockListModal()">🚫 封鎖名單${blockedCount>0?` <span class="badge badge-red" style="font-size:0.65rem;margin-left:4px">${blockedCount}</span>`:''}</div>
         <div style="height:1px;background:var(--border);margin:4px 0;"></div>
         ${isFounder()?`<div class="action-menu-item" onclick="closeActionMenu();openPaymentMethodsModal()">💳 繳費方式</div>`:''}
         <div class="action-menu-item" onclick="closeActionMenu();openAmtEdit()">💰 繳費金額更改</div>
         <div class="action-menu-item" onclick="closeActionMenu();location.href='report.html'">📄 報表</div>
         <div style="height:1px;background:var(--border);margin:4px 0;"></div>
-        <div class="action-menu-item" onclick="closeActionMenu();confirmDelete()" style="color:var(--red);">🗑 刪除活動</div>
+        <div class="action-menu-item" onclick="closeActionMenu();confirmDeleteEvent()" style="color:var(--red);">🗑 刪除活動</div>
       </div>
     </div>`;
   } else if(isCounter()){
@@ -584,11 +584,14 @@ function renderPage(){
     actions+=`<button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>`;
   }
   document.getElementById('actionBar').innerHTML=actions;
+  
+  // 移動設定按鈕到截止日期旁邊
   const settingsBtn = document.getElementById('settingsButton');
   const settingsContainer = document.getElementById('settingsButtonContainer');
   if(settingsBtn && settingsContainer){
     settingsContainer.appendChild(settingsBtn);
   }
+
   const payers=PC_getPayers(evt);
   const paid=payers.filter(m=>m.status==='paid').length;
   const pend=payers.filter(m=>m.status==='pending').length;
@@ -717,7 +720,7 @@ function renderMembers(){
             amt = '—'; // 已繳清，不顯示金額
           }
         } else if (remainingAmt > 0) {
-          amt = '待繳$' + remainingAmt; // 顯示剩餘待繳金額
+          amt = '$' + remainingAmt; // 顯示剩餘待繳金額
         } else {
           amt = '—';
         }
@@ -1397,6 +1400,111 @@ function toggleActionMenu(){
 }
 function closeActionMenu(){
   document.getElementById('actionMenu').style.display='none';
+}
+
+// ── 刪除活動 ──
+function confirmDeleteEvent(){
+  if(!confirm('⚠️ 確定要刪除此活動嗎？\n\n刪除後將無法復原，所有成員資料和繳費記錄都會消失。')){
+    return;
+  }
+  const evts=PC_getEvents();
+  const filtered=evts.filter(e=>e.id!==eventId);
+  PC_saveEvents(filtered);
+  
+  // 清除相關數據
+  localStorage.removeItem('pc_join_req__'+eventId);
+  localStorage.removeItem('pc_blocked__'+eventId);
+  
+  PC_toast('✅ 活動已刪除');
+  setTimeout(()=>location.href='dashboard.html',800);
+}
+
+// ── 加入申請彈窗 ──
+function openJoinRequestModal(){
+  const reqs=PC_getJoinRequests(eventId).filter(r=>r.status==='pending');
+  let content='';
+  if(reqs.length===0){
+    content='<div style="color:var(--text3);text-align:center;padding:30px;font-size:0.9rem">目前沒有待審核的加入申請</div>';
+  } else {
+    content=reqs.map((r,i)=>`
+      <div style="padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;">
+          <div style="font-weight:600;margin-bottom:4px;">${r.name||'—'}</div>
+          <div style="font-size:0.8rem;color:var(--text2)">${r.email}</div>
+          <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${r.requestedAt||'—'}</div>
+        </div>
+        <button class="btn btn-primary" style="padding:6px 14px;font-size:0.82rem" onclick="approveJoin('${r.email}');openJoinRequestModal()">通過</button>
+        <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem" onclick="rejectJoin('${r.email}');openJoinRequestModal()">拒絕</button>
+      </div>
+    `).join('');
+  }
+  
+  const html=`
+    <div style="background:white;border-radius:16px;max-width:520px;width:90%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:1.05rem;font-weight:700;">👥 加入申請審核</div>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:1.3rem;color:var(--text3);cursor:pointer;padding:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;">${content}</div>
+    </div>
+  `;
+  showModal(html);
+}
+
+// ── 封鎖名單彈窗 ──
+function openBlockListModal(){
+  const blocked=JSON.parse(localStorage.getItem('pc_blocked__'+eventId)||'[]');
+  let content='';
+  if(blocked.length===0){
+    content='<div style="color:var(--text3);text-align:center;padding:30px;font-size:0.9rem">目前沒有封鎖的用戶</div>';
+  } else {
+    content=blocked.map(email=>`
+      <div style="padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-weight:600;">${email}</div>
+        </div>
+        <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem;color:var(--accent)" onclick="unblock('${email}');openBlockListModal()">解除封鎖</button>
+      </div>
+    `).join('');
+  }
+  
+  const html=`
+    <div style="background:white;border-radius:16px;max-width:520px;width:90%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:1.05rem;font-weight:700;">🚫 封鎖名單</div>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:1.3rem;color:var(--text3);cursor:pointer;padding:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;">${content}</div>
+    </div>
+  `;
+  showModal(html);
+}
+
+function unblock(email){
+  const blocked=JSON.parse(localStorage.getItem('pc_blocked__'+eventId)||'[]');
+  const filtered=blocked.filter(e=>e!==email);
+  localStorage.setItem('pc_blocked__'+eventId,JSON.stringify(filtered));
+  PC_toast('✅ 已解除封鎖');
+  renderPage();
+}
+
+// ── 通用彈窗函數 ──
+function showModal(htmlContent){
+  let modal=document.getElementById('customModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='customModal';
+    modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;padding:20px;';
+    modal.onclick=function(e){if(e.target===modal)closeModal();};
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML=htmlContent;
+  modal.style.display='flex';
+}
+
+function closeModal(){
+  const modal=document.getElementById('customModal');
+  if(modal)modal.style.display='none';
 }
 
 // ── 點擊外部關閉選單 ──
