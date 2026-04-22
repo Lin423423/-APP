@@ -102,6 +102,11 @@ body{min-height:100vh;background:var(--bg);}
         <div class="pay-form-title">填寫繳費資訊</div>
         <div id="userIdentitySection"></div>
         <div class="form-group">
+          <label class="form-label">本次繳費金額</label>
+          <input type="number" id="customPayAmount" class="form-input" placeholder="0" min="0" style="font-size:1.1rem;font-weight:600;color:var(--accent)" oninput="updatePayButton()">
+          <div style="font-size:0.75rem;color:var(--text3);margin-top:4px">可自行輸入繳費金額，或使用預設應繳金額</div>
+        </div>
+        <div class="form-group">
           <label class="form-label">選擇支付方式</label>
           <div class="pay-methods" id="payMethods"></div>
         </div>
@@ -189,6 +194,10 @@ function setupPage(){
   document.getElementById('payDesc').textContent=foundEvent.desc||'請完成繳費，謝謝！';
   document.getElementById('payAmount').textContent='$'+personalAmt.toLocaleString();
   document.getElementById('payBtnAmt').textContent='$'+personalAmt.toLocaleString();
+  
+  // 設定自定義金額欄位預設值
+  document.getElementById('customPayAmount').value = personalAmt;
+  
   const dl=new Date(foundEvent.deadline),days=Math.ceil((dl-new Date())/86400000);
   const dtag=document.getElementById('deadlineTag');
   dtag.textContent='📅 截止：'+foundEvent.deadline+'（剩 '+Math.max(0,days)+' 天）';
@@ -239,8 +248,21 @@ function setupPage(){
 
 function selectMethod(el,m){document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');selectedMethod=m;}
 
+function updatePayButton(){
+  const customAmt = parseFloat(document.getElementById('customPayAmount').value) || 0;
+  document.getElementById('payBtnAmt').textContent = '$' + customAmt.toLocaleString();
+}
+
 function submitPayment(){
   if(isDemo){PC_toast('🎮 Demo 模式，不實際處理付款');return;}
+  
+  // 取得自定義繳費金額
+  const actualPayAmount = parseFloat(document.getElementById('customPayAmount').value) || 0;
+  if(actualPayAmount <= 0){
+    PC_toast('❌ 請輸入有效的繳費金額');
+    return;
+  }
+  
   let payerName,payerEmail;
   if(currentUser){payerName=currentUser.name;payerEmail=currentUser.email;}
   else{
@@ -264,7 +286,7 @@ function submitPayment(){
           if(!m.txHistory)m.txHistory=[];
           m.txHistory.push({
             txId,
-            amount: personalAmt,  // 使用實際繳費金額（剩餘待繳）
+            amount: actualPayAmount,  // 使用自定義繳費金額
             time: now,
             method: selectedMethod,
             remark: remark
@@ -283,7 +305,7 @@ function submitPayment(){
             // 補充 Email 並繳費
             m.email=payerEmail;
             if(!m.txHistory)m.txHistory=[];
-            m.txHistory.push({txId, amount: personalAmt, time: now, method: selectedMethod, remark: remark});
+            m.txHistory.push({txId, amount: actualPayAmount, time: now, method: selectedMethod, remark: remark});
             const expectedAmt = m.customAmount !== null && m.customAmount !== undefined ? m.customAmount : (e.amount || 0);
             const paidTotal = m.txHistory.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
             m.status = paidTotal >= expectedAmt ? 'paid' : 'pending';
@@ -303,21 +325,21 @@ function submitPayment(){
               txId,
               payMethod:selectedMethod,
               customAmount:null,
-              txHistory:[{txId, amount: personalAmt, time: now, method: selectedMethod, remark: remark}]
+              txHistory:[{txId, amount: actualPayAmount, time: now, method: selectedMethod, remark: remark}]
             });
           }
         }
         localStorage.setItem(ownerKey,JSON.stringify(evts));
         // Notify event owner
         const ownerEmail=ownerKey.replace('pc_events__','');
-        PC_sendNotify(ownerEmail,'收到繳費通知 💰',`${payerName}(${payerEmail}) 已繳費「${foundEvent.title}」$${personalAmt.toLocaleString()}，方式：${selectedMethod}，交易編號：${txId}。`,'success');
+        PC_sendNotify(ownerEmail,'收到繳費通知 💰',`${payerName}(${payerEmail}) 已繳費「${foundEvent.title}」$${actualPayAmount.toLocaleString()}，方式：${selectedMethod}，交易編號：${txId}。`,'success');
       }
     }
     document.getElementById('rcTxId').textContent=txId;
     document.getElementById('rcTitle').textContent=foundEvent.title;
     document.getElementById('rcName').textContent=payerName;
     document.getElementById('rcEmail').textContent=payerEmail;
-    document.getElementById('rcAmount').textContent='$'+personalAmt.toLocaleString();
+    document.getElementById('rcAmount').textContent='$'+actualPayAmount.toLocaleString();
     document.getElementById('rcMethod').textContent=selectedMethod;
     document.getElementById('rcRemark').textContent=remark||'—';
     document.getElementById('rcTime').textContent=new Date().toLocaleString('zh-TW');

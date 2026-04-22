@@ -706,7 +706,11 @@ function renderMembers(){
         const remainingAmt = expectedAmt - paidTotal;
         
         if (targetMember.status === 'paid' && remainingAmt <= 0) {
-          amt = '—'; // 已繳清，不顯示金額
+          if (remainingAmt < 0) {
+            amt = '溢繳 $' + Math.abs(remainingAmt); // 顯示溢繳金額
+          } else {
+            amt = '—'; // 已繳清，不顯示金額
+          }
         } else if (remainingAmt > 0) {
           amt = '$' + remainingAmt; // 顯示剩餘待繳金額
         } else {
@@ -1321,7 +1325,7 @@ function confirmDelete(){
 function openAmtEdit(){
   const payers=PC_getPayers(evt);document.getElementById('defaultAmtText').textContent=evt.amount||0;amtSelections=new Set();document.getElementById('selectAllCheck').classList.remove('checked');
   document.getElementById('amtList').innerHTML=payers.length
-    ?payers.map(m=>{const ri=(evt.members||[]).indexOf(m);return `<div class="amt-member-row"><div class="amt-check" id="amtck_${ri}" onclick="toggleAmtSel(${ri},this)"></div><span style="flex:1;font-size:0.86rem;font-weight:600">${m.email||m.name||'—'}</span><span style="font-size:0.78rem;color:var(--text3);margin-right:8px">現：$${PC_getExpectedAmount(evt,m)}</span><input type="number" class="form-input" id="amt_${ri}" value="" placeholder="${evt.amount||0}" min="0" style="width:110px;padding:7px 10px;font-size:0.85rem" onkeydown="if(event.key==='Enter')saveAmtEdit()"></div>`;}).join('')
+    ?payers.map(m=>{const ri=(evt.members||[]).indexOf(m);const totalExpected=PC_getExpectedAmount(evt,m);return `<div class="amt-member-row"><div class="amt-check" id="amtck_${ri}" onclick="toggleAmtSel(${ri},this)"></div><span style="flex:1;font-size:0.86rem;font-weight:600">${m.email||m.name||'—'}</span><span style="font-size:0.78rem;color:var(--text3);margin-right:8px">總應繳：$${totalExpected}</span><input type="number" class="form-input" id="amt_${ri}" value="" placeholder="${totalExpected}" min="0" style="width:110px;padding:7px 10px;font-size:0.85rem" onkeydown="if(event.key==='Enter')saveAmtEdit()"></div>`;}).join('')
     :'<div style="color:var(--text3);text-align:center;padding:16px;font-size:0.85rem">目前沒有繳費者</div>';
   document.getElementById('amtOverlay').classList.add('show');
 }
@@ -1336,24 +1340,20 @@ function saveAmtEdit(){
     if(inp){
       const newAmt=inp.value===''?null:parseFloat(inp.value)||0;
       if(newAmt!==null && newAmt!==0){
-        // 累加邏輯：增加應繳金額
-        if(m.customAmount===null || m.customAmount===undefined){
-          m.customAmount=newAmt; // 第一次設定
-        } else {
-          m.customAmount+=newAmt; // 累加
-        }
+        // 覆蓋模式：直接設定新的應繳金額
+        m.customAmount = newAmt;  // 直接覆蓋，不累加
         
         // 計算已繳總額
         const paidTotal = (m.txHistory || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
         
         // 根據已繳金額更新狀態
         if(paidTotal >= m.customAmount){
-          m.status = 'paid';  // 已繳清
+          m.status = 'paid';  // 已繳清（或超繳）
         } else {
           m.status = 'pending';  // 還有待繳
         }
         
-        if(m.email)PC_sendNotify(m.email,'繳費金額已更新 💰',`你在「${evt.title}」的應繳金額已更新為 $${m.customAmount}。請完成剩餘繳費。`,'info');
+        if(m.email)PC_sendNotify(m.email,'繳費金額已更新 💰',`你在「${evt.title}」的應繳金額已更新為 $${m.customAmount}。`,'info');
       }
     }
   });
