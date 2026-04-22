@@ -469,11 +469,11 @@ function renderSidebar(){
   // 過濾掉 pending_invite 狀態的活動
   const joined=evts.filter(e=>!e._isOwner && (!e._myMember || e._myMember.status !== 'pending_invite'));
   let html='';
-  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mc')">已建立活動 <span class="chevron open" id="mc_icon">▼</span></div><div class="sidebar-menu-list open" id="mc">`;
-  if(!created.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無資料</div>`;
+  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mc')">已建立 <span class="chevron open" id="mc_icon">▼</span></div><div class="sidebar-menu-list open" id="mc">`;
+  if(!created.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無</div>`;
   html+=created.map(e=>`<a class="nav-event${e.id===eventId?' current':''}" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('')+'</div>';
-  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mj')">已加入活動 <span class="chevron open" id="mj_icon">▼</span></div><div class="sidebar-menu-list open" id="mj">`;
-  if(!joined.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無資料</div>`;
+  html+=`<div class="sidebar-menu-header" onclick="toggleSideMenu('mj')">已加入 <span class="chevron open" id="mj_icon">▼</span></div><div class="sidebar-menu-list open" id="mj">`;
+  if(!joined.length)html+=`<div style="padding:4px 12px;font-size:0.74rem;color:var(--text3)">無</div>`;
   html+=joined.map(e=>`<a class="nav-event${e.id===eventId?' current':''}" href="event.html?id=${e.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${e.title}</span></a>`).join('')+'</div>';
   const c=document.getElementById('sidebarEvents');if(c)c.innerHTML=html;
   PC_fillSidebarUser();
@@ -1214,27 +1214,43 @@ function renderBlockList(){
 // ── Payment Methods Setting ──
 function openPaymentMethodsModal(){
   const DEFAULT_METHODS = [
-    {id:'linepay', icon:'💚', name:'LINE Pay'},
-    {id:'jkopay', icon:'🔵', name:'街口支付'},
-    {id:'credit', icon:'💳', name:'信用卡'},
-    {id:'atm', icon:'🏧', name:'ATM 轉帳'}
+    {id:'linepay', icon:'💚', name:'LINE Pay', active:true},
+    {id:'jkopay', icon:'🔵', name:'街口支付', active:true},
+    {id:'credit', icon:'💳', name:'信用卡', active:true},
+    {id:'atm', icon:'🏧', name:'ATM 轉帳', active:true}
   ];
-  
-  // 獲取發起人的繳費方式
+
+  // 獲取發起人的繳費方式（含停用狀態）
   let allMethods = DEFAULT_METHODS;
   const saved = localStorage.getItem('pc_pay_methods__'+user.email);
   if(saved){
     const parsed = JSON.parse(saved);
     if(parsed.length) allMethods = parsed;
   }
-  
-  // 獲取活動當前設定
+
+  // 獲取活動當前設定（上次儲存的選取）
+  // evt.paymentMethods 存在 → 用上次選取；不存在 → 預設全部未選
   const currentMethods = evt.paymentMethods || [];
-  
+
   // 渲染選項
   const list = document.getElementById('paymentMethodsList');
   list.innerHTML = allMethods.map(m => {
-    const checked = currentMethods.includes(m.id) || currentMethods.length === 0;
+    const isDisabled = m.active === false;
+    const checked = !isDisabled && currentMethods.includes(m.id);
+
+    if(isDisabled){
+      return `
+        <label style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border-radius:8px;border:1.5px solid var(--border);opacity:0.5;cursor:not-allowed;">
+          <div style="width:18px;height:18px;border-radius:4px;border:2px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-size:0.55rem;color:var(--text3);font-weight:700;white-space:nowrap;">停用</span>
+          </div>
+          <span style="font-size:1.3rem;">${m.icon}</span>
+          <span style="font-weight:600;flex:1;color:var(--text3);">${m.name}</span>
+          <span style="font-size:0.72rem;color:var(--text3);background:var(--border);padding:2px 8px;border-radius:100px;">已停用</span>
+        </label>
+      `;
+    }
+
     return `
       <label style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border-radius:8px;cursor:pointer;border:1.5px solid ${checked?'var(--accent)':'var(--border)'};transition:all 0.15s;">
         <input type="checkbox" id="pm_${m.id}" value="${m.id}" ${checked?'checked':''} style="width:18px;height:18px;cursor:pointer;">
@@ -1243,7 +1259,7 @@ function openPaymentMethodsModal(){
       </label>
     `;
   }).join('');
-  
+
   // 監聽變化更新樣式
   list.querySelectorAll('input[type="checkbox"]').forEach(cb => {
     cb.addEventListener('change', function(){
@@ -1251,27 +1267,26 @@ function openPaymentMethodsModal(){
       label.style.borderColor = this.checked ? 'var(--accent)' : 'var(--border)';
     });
   });
-  
+
   document.getElementById('paymentMethodsOverlay').classList.add('show');
 }
 
 function savePaymentMethods(){
   const selected = Array.from(document.querySelectorAll('#paymentMethodsList input[type="checkbox"]:checked')).map(cb => cb.value);
-  
-  if(selected.length === 0){
-    PC_toast('請至少選擇一種繳費方式');
-    return;
-  }
-  
+
   const evts = PC_getEvents();
   const e = evts.find(x => x.id === eventId);
   if(e){
     e.paymentMethods = selected;
     PC_saveEvents(evts);
   }
-  
+
   closeOverlay('paymentMethodsOverlay');
-  PC_toast('✅ 繳費方式設定已更新');
+  if(selected.length === 0){
+    PC_toast('⚠️ 尚未選擇繳費方式，成員目前無法繳費');
+  } else {
+    PC_toast('✅ 繳費方式設定已更新');
+  }
 }
 
 // ── Add member ──

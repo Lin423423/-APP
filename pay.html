@@ -233,6 +233,22 @@ function setupPage(){
   // 如果活動有設定繳費方式，只顯示活動啟用的方式
   if(foundEvent.paymentMethods && foundEvent.paymentMethods.length > 0){
     methods = methods.filter(m => foundEvent.paymentMethods.includes(m.id));
+  } else if(foundEvent.paymentMethods && foundEvent.paymentMethods.length === 0){
+    // 明確設定為空（代表管理員還未選擇任何繳費方式）
+    methods = [];
+  }
+
+  if(methods.length === 0){
+    document.getElementById('payMethods').innerHTML = `
+      <div style="background:var(--orange-light);border:1px solid #fed7aa;border-radius:10px;padding:14px 16px;font-size:0.86rem;color:var(--orange);text-align:center;">
+        ⚠️ 此活動尚未設定可用的繳費方式，請聯繫活動管理員。
+      </div>`;
+    document.getElementById('methodsLabel').textContent = '尚未設定';
+    // 禁用繳費按鈕
+    const btn = document.querySelector('.submit-btn');
+    if(btn){ btn.disabled=true; btn.style.opacity='0.4'; btn.style.cursor='not-allowed'; }
+    selectedMethod = '';
+    return;
   }
   
   // 渲染為一行一個
