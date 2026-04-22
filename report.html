@@ -106,8 +106,8 @@ tbody tr:last-child td{border-bottom:none;}
   <div class="topbar">
     <div><div class="page-title">財務報表</div><div class="page-sub">選擇活動，查看對應收款統計與明細</div></div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost" onclick="showPdf()">📄 匯出 PDF</button>
-      <button class="btn btn-primary" style="color:#fff" onclick="PC_toast('Excel 匯出（後端串接後啟用）')">📊 匯出 Excel</button>
+      <button class="btn btn-ghost" onclick="exportPDF()">📄 匯出 PDF</button>
+      <button class="btn btn-primary" style="color:#fff;justify-content:center;" onclick="exportExcel()">📊 匯出 Excel</button>
     </div>
   </div>
 
@@ -177,7 +177,7 @@ tbody tr:last-child td{border-bottom:none;}
     </div>
     <div class="pdf-section-title">各活動明細</div>
     <table class="pdf-table"><thead><tr><th>活動名稱</th><th>實收</th><th>應收</th><th>繳費率</th></tr></thead><tbody id="pdfBody"></tbody></table>
-    <button class="pdf-dl-btn" onclick="PC_toast('PDF 下載（後端串接後啟用）');document.getElementById('pdfOverlay').classList.remove('show')">⬇ 下載 PDF</button>
+    <button class="pdf-dl-btn" onclick="doPrint()">🖨 列印 / 儲存為 PDF</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -326,8 +326,40 @@ function renderReport(){
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">無資料</td></tr>';
 }
 
-function showPdf(){
+// ── 輔助：取得選取活動的所有成員資料列 ──
+function getExportRows(){
   const evts=PC_getEvents().filter(e=>selectedIds.has(e.id));
+  const rows=[];
+  evts.forEach(e=>{
+    (e.members||[]).forEach(m=>{
+      const roles=Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);
+      const isPayer=roles.includes('payer');
+      const expectedAmt=isPayer?PC_getExpectedAmount(e,m):0;
+      const txHistory=m.txHistory||[];
+      const paidTotal=txHistory.reduce((s,tx)=>s+(Number(tx.amount)||0),0);
+      const lastTx=txHistory.length?txHistory[txHistory.length-1]:null;
+      const paidAt=lastTx?(lastTx.paidAt||lastTx.time||m.paidAt||'—'):(m.paidAt||'—');
+      const mainRole=roles[0]||'payer';
+      const roleTxt=mainRole==='payer'?'繳費者':mainRole==='counter'?'統計者':mainRole==='admin'?'管理員':'觀察者';
+      const stTxt=!isPayer?roleTxt:(m.status==='paid'?'已繳費':m.status==='overdue'?'逾期未繳':'待繳費');
+      rows.push({
+        eventTitle:e.title,
+        name:m.name||m.email||'—',
+        email:m.email||'—',
+        role:roleTxt,
+        expected:isPayer?expectedAmt:'—',
+        paid:isPayer?paidTotal:'—',
+        status:stTxt,
+        paidAt
+      });
+    });
+  });
+  return {evts,rows};
+}
+
+// ── PDF 匯出（開啟預覽 → 瀏覽器列印） ──
+function exportPDF(){
+  const {evts,rows}=getExportRows();
   if(!evts.length){PC_toast('請先選擇至少一個活動');return;}
   let c=0,ex=0,tp=0,paid=0;
   evts.forEach(e=>{c+=PC_getCollected(e);ex+=PC_getExpected(e);const p=PC_getPayers(e);tp+=p.length;paid+=p.filter(m=>m.status==='paid').length;});
@@ -335,12 +367,115 @@ function showPdf(){
   document.getElementById('pdfTotal').textContent='$'+c.toLocaleString();
   document.getElementById('pdfRate').textContent=tp?Math.round(paid/tp*100)+'%':'0%';
   document.getElementById('pdfEvts').textContent=evts.length;
+  // 各活動摘要
   document.getElementById('pdfBody').innerHTML=evts.map(e=>{
     const ec=PC_getCollected(e),ex2=PC_getExpected(e);
     const r=ex2?Math.round(ec/ex2*100):0;
     return `<tr><td>${e.title}</td><td style="color:#4f6ef7;font-weight:700">$${ec.toLocaleString()}</td><td>$${ex2.toLocaleString()}</td><td>${r}%</td></tr>`;
   }).join('');
+  // 成員明細表
+  const detailHtml=rows.map(r=>`<tr>
+    <td>${r.name}</td><td style="color:#888;font-size:0.78rem">${r.eventTitle}</td>
+    <td>${r.role}</td>
+    <td style="font-weight:700">${r.expected==='—'?'—':'$'+Number(r.expected).toLocaleString()}</td>
+    <td style="font-weight:700;color:#16a34a">${r.paid==='—'?'—':'$'+Number(r.paid).toLocaleString()}</td>
+    <td style="color:#888;font-size:0.75rem">${r.paidAt}</td>
+    <td><span style="padding:2px 8px;border-radius:100px;font-size:0.7rem;font-weight:700;background:${r.status==='已繳費'?'#dcfce7':r.status==='逾期未繳'?'#fee2e2':'#fef3c7'};color:${r.status==='已繳費'?'#16a34a':r.status==='逾期未繳'?'#dc2626':'#d97706'}">${r.status}</span></td>
+  </tr>`).join('');
+  // 插入成員明細區塊（如果 pdf-doc 沒有的話就加）
+  let detailSection=document.getElementById('pdfMemberDetail');
+  if(!detailSection){
+    const pdfDoc=document.querySelector('.pdf-doc');
+    detailSection=document.createElement('div');
+    detailSection.id='pdfMemberDetail';
+    pdfDoc.querySelector('.pdf-dl-btn').before(detailSection);
+  }
+  detailSection.innerHTML=`
+    <div class="pdf-section-title" style="margin-top:20px;">成員繳費明細</div>
+    <table class="pdf-table"><thead><tr><th>姓名</th><th>活動</th><th>角色</th><th>應繳</th><th>已繳</th><th>繳費時間</th><th>狀態</th></tr></thead>
+    <tbody>${detailHtml||'<tr><td colspan="7" style="text-align:center;color:#888">無資料</td></tr>'}</tbody></table>`;
   document.getElementById('pdfOverlay').classList.add('show');
+}
+
+function doPrint(){
+  const pdfDoc=document.querySelector('.pdf-doc');
+  const w=window.open('','_blank','width=700,height=900');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>PayClub 財務報表</title>
+    <style>
+      body{font-family:'Noto Sans TC',sans-serif;color:#111;padding:32px;font-size:13px;}
+      h2{font-size:1.5rem;color:#4f6ef7;margin:0 0 4px;}
+      .sep{height:3px;background:#4f6ef7;border-radius:4px;margin:12px 0;}
+      .stats{display:flex;gap:32px;margin-bottom:20px;}
+      .stat-box{text-align:center;}
+      .stat-val{font-size:1.6rem;font-weight:800;color:#4f6ef7;}
+      .stat-lbl{font-size:0.72rem;color:#888;}
+      table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+      th{background:#f5f6fa;padding:8px 12px;font-size:0.7rem;text-align:left;border-bottom:2px solid #e5e7eb;color:#6b7280;}
+      td{padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:0.82rem;}
+      .badge{padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:700;}
+      h3{font-size:0.78rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin:20px 0 8px;}
+      @media print{@page{margin:20mm;}}
+    </style></head><body>
+    ${pdfDoc.innerHTML.replace(/<button[^>]*>.*?<\/button>/gs,'').replace(/class="pdf-close[^"]*"/g,'style="display:none"')}
+    <script>window.onload=()=>window.print();<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+// ── Excel 匯出（SheetJS） ──
+function exportExcel(){
+  const {evts,rows}=getExportRows();
+  if(!evts.length){PC_toast('請先選擇至少一個活動');return;}
+
+  // 動態載入 SheetJS
+  if(typeof XLSX==='undefined'){
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=()=>_doExcel(evts,rows);
+    document.head.appendChild(s);
+    PC_toast('⏳ 載入 Excel 模組中...');
+  } else {
+    _doExcel(evts,rows);
+  }
+}
+
+function _doExcel(evts,rows){
+  const wb=XLSX.utils.book_new();
+
+  // Sheet 1：活動摘要
+  const summaryData=[['活動名稱','實收金額','應收金額','繳費率','繳費人數','已繳人數']];
+  evts.forEach(e=>{
+    const c=PC_getCollected(e),ex=PC_getExpected(e);
+    const p=PC_getPayers(e);
+    const paidN=p.filter(m=>m.status==='paid').length;
+    summaryData.push([e.title,'$'+c.toLocaleString(),'$'+ex.toLocaleString(),(ex?Math.round(c/ex*100):0)+'%',p.length,paidN]);
+  });
+  // 總計列
+  let tc=0,tex=0,tp=0,tpaid=0;
+  evts.forEach(e=>{tc+=PC_getCollected(e);tex+=PC_getExpected(e);const p=PC_getPayers(e);tp+=p.length;tpaid+=p.filter(m=>m.status==='paid').length;});
+  summaryData.push(['【總計】','$'+tc.toLocaleString(),'$'+tex.toLocaleString(),(tex?Math.round(tc/tex*100):0)+'%',tp,tpaid]);
+  const ws1=XLSX.utils.aoa_to_sheet(summaryData);
+  ws1['!cols']=[{wch:24},{wch:12},{wch:12},{wch:10},{wch:10},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,ws1,'活動摘要');
+
+  // Sheet 2：成員明細
+  const detailData=[['姓名','Email','活動','角色','應繳金額','已繳金額','繳費狀態','最後繳費時間']];
+  rows.forEach(r=>{
+    detailData.push([
+      r.name, r.email, r.eventTitle, r.role,
+      r.expected==='—'?'—':'$'+Number(r.expected).toLocaleString(),
+      r.paid==='—'?'—':'$'+Number(r.paid).toLocaleString(),
+      r.status, r.paidAt
+    ]);
+  });
+  const ws2=XLSX.utils.aoa_to_sheet(detailData);
+  ws2['!cols']=[{wch:14},{wch:26},{wch:20},{wch:10},{wch:10},{wch:10},{wch:12},{wch:18}];
+  XLSX.utils.book_append_sheet(wb,ws2,'成員明細');
+
+  const date=new Date().toLocaleDateString('zh-TW').replace(/\//g,'-');
+  XLSX.writeFile(wb,`PayClub_報表_${date}.xlsx`);
+  PC_toast('✅ Excel 已下載');
 }
 
 // Init: select all by default
