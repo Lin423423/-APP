@@ -1791,14 +1791,20 @@ function openBlockListModal(){
   if(blocked.length===0){
     content='<div style="color:var(--text3);text-align:center;padding:30px;font-size:0.9rem">目前沒有封鎖的用戶</div>';
   } else {
-    content=blocked.map(email=>`
-      <div style="padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <div>
-          <div style="font-weight:600;">${email}</div>
+    content=blocked.map(b=>{
+      // 相容物件格式 {email,name} 和舊字串格式
+      const email = typeof b==='object' ? b.email : b;
+      const name  = typeof b==='object' && b.name ? b.name : email;
+      return `
+        <div style="padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-weight:600;">${name}</div>
+            <div style="font-size:0.76rem;color:var(--text3);margin-top:2px;">${email}</div>
+          </div>
+          <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem;color:var(--accent)" onclick="unblock('${email}');openBlockListModal()">解除封鎖</button>
         </div>
-        <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem;color:var(--accent)" onclick="unblock('${email}');openBlockListModal()">解除封鎖</button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
   
   const html=`
