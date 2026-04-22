@@ -230,12 +230,14 @@ function setupPage(){
     }
   }
   
-  // 如果活動有設定繳費方式，只顯示活動啟用的方式
-  if(foundEvent.paymentMethods && foundEvent.paymentMethods.length > 0){
-    methods = methods.filter(m => foundEvent.paymentMethods.includes(m.id));
-  } else if(foundEvent.paymentMethods && foundEvent.paymentMethods.length === 0){
-    // 明確設定為空（代表管理員還未選擇任何繳費方式）
+  // 繳費方式過濾：
+  // - paymentMethods === undefined → 從未設定，擋住
+  // - paymentMethods === [] → 明確設定為空，擋住
+  // - paymentMethods 有內容 → 只顯示選取的
+  if(!foundEvent.paymentMethods || foundEvent.paymentMethods.length === 0){
     methods = [];
+  } else {
+    methods = methods.filter(m => foundEvent.paymentMethods.includes(m.id));
   }
 
   if(methods.length === 0){
