@@ -187,7 +187,7 @@ body{display:flex;}
   <!-- Editable description -->
   <div class="desc-row">
     <div class="desc-box" id="descBox" onclick="toggleDescEdit()">
-      <span id="evtDescText">無說明</span>
+      <span id="evtDescText">點擊新增說明</span>
     </div>
   </div>
   <div id="descEditArea" style="display:none;margin-bottom:12px;">
@@ -197,10 +197,11 @@ body{display:flex;}
       <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.82rem" onclick="toggleDescEdit()">取消</button>
     </div>
   </div>
-
-  <div class="dl-row">
+  
+  <div class="dl-row" style="display:flex;align-items:center;gap:8px;">
     <span style="font-size:0.84rem;color:var(--text2)">截止：</span>
     <button class="dl-date-btn" id="dlDisplay" onclick="toggleDlEdit()">—</button>
+    <div style="margin-left:auto;" id="settingsButtonContainer"></div>
   </div>
   <div id="dlEditRow" style="display:none;margin-bottom:14px;">
     <div class="date-picker-wrap" style="margin-bottom:8px;">
@@ -562,7 +563,7 @@ function renderPage(){
   
   let actions='';
   if(isAdmin()){
-    actions+=`<div style="position:relative;display:inline-block;">
+    actions+=`<div style="position:relative;display:inline-block;" id="settingsButton">
       <button class="btn btn-primary" onclick="toggleActionMenu()" id="actionMenuBtn">⚙️ 設定</button>
       <div class="action-menu" id="actionMenu" style="display:none;">
         <div class="action-menu-item" onclick="closeActionMenu();sendReminder()">📣 催款</div>
@@ -583,7 +584,11 @@ function renderPage(){
     actions+=`<button class="btn btn-ghost" onclick="location.href='report.html'">📄 報表</button>`;
   }
   document.getElementById('actionBar').innerHTML=actions;
-
+  const settingsBtn = document.getElementById('settingsButton');
+  const settingsContainer = document.getElementById('settingsButtonContainer');
+  if(settingsBtn && settingsContainer){
+    settingsContainer.appendChild(settingsBtn);
+  }
   const payers=PC_getPayers(evt);
   const paid=payers.filter(m=>m.status==='paid').length;
   const pend=payers.filter(m=>m.status==='pending').length;
