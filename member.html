@@ -185,26 +185,30 @@ function joinEvent(){
   const result=PC_findEventByCode(code);
   if(!result){errEl.textContent='找不到此邀請碼，請確認後重試';errEl.style.display='block';return;}
   errEl.style.display='none';
-  
-  // 檢查是否被封鎖（封鎖才擋住，無法加入）
+
+  // ── 封鎖檢查（最優先，以 pc_blocked__ 為唯一依據）──
   const blockKey='pc_blocked__'+result.event.id;
   const blockedList=JSON.parse(localStorage.getItem(blockKey)||'[]');
   if(blockedList.find(b=>b.email===user.email)){
-    errEl.textContent='🚫 你已被此活動的發起人封鎖，如需解除請聯繫管理員';
+    errEl.textContent='🚫 你已被此活動的發起人封鎖，須等管理員解除封鎖後才可再次申請';
     errEl.style.display='block';
     return;
   }
 
-  // 被拒絕可以重新申請（清除舊的 rejected 紀錄後重新送出）
+  // ── 被拒絕可以重新申請 ──
   const allReqs=PC_getJoinRequests(result.event.id);
   const myPrevReq=allReqs.find(r=>r.email===user.email);
   if(myPrevReq&&myPrevReq.status==='rejected'){
-    // 清除舊的拒絕紀錄，讓他可以重新申請
     myPrevReq.status='pending';
     myPrevReq.requestedAt=new Date().toISOString();
     PC_saveJoinRequests(result.event.id, allReqs);
-    // 清除舊的拒絕通知 flag，以防下次被拒絕時不再發通知
     localStorage.removeItem('pc_reject_notif__'+result.event.id+'__'+user.email);
+    // 確保加入 joined 列表
+    const joinedNow=getMemberJoined();
+    if(!joinedNow.find(j=>j.eventId===result.event.id)){
+      joinedNow.push({eventId:result.event.id,eventTitle:result.event.title,ownerKey:result.ownerKey,joinedAt:new Date().toISOString()});
+      saveMemberJoined(joinedNow);
+    }
     const ownerEmail=result.ownerKey.replace('pc_events__','');
     PC_sendNotify(ownerEmail,'重新申請加入 👥',`${user.name}(${user.email}) 重新申請加入「${result.event.title}」，請前往活動頁面審核。`,'info');
     document.getElementById('inviteInput').value='';
@@ -212,16 +216,18 @@ function joinEvent(){
     renderJoined();
     return;
   }
-  
+
+  // ── 已在 joined 列表中 ──
   const joined=getMemberJoined();
   if(joined.find(j=>j.eventId===result.event.id)){PC_toast('你已加入此活動');return;}
-  
-  const reqs=PC_getJoinRequests(result.event.id);
-  const alreadyReq=reqs.find(r=>r.email===user.email&&r.status==='pending');
+
+  // ── 申請已送出等待審核 ──
+  const alreadyReq=allReqs.find(r=>r.email===user.email&&r.status==='pending');
   if(alreadyReq){PC_toast('申請已送出，等待審核');return;}
-  
-  reqs.push({email:user.email,name:user.name,requestedAt:new Date().toISOString(),status:'pending'});
-  PC_saveJoinRequests(result.event.id,reqs);
+
+  // ── 正常送出申請 ──
+  allReqs.push({email:user.email,name:user.name,requestedAt:new Date().toISOString(),status:'pending'});
+  PC_saveJoinRequests(result.event.id,allReqs);
   joined.push({eventId:result.event.id,eventTitle:result.event.title,ownerKey:result.ownerKey,joinedAt:new Date().toISOString()});
   saveMemberJoined(joined);
   document.getElementById('inviteInput').value='';
@@ -241,42 +247,53 @@ function removeAllDeleted(){
 }
 
 function renderJoined(){
-  // ── 自動處理被拒絕 / 被封鎖的活動 ──
+  // ── 自動處理被拒絕的活動（被封鎖改為保留顯示）──
   let joined=getMemberJoined();
   let changed=false;
-  joined=joined.filter((j)=>{
-    const result=PC_findEventById(j.eventId);
-    if(!result) return true; // 活動已刪除，保留讓使用者看到「已刪除」提示
-    const evt=result.event;
 
-    // 檢查封鎖
-    const blocked=JSON.parse(localStorage.getItem('pc_blocked__'+j.eventId)||'[]');
-    const isBlocked=blocked.find(b=>b.email===user.email);
-    if(isBlocked){
+  joined=joined.map((j)=>{
+    const result=PC_findEventById(j.eventId);
+    if(!result) return j; // 活動已刪除，保留
+
+    // 同步封鎖狀態：若 pc_blocked__ 有記錄 → 標記 blocked:true
+    const blockedList=JSON.parse(localStorage.getItem('pc_blocked__'+j.eventId)||'[]');
+    const isBlocked=!!blockedList.find(b=>b.email===user.email);
+    if(isBlocked && !j.blocked){
+      j.blocked=true;
+      changed=true;
+      // 發封鎖通知（只發一次）
       const flagKey='pc_block_notif__'+j.eventId+'__'+user.email;
       if(!localStorage.getItem(flagKey)){
-        PC_sendNotify(user.email,'你已被封鎖 🚫',`你已被「${evt.title}」的活動發起人封鎖，已自動退出活動。如需解除封鎖，請聯繫活動管理員。`,'warning');
+        PC_sendNotify(user.email,'你已被封鎖 🚫',`你已被「${result.event.title}」的活動發起人封鎖。如需解除封鎖，請聯繫活動管理員。`,'warning');
         localStorage.setItem(flagKey,'1');
       }
-      changed=true;
-      return false;
     }
+    if(!isBlocked && j.blocked){
+      // 已解封，清除標記
+      j.blocked=false;
+      changed=true;
+    }
+    return j;
+  });
 
-    // 檢查拒絕（自動退出，但可重新申請）
+  // 被拒絕 → 自動移除（可重新申請）
+  joined=joined.filter((j)=>{
+    const result=PC_findEventById(j.eventId);
+    if(!result||j.blocked) return true; // 活動已刪除或封鎖中，保留
     const reqs=PC_getJoinRequests(j.eventId);
     const myReq=reqs.find(r=>r.email===user.email);
     if(myReq&&myReq.status==='rejected'){
       const flagKey='pc_reject_notif__'+j.eventId+'__'+user.email;
       if(!localStorage.getItem(flagKey)){
-        PC_sendNotify(user.email,'申請已被拒絕 ❌',`你加入「${evt.title}」的申請已被拒絕，已自動退出活動。你可以重新輸入邀請碼再次申請。`,'warning');
+        PC_sendNotify(user.email,'申請已被拒絕 ❌',`你加入「${result.event.title}」的申請已被拒絕，已自動退出活動。你可以重新輸入邀請碼再次申請。`,'warning');
         localStorage.setItem(flagKey,'1');
       }
       changed=true;
       return false;
     }
-
     return true;
   });
+
   if(changed) saveMemberJoined(joined);
 
   const emptyEl=document.getElementById('emptyState');
@@ -289,6 +306,23 @@ function renderJoined(){
   document.getElementById('removeDeletedBtn').style.display=hasDeleted?'inline-flex':'none';
 
   container.innerHTML=joined.map((j,ji)=>{
+    // 被封鎖的活動：顯示封鎖提示卡片
+    if(j.blocked){
+      const result=PC_findEventById(j.eventId);
+      const title=result?result.event.title:j.eventTitle;
+      return `<div class="event-card no-click" style="border-color:#fecaca;">
+        <div class="ec-main">
+          <div class="ec-header">
+            <div class="ec-title" style="color:var(--text2)">${title}</div>
+            <span class="badge badge-red">已封鎖</span>
+          </div>
+          <div style="background:var(--red-light);border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.84rem;color:var(--red);">
+            🚫 你已被此活動的發起人封鎖，須等管理員解除封鎖後才可重新申請。
+          </div>
+        </div>
+      </div>`;
+    }
+
     const reqs=PC_getJoinRequests(j.eventId);
     const myReq=reqs.find(r=>r.email===user.email);
     const approved=myReq&&myReq.status==='approved';

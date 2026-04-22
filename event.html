@@ -1142,31 +1142,36 @@ function toggleBlockPanel(){
 
 function blockUser(reqIndex){
   const reqs=PC_getJoinRequests(eventId);
-  const user=reqs[reqIndex];
-  
+  const blockedMember=reqs[reqIndex];
+
   // 從申請列表移除
   reqs.splice(reqIndex,1);
   PC_saveJoinRequests(eventId,reqs);
-  
+
   // 添加到封鎖名單
   const blockKey='pc_blocked__'+eventId;
   const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
-  if(!blocked.find(b=>b.email===user.email)){
-    blocked.push({
-      email:user.email,
-      name:user.name,
-      blockedAt:new Date().toISOString()
-    });
+  if(!blocked.find(b=>b.email===blockedMember.email)){
+    blocked.push({email:blockedMember.email, name:blockedMember.name, blockedAt:new Date().toISOString()});
     localStorage.setItem(blockKey,JSON.stringify(blocked));
   }
-  
-  // 從該用戶的已加入記錄中移除此活動
-  const memberJoinedKey='pc_member_joined__'+user.email;
+
+  // 標記 joined 紀錄為 blocked（不刪除，讓 member.html 能持續偵測）
+  const memberJoinedKey='pc_member_joined__'+blockedMember.email;
   const memberJoined=JSON.parse(localStorage.getItem(memberJoinedKey)||'[]');
-  const updated=memberJoined.filter(j=>j.eventId!==eventId);
-  localStorage.setItem(memberJoinedKey,JSON.stringify(updated));
-  
-  PC_sendNotify(user.email,'無法加入活動','你已被「'+evt.title+'」的管理員封鎖，無法加入此活動。','error');
+  const jIdx=memberJoined.findIndex(j=>j.eventId===eventId);
+  if(jIdx>=0){
+    memberJoined[jIdx].blocked=true;
+  } else {
+    // 若不在 joined 列表（直接封鎖申請中的人），加一筆 blocked 紀錄
+    memberJoined.push({eventId, eventTitle:evt.title, ownerKey:PC_eventsKey(PC_getUser()), blocked:true, joinedAt:new Date().toISOString()});
+  }
+  localStorage.setItem(memberJoinedKey,JSON.stringify(memberJoined));
+
+  // 清除舊的封鎖通知 flag，讓此次封鎖能再次發通知
+  localStorage.removeItem('pc_block_notif__'+eventId+'__'+blockedMember.email);
+
+  PC_sendNotify(blockedMember.email,'你已被封鎖 🚫','你已被「'+evt.title+'」的活動發起人封鎖，已自動退出活動。如需解除封鎖，請聯繫活動管理員。','error');
   renderJoinReqs();
   renderPage();
   PC_toast('🚫 已封鎖用戶');
@@ -1176,14 +1181,25 @@ function unblockUser(email){
   const blockKey='pc_blocked__'+eventId;
   const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
   const unblockedUser=blocked.find(b=>b.email===email);
-  const updated=blocked.filter(b=>b.email!==email);
-  localStorage.setItem(blockKey,JSON.stringify(updated));
-  
-  // 發送通知
-  if(unblockedUser){
-    PC_sendNotify(email,'解除封鎖通知','「'+evt.title+'」已解除對你的封鎖，你現在可以重新申請加入。','success');
+  localStorage.setItem(blockKey,JSON.stringify(blocked.filter(b=>b.email!==email)));
+
+  // 清除 joined 紀錄上的 blocked 標記
+  const memberJoinedKey='pc_member_joined__'+email;
+  const memberJoined=JSON.parse(localStorage.getItem(memberJoinedKey)||'[]');
+  const jIdx=memberJoined.findIndex(j=>j.eventId===eventId);
+  if(jIdx>=0){
+    // 解封後直接移除 joined 紀錄，讓成員重新申請
+    memberJoined.splice(jIdx,1);
+    localStorage.setItem(memberJoinedKey,JSON.stringify(memberJoined));
   }
-  
+
+  // 清除封鎖相關 flag，讓之後再被封鎖時能重新發通知
+  localStorage.removeItem('pc_block_notif__'+eventId+'__'+email);
+
+  if(unblockedUser){
+    PC_sendNotify(email,'封鎖已解除 ✅','「'+evt.title+'」已解除對你的封鎖，你現在可以重新輸入邀請碼申請加入。','success');
+  }
+
   renderBlockList();
   renderPage();
   PC_toast('✅ 已解除封鎖');
@@ -1744,25 +1760,28 @@ function rejectJoin(email){
 function blockAndReject(email){
   const reqs=PC_getJoinRequests(eventId);
   const req=reqs.find(r=>r.email===email);
-  
   if(!req){PC_toast('❌ 找不到申請');return;}
-  
+
   // 拒絕申請
   req.status='rejected';
   PC_saveJoinRequests(eventId,reqs);
-  
-  // 添加到封鎖名單
+
+  // 添加到封鎖名單（統一用物件格式）
   const blocked=JSON.parse(localStorage.getItem('pc_blocked__'+eventId)||'[]');
-  if(!blocked.includes(email)){
-    blocked.push(email);
+  if(!blocked.find(b=>b.email===email||b===email)){
+    blocked.push({email:email, name:req.name||email, blockedAt:new Date().toISOString()});
     localStorage.setItem('pc_blocked__'+eventId,JSON.stringify(blocked));
   }
-  
-  PC_sendNotify(email,'加入申請未通過 ❌',`你的「${evt.title}」加入申請未獲通過。`,'warning');
-  
+
+  // 清除舊的封鎖通知 flag
+  localStorage.removeItem('pc_block_notif__'+eventId+'__'+email);
+
+  // 發正確的封鎖通知
+  PC_sendNotify(email,'你已被封鎖 🚫',`你已被「${evt.title}」的活動發起人封鎖，無法再次申請加入。如需解除封鎖，請聯繫活動管理員。`,'error');
+
   renderPage();
   PC_toast('✅ 已封鎖並拒絕');
-  openJoinRequestModal();  // 重新打開以刷新列表
+  openJoinRequestModal();
 }
 
 // ── 封鎖名單彈窗 ──
@@ -1795,9 +1814,15 @@ function openBlockListModal(){
 }
 
 function unblock(email){
-  const blocked=JSON.parse(localStorage.getItem('pc_blocked__'+eventId)||'[]');
-  const filtered=blocked.filter(e=>e!==email);
-  localStorage.setItem('pc_blocked__'+eventId,JSON.stringify(filtered));
+  const blockKey='pc_blocked__'+eventId;
+  const blocked=JSON.parse(localStorage.getItem(blockKey)||'[]');
+  const unblockedUser=blocked.find(b=>b.email===email||b===email);
+  const filtered=blocked.filter(b=>b!==email&&(b.email===undefined||b.email!==email));
+  localStorage.setItem(blockKey,JSON.stringify(filtered));
+  // 清除封鎖 flag，讓之後再被封鎖時能重新發通知
+  localStorage.removeItem('pc_block_notif__'+eventId+'__'+email);
+  // 發解封通知
+  PC_sendNotify(email,'封鎖已解除 ✅',`「${evt.title}」已解除對你的封鎖，你現在可以重新輸入邀請碼申請加入。`,'success');
   PC_toast('✅ 已解除封鎖');
   renderPage();
 }
