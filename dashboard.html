@@ -120,11 +120,7 @@ body{display:flex;}
     <div class="stat-card"><div class="stat-label">進行中活動</div><div class="stat-val" id="sActive">0</div><div class="stat-sub">個活動</div></div>
   </div>
 
-  <!-- 活動邀請確認 -->
-  <div id="inviteSection" style="display:none;background:var(--orange-light);border:1px solid #fed7aa;border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;">
-    <div style="font-size:0.9rem;font-weight:700;margin-bottom:12px;color:var(--orange);">📬 活動邀請</div>
-    <div id="inviteContent"></div>
-  </div>
+  <!-- 活動邀請確認 banner 已移除，改為按鈕式 -->
 
   <!-- Bulk bar -->
   <div class="bulk-bar" id="bulkBar" style="display:none">
@@ -134,18 +130,33 @@ body{display:flex;}
   </div>
 
   <div class="section-header">
-    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
       <div class="section-title">活動列表</div>
       <div class="dash-filter-wrap">
         <button class="dash-filter-btn active" onclick="setDashFilter('all', this)">全部</button>
         <button class="dash-filter-btn" onclick="setDashFilter('created', this)">已建立</button>
         <button class="dash-filter-btn" onclick="setDashFilter('joined', this)">已加入</button>
       </div>
+      <button class="btn btn-ghost" id="inviteBtn" onclick="openInviteModal()" style="font-size:0.8rem;padding:6px 12px;display:none;border-color:var(--orange);color:var(--orange);">
+        📬 活動邀請 <span id="inviteBadge" style="background:var(--orange);color:#fff;border-radius:100px;font-size:0.65rem;padding:1px 6px;margin-left:4px;font-weight:700;"></span>
+      </button>
     </div>
     <button class="btn btn-ghost" id="selBtn" onclick="toggleSel()" style="font-size:0.8rem;padding:6px 12px;">☑ 選取</button>
   </div>
   <div class="events-grid" id="eventsGrid"></div>
 </main>
+
+<!-- 活動邀請列表 Modal -->
+<div class="overlay" id="inviteListOverlay" onclick="if(event.target===this)closeInviteModal()">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-title">📬 活動邀請</div>
+    <div class="modal-sub" style="margin-top:-8px;margin-bottom:16px;font-size:0.82rem;color:var(--text3);">以下活動邀請你加入，請確認是否接受</div>
+    <div id="inviteListBody" style="display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;"></div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="closeInviteModal()">關閉</button>
+    </div>
+  </div>
+</div>
 
 <!-- Add custom method modal -->
 <div class="overlay" id="addMethodOverlay">
@@ -308,7 +319,8 @@ function toggleSideMenu(id) {
 function renderSidebar(){
   const evts = PC_getAllMyEvents();
   const created = evts.filter(e => e._isOwner);
-  const joined = evts.filter(e => !e._isOwner);
+  // 已加入活動區塊（過濾掉尚未接受邀請的）
+  const joined = evts.filter(e => !e._isOwner && !(e._myMember && e._myMember.status === 'pending_invite'));
   
   const curId = (typeof eventId !== 'undefined') ? eventId : null;
   let html = '';
@@ -381,7 +393,10 @@ function copyInvite(code,e){e.stopPropagation();PC_copyText(code,'🔑 邀請碼
 function renderEvents(){
   let evts = PC_getAllMyEvents(); 
   
-  // 🌟 核心修改：根據選擇的分類進行過濾
+  // 過濾掉尚未接受邀請的活動（pending_invite）
+  evts = evts.filter(e => !(e._myMember && e._myMember.status === 'pending_invite'));
+
+  // 根據選擇的分類進行過濾
   if(currentDashFilter === 'created') evts = evts.filter(e => e._isOwner);
   if(currentDashFilter === 'joined') evts = evts.filter(e => !e._isOwner);
 
@@ -426,10 +441,10 @@ function renderEvents(){
 }
 
 // ── Pending Invites ──
-let pendingInviteData = null;
+let allPendingInvites = []; // [{event, ownerKey, member}, ...]
 
 function checkPendingInvites(){
-  // 檢查是否有待確認的邀請
+  allPendingInvites = [];
   for(let i=0; i<localStorage.length; i++){
     const key = localStorage.key(i);
     if(key && key.startsWith('pc_events__')){
@@ -438,73 +453,76 @@ function checkPendingInvites(){
         for(const evt of events){
           const myMember = (evt.members || []).find(m => m.email === user.email);
           if(myMember && myMember.status === 'pending_invite'){
-            pendingInviteData = {event: evt, ownerKey: key, member: myMember};
-            showInvite();
-            return;
+            allPendingInvites.push({event: evt, ownerKey: key, member: myMember});
           }
         }
       }catch(e){}
     }
   }
-  document.getElementById('inviteSection').style.display = 'none';
+  // 更新按鈕顯示
+  const btn = document.getElementById('inviteBtn');
+  const badge = document.getElementById('inviteBadge');
+  if(allPendingInvites.length > 0){
+    btn.style.display = 'inline-flex';
+    badge.textContent = allPendingInvites.length;
+  } else {
+    btn.style.display = 'none';
+  }
 }
 
-function showInvite(){
-  if(!pendingInviteData) return;
-  const evt = pendingInviteData.event;
-  const section = document.getElementById('inviteSection');
-  section.style.display = 'block';
-  
-  document.getElementById('inviteContent').innerHTML = `
-    <div style="background:var(--white);border-radius:10px;padding:14px 16px;">
-      <div style="font-weight:700;margin-bottom:6px;">${evt.title}</div>
-      <div style="font-size:0.84rem;color:var(--text2);margin-bottom:12px;">${evt.desc || '邀請你加入此活動'}</div>
+function openInviteModal(){
+  document.getElementById('inviteListBody').innerHTML = allPendingInvites.map((inv, idx) => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+      <div style="font-weight:700;margin-bottom:4px;">${inv.event.title}</div>
+      <div style="font-size:0.82rem;color:var(--text2);margin-bottom:12px;">${inv.event.desc || '邀請你加入此活動'}</div>
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost" style="flex:1" onclick="rejectInvite()">拒絕邀請</button>
-        <button class="btn btn-primary" style="flex:2" onclick="acceptInvite()">✓ 同意加入</button>
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;font-size:0.82rem;" onclick="rejectInvite(${idx})">拒絕</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center;font-size:0.82rem;" onclick="acceptInvite(${idx})">✓ 同意加入</button>
       </div>
     </div>
-  `;
+  `).join('');
+  document.getElementById('inviteListOverlay').classList.add('show');
 }
 
-function acceptInvite(){
-  if(!pendingInviteData) return;
-  const {event, ownerKey, member} = pendingInviteData;
-  
-  // 更新成員狀態
-  member.status = getRoles(member).includes('payer') ? 'pending' : 'none';
+function closeInviteModal(){
+  document.getElementById('inviteListOverlay').classList.remove('show');
+}
+
+function acceptInvite(idx){
+  const inv = allPendingInvites[idx];
+  if(!inv) return;
+  const {event, ownerKey, member} = inv;
+
+  const newStatus = getRoles(member).includes('payer') ? 'pending' : 'none';
   const ownerEmail = ownerKey.replace('pc_events__','');
   const events = JSON.parse(localStorage.getItem(ownerKey) || '[]');
   const evt = events.find(e => e.id === event.id);
   if(evt){
     const m = (evt.members || []).find(m => m.email === user.email);
-    if(m) m.status = member.status;
+    if(m) m.status = newStatus;
     localStorage.setItem(ownerKey, JSON.stringify(events));
   }
-  
-  // 添加到已加入列表
+
   const joined = JSON.parse(localStorage.getItem('pc_member_joined__'+user.email) || '[]');
   if(!joined.find(j => j.eventId === event.id)){
-    joined.push({
-      eventId: event.id,
-      eventTitle: event.title,
-      ownerKey: ownerKey,
-      joinedAt: new Date().toISOString()
-    });
+    joined.push({eventId: event.id, eventTitle: event.title, ownerKey, joinedAt: new Date().toISOString()});
     localStorage.setItem('pc_member_joined__'+user.email, JSON.stringify(joined));
   }
-  
-  PC_sendNotify(ownerEmail, '邀請已接受', user.name+' 已接受加入「'+event.title+'」。', 'success');
-  PC_toast('✅ 已加入活動');
-  pendingInviteData = null;
+
+  PC_sendNotify(ownerEmail, '邀請已接受 ✅', user.name+' 已接受加入「'+event.title+'」。', 'success');
+  PC_toast('✅ 已加入「'+event.title+'」');
+  allPendingInvites.splice(idx, 1);
+  checkPendingInvites();
+  closeInviteModal();
+  if(allPendingInvites.length > 0) openInviteModal(); // 還有邀請就繼續顯示
   renderAll();
 }
 
-function rejectInvite(){
-  if(!pendingInviteData) return;
-  const {event, ownerKey, member} = pendingInviteData;
-  
-  // 從成員列表移除
+function rejectInvite(idx){
+  const inv = allPendingInvites[idx];
+  if(!inv) return;
+  const {event, ownerKey} = inv;
+
   const ownerEmail = ownerKey.replace('pc_events__','');
   const events = JSON.parse(localStorage.getItem(ownerKey) || '[]');
   const evt = events.find(e => e.id === event.id);
@@ -512,10 +530,17 @@ function rejectInvite(){
     evt.members = (evt.members || []).filter(m => m.email !== user.email);
     localStorage.setItem(ownerKey, JSON.stringify(events));
   }
-  
+
   PC_sendNotify(ownerEmail, '邀請已拒絕', user.name+' 拒絕了加入「'+event.title+'」的邀請。', 'info');
-  PC_toast('已拒絕邀請');
-  pendingInviteData = null;
+  PC_toast('已拒絕「'+event.title+'」的邀請');
+  allPendingInvites.splice(idx, 1);
+  checkPendingInvites();
+  // 重新渲染列表內容（不關閉 modal，除非沒有更多邀請）
+  if(allPendingInvites.length > 0){
+    openInviteModal();
+  } else {
+    closeInviteModal();
+  }
   renderAll();
 }
 
