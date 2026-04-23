@@ -187,7 +187,7 @@ body{display:flex;}
   <!-- Editable description -->
   <div class="desc-row">
     <div class="desc-box" id="descBox" onclick="toggleDescEdit()">
-      <span id="evtDescText">無說明</span>
+      <span id="evtDescText">點擊以輸入說明</span>
     </div>
   </div>
   <div id="descEditArea" style="display:none;margin-bottom:12px;">
@@ -575,7 +575,7 @@ function renderPage(){
     descText.textContent=evt.desc;
     descBox.classList.remove('empty');
   } else {
-    descText.textContent='無說明';
+    descText.textContent='點擊以輸入說明';
     descBox.classList.add('empty');
   }
   const canEditDesc=isFounder()||isAdmin();
@@ -603,7 +603,7 @@ function renderPage(){
         <div class="action-menu-item" onclick="closeActionMenu();openAmtEdit()">💰 繳費金額更改</div>
         <div class="action-menu-item" onclick="closeActionMenu();location.href='report.html'">📄 報表</div>
         <div style="height:1px;background:var(--border);margin:4px 0;"></div>
-        <div class="action-menu-item" onclick="closeActionMenu();confirmDeleteEvent()" style="color:var(--red);">🗑 刪除活動</div>
+        ${isFounder()?`<div class="action-menu-item" onclick="closeActionMenu();confirmDeleteEvent()" style="color:var(--red);">🗑 刪除活動</div>`:''}
       </div>
     </div>`;
   } else if(isCounter()){
@@ -1341,7 +1341,13 @@ function confirmRoleAdj(){
   if(!roles.length){PC_toast('請至少選擇一個身份');return;}
   const evts=PC_getEvents();const e=evts.find(x=>x.id===eventId);
   const m=e.members[pendingRoleIdx];const oldRoles=getRoles(m);
+  const wasPayerAndNowNot=oldRoles.includes('payer')&&!roles.includes('payer');
   m.roles=roles;m.role=roles[0];
+  // 移除繳費者身分時：保留所有繳費紀錄，只將 status 改為 none
+  if(wasPayerAndNowNot){
+    m.status='none';
+    // txHistory、paidAt、txId、payMethod 全部保留，不清除
+  }
   PC_saveEvents(evts);
   PC_sendNotify(m.email,'身份已調整 🎭',`你在「${evt.title}」的身份已更新為：${roles.map(r=>RL[r]).join('、')}。`,'info');
   closeOverlay('roleOverlay');renderPage();PC_toast('✅ 身份已更新');
