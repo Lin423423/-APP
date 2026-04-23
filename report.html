@@ -527,66 +527,93 @@ function exportExcel(){
 function _doExcel(evts){
   const wb=XLSX.utils.book_new();
 
-  // ── Sheet 1：活動摘要 ──
+  // ── 總覽 Sheet ──
   let tc=0,tex=0,tp=0,tpaid=0;
-  const summaryData=[['活動名稱','截止日期','實收金額','應收金額','待收金額','繳費率','繳費人數','已繳人數']];
+  const summaryData=[
+    ['PayClub 財務報表'],
+    ['匯出日期', new Date().toLocaleDateString('zh-TW')],
+    [],
+    ['活動名稱','截止日期','實收金額','應收金額','待收金額','繳費率','繳費人數','已繳人數']
+  ];
   evts.forEach(e=>{
     const c=PC_getCollected(e),ex=PC_getExpected(e);
     const p=PC_getPayers(e),paidN=p.filter(m=>m.status==='paid').length;
     tc+=c;tex+=ex;tp+=p.length;tpaid+=paidN;
     summaryData.push([e.title,e.deadline||'—',c,ex,ex-c,(ex?Math.round(c/ex*100):0)+'%',p.length,paidN]);
   });
+  summaryData.push([]);
   summaryData.push(['【總計】','—',tc,tex,tex-tc,(tex?Math.round(tc/tex*100):0)+'%',tp,tpaid]);
-  const ws1=XLSX.utils.aoa_to_sheet(summaryData);
-  ws1['!cols']=[{wch:22},{wch:14},{wch:12},{wch:12},{wch:12},{wch:10},{wch:10},{wch:10}];
-  XLSX.utils.book_append_sheet(wb,ws1,'活動摘要');
+  const wsSum=XLSX.utils.aoa_to_sheet(summaryData);
+  wsSum['!cols']=[{wch:24},{wch:14},{wch:12},{wch:12},{wch:12},{wch:10},{wch:10},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,wsSum,'總覽');
 
-  // ── Sheet 2：成員總覽 ──
-  const memberData=[['姓名','Email','活動','角色','應繳金額','已繳金額','待繳金額','繳費狀態','最後繳費時間']];
+  // ── 每個活動一個 Sheet ──
   evts.forEach(e=>{
+    const c=PC_getCollected(e),ex=PC_getExpected(e);
+    const payers=PC_getPayers(e);
+    const paidN=payers.filter(m=>m.status==='paid').length;
+
+    const rows=[];
+    // 活動標題區
+    rows.push([`活動：${e.title}`]);
+    rows.push(['截止日期', e.deadline||'—', '', '實收', c, '', '應收', ex, '', '待收', ex-c, '', '繳費率', ex?Math.round(c/ex*100)+'%':'0%']);
+    rows.push([]);
+
+    // 欄位標題（成員區）
+    rows.push(['姓名','Email','身分','應繳金額','已繳合計','繳費狀態','']);
+    // 欄位標題（繳費記錄區，縮排用空白）
+    const TX_HEADER = ['', '', '#','繳費時間','金額','累計已繳','繳費方式','備註'];
+
     (e.members||[]).forEach(m=>{
       const roles=Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);
+      const mainRole=roles.includes('admin')?'管理員':roles.includes('counter')?'統計者':'成員';
       const isPayer=roles.includes('payer');
       const exp=isPayer?PC_getExpectedAmount(e,m):0;
       const txHistory=m.txHistory||[];
       const paidTotal=txHistory.reduce((s,tx)=>s+(Number(tx.amount)||0),0);
-      const lastTx=txHistory.length?txHistory[txHistory.length-1]:null;
-      const paidAt=lastTx?(lastTx.paidAt||lastTx.time||m.paidAt||'—'):(m.paidAt||'—');
-      const mainRole=roles[0]||'payer';
-      const roleTxt=mainRole==='payer'?'繳費者':mainRole==='counter'?'統計者':mainRole==='admin'?'管理員':'觀察者';
-      const stTxt=!isPayer?roleTxt:(m.status==='paid'?'已繳費':m.status==='overdue'?'逾期未繳':'待繳費');
-      memberData.push([m.name||'—',m.email||'—',e.title,roleTxt,isPayer?exp:'—',isPayer?paidTotal:'—',isPayer?(exp-paidTotal):'—',stTxt,paidAt]);
-    });
-  });
-  const ws2=XLSX.utils.aoa_to_sheet(memberData);
-  ws2['!cols']=[{wch:14},{wch:28},{wch:20},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:20}];
-  XLSX.utils.book_append_sheet(wb,ws2,'成員總覽');
+      const stTxt=!isPayer?'—':m.status==='paid'?'已繳費':m.status==='overdue'?'逾期未繳':'待繳費';
 
-  // ── Sheet 3：每筆繳費記錄 ──
-  const txData=[['序號','姓名','Email','活動','繳費時間','金額','累計已繳','應繳金額','方式','備註','狀態']];
-  let seq=0;
-  evts.forEach(e=>{
-    (e.members||[]).forEach(m=>{
-      const roles=Array.isArray(m.roles)?m.roles:(m.role?[m.role]:[]);
-      if(!roles.includes('payer')) return;
-      const exp=PC_getExpectedAmount(e,m);
-      const txHistory=m.txHistory||[];
-      let cumulative=0;
-      txHistory.forEach(tx=>{
-        seq++;
-        cumulative+=Number(tx.amount)||0;
-        const stTxt=m.status==='paid'?'已繳費':m.status==='overdue'?'逾期未繳':'待繳費';
-        txData.push([seq,m.name||'—',m.email||'—',e.title,tx.paidAt||tx.time||'—',Number(tx.amount)||0,cumulative,exp,tx.payMethod||tx.method||m.payMethod||'—',tx.remark||'',stTxt]);
-      });
-      if(txHistory.length===0){
-        const stTxt=m.status==='paid'?'已繳費':m.status==='overdue'?'逾期未繳':'待繳費';
-        txData.push(['—',m.name||'—',m.email||'—',e.title,'—',0,0,exp,'—','',stTxt]);
+      // 成員列
+      rows.push([
+        m.name||m.email||'—',
+        m.email||'—',
+        mainRole,
+        isPayer?exp:'—',
+        isPayer?paidTotal:'—',
+        stTxt,
+        ''
+      ]);
+
+      // 繳費記錄列（縮排）
+      if(isPayer && txHistory.length>0){
+        rows.push(TX_HEADER);
+        let cumulative=0;
+        txHistory.forEach((tx,i)=>{
+          cumulative+=Number(tx.amount)||0;
+          rows.push([
+            '','',
+            i+1,
+            tx.paidAt||tx.time||'—',
+            Number(tx.amount)||0,
+            cumulative,
+            tx.payMethod||tx.method||m.payMethod||'—',
+            tx.remark||''
+          ]);
+        });
+      } else if(isPayer){
+        rows.push(['','','（尚無繳費記錄）']);
       }
+
+      // 成員間空一行
+      rows.push([]);
     });
+
+    // 工作表名稱限制31字元，去除非法字元
+    const sheetName = e.title.replace(/[\\\/\?\*\[\]]/g,'').slice(0,31);
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:16},{wch:26},{wch:8},{wch:10},{wch:10},{wch:10},{wch:4},{wch:8},{wch:18},{wch:10},{wch:10},{wch:12},{wch:20}];
+    XLSX.utils.book_append_sheet(wb,ws,sheetName||`活動${evts.indexOf(e)+1}`);
   });
-  const ws3=XLSX.utils.aoa_to_sheet(txData);
-  ws3['!cols']=[{wch:6},{wch:14},{wch:28},{wch:20},{wch:20},{wch:8},{wch:10},{wch:10},{wch:12},{wch:20},{wch:12}];
-  XLSX.utils.book_append_sheet(wb,ws3,'每筆繳費記錄');
 
   const date=new Date().toLocaleDateString('zh-TW').replace(/\//g,'-');
   XLSX.writeFile(wb,`PayClub_報表_${date}.xlsx`);
