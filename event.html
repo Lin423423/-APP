@@ -110,7 +110,8 @@ body{display:flex;}
 .status-opt.selected{border-color:var(--accent);background:var(--accent-light);}
 .danger-box{background:var(--red-light);border:1px solid #fecaca;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:0.84rem;color:var(--red);text-align:center;}
 /* Founder badge */
-.badge-founder{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #fde68a;}
+.badge-founder{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.badge-admin{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
 /* Calendar picker */
 .date-picker-wrap{position:relative;max-width:300px;}
 .date-display{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;background:var(--white);transition:border-color 0.15s;user-select:none;}
@@ -429,7 +430,7 @@ let pendingApproveIdx=-1,pendingStatusIdx=-1,pendingDeleteIdx=-1,pendingRoleIdx=
 let amtSelections=new Set();
 
 const RL={payer:'成員',counter:'統計者',admin:'管理員',pending_invite:'待確認',founder:'發起人'};
-const RB={payer:'badge-blue',counter:'badge-orange',admin:'badge-green',pending_invite:'badge-orange',founder:'badge-founder'};
+const RB={payer:'badge-blue',counter:'badge-orange',admin:'badge-admin',pending_invite:'badge-orange',founder:'badge-founder'};
 const RC={payer:'#4f6ef7',counter:'#d97706',admin:'#16a34a',founder:'#92400e'};
 const ROLE_SEL={payer:'sel-payer',counter:'sel-counter',admin:'sel-admin'};
 
@@ -822,7 +823,7 @@ function renderMembers(){
       <div class="member-row" onclick="${canClick?`toggleMDetail('${detailId}')`:''}" style="${!canClick?'cursor:default':''}">
         <div class="m-av" style="background:${RC[primaryRole]||'#9ca3af'}">${(m.email||m.name||'?').slice(0,1).toUpperCase()}</div>
         <div class="m-info">
-          <div class="m-name-row">${m.email||m.name||'—'} ${isFounderRow?`<span class="badge badge-founder" style="font-size:0.63rem;padding:1px 6px">發起人</span>`:primaryRole==='admin'?`<span class="badge badge-green" style="font-size:0.63rem;padding:1px 6px">管理員</span>`:primaryRole==='counter'?`<span class="badge badge-orange" style="font-size:0.63rem;padding:1px 6px">統計者</span>`:`<span class="badge badge-blue" style="font-size:0.63rem;padding:1px 6px">成員</span>`}</div>
+          <div class="m-name-row">${m.email||m.name||'—'} ${isFounderRow?`<span class="badge badge-founder" style="font-size:0.63rem;padding:1px 6px">發起人</span>`:primaryRole==='admin'?`<span class="badge badge-admin" style="font-size:0.63rem;padding:1px 6px">管理員</span>`:primaryRole==='counter'?`<span class="badge badge-orange" style="font-size:0.63rem;padding:1px 6px">統計者</span>`:`<span class="badge badge-blue" style="font-size:0.63rem;padding:1px 6px">成員</span>`}</div>
           <div class="m-sub">${m.paidAt||'—'}${m.payMethod?' via '+m.payMethod:''}</div>
         </div>
         <div class="m-amount">${amt}</div>

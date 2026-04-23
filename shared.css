@@ -75,6 +75,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC','Plus Jak
 .badge-red{background:var(--red-light);color:var(--red);}
 .badge-gray{background:var(--surface);color:var(--text2);}
 .badge-blue{background:var(--accent-light);color:var(--accent);}
+.badge-founder{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.badge-admin{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
 
 /* ── FORM ── */
 .form-group{margin-bottom:14px;}
