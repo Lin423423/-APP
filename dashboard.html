@@ -419,17 +419,20 @@ function renderEvents(){
     const reqs=PC_getJoinRequests(e.id);
     const pending=reqs.filter(r=>r.status==='pending').length;
 
-    // 個人繳費狀態（只對非主辦、且有繳費者身分的成員顯示）
+    // 個人繳費狀態
     let myPayBadge='';
-    if(!isOwner && e._myMember){
-      const myRoles=Array.isArray(e._myMember.roles)?e._myMember.roles:(e._myMember.role?[e._myMember.role]:[]);
+    // 主辦人：從 members 找自己的繳費狀態
+    const myMemberData = isOwner
+      ? (e.members||[]).find(m=>m.email===user.email)
+      : e._myMember;
+    if(myMemberData){
+      const myRoles=Array.isArray(myMemberData.roles)?myMemberData.roles:(myMemberData.role?[myMemberData.role]:[]);
       if(myRoles.includes('payer')){
-        // 應繳金額為 0 時不顯示繳費狀態
-        const myExpected=e._myMember.customAmount!=null?Number(e._myMember.customAmount):Number(e.amount||0);
+        const myExpected=myMemberData.customAmount!=null?Number(myMemberData.customAmount):Number(e.amount||0);
         if(myExpected>0){
-          const myStatus=e._myMember.status;
+          const myStatus=myMemberData.status;
           if(myStatus==='paid'){
-            myPayBadge=`<span class="badge badge-green" style="font-size:0.62rem">✓ 您已繳費</span>`;
+            myPayBadge=`<span class="badge badge-green" style="font-size:0.62rem">✓ 已繳費</span>`;
           } else if(myStatus==='overdue'){
             myPayBadge=`<span class="badge badge-red" style="font-size:0.62rem">⚠ 逾期未繳</span>`;
           } else {
@@ -438,6 +441,10 @@ function renderEvents(){
         }
       }
     }
+
+    // 身分 badge
+    const roleBadgeColor = isOwner?'badge-founder':primaryRole==='admin'?'badge-green':primaryRole==='counter'?'badge-orange':'badge-blue';
+    const roleBadgeText = isOwner?'主辦人':(myRole||'成員');
     
     // 選取模式判斷
     const isSel = selIds.has(e.id);
@@ -452,6 +459,7 @@ function renderEvents(){
       <div class="ec-top" style="${canSelect?'padding-left:26px':''}">
         <div class="ec-title">${e.title}${pending>0&&isOwner?` <span class="badge badge-orange" style="font-size:0.63rem">申請 ${pending}</span>`:''}</div>
         <div>
+          <span class="badge ${roleBadgeColor}" style="font-size:0.6rem;margin-right:4px">${roleBadgeText}</span>
           <span class="badge ${tc}">${tt}</span>${myPayBadge?` ${myPayBadge}`:''}
         </div>
       </div>
